@@ -1,4 +1,6 @@
 // ----------------------------------------------------------------------
+import { paramCase } from 'src/utils/change-case';
+import { _id, _postTitles } from 'src/_mock/assets';
 
 const ROOTS = {
   AUTH: '/auth',
@@ -6,7 +8,7 @@ const ROOTS = {
 };
 
 // ----------------------------------------------------------------------
-
+const MOCK_ID = _id[1];
 export const paths = {
   minimalUI: 'https://mui.com/store/items/minimal-dashboard/',
   // AUTH
@@ -26,6 +28,18 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/group`,
       five: `${ROOTS.DASHBOARD}/group/five`,
       six: `${ROOTS.DASHBOARD}/group/six`,
+    },
+    user: {
+      root: `${ROOTS.DASHBOARD}/user`,
+      new: `${ROOTS.DASHBOARD}/user/new`,
+      list: `${ROOTS.DASHBOARD}/user/list`,
+      cards: `${ROOTS.DASHBOARD}/user/cards`,
+      profile: `${ROOTS.DASHBOARD}/user/profile`,
+      account: `${ROOTS.DASHBOARD}/user/account`,
+      edit: (id) => `${ROOTS.DASHBOARD}/user/${id}/edit`,
+      demo: {
+        edit: `${ROOTS.DASHBOARD}/user/${MOCK_ID}/edit`,
+      },
     },
   },
 };

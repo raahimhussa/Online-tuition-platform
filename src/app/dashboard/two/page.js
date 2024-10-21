@@ -1,5 +1,5 @@
 // sections
-import TwoView from 'src/sections/two/view';
+import AvailabilityView from 'src/sections/two/view';
 
 // ----------------------------------------------------------------------
 
@@ -8,5 +8,5 @@ export const metadata = {
 };
 
 export default function Page() {
-  return <TwoView />;
+  return <AvailabilityView />;
 }

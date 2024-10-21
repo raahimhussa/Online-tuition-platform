@@ -5,5 +5,6 @@ import { PATH_AFTER_LOGIN } from 'src/config-global';
 // ----------------------------------------------------------------------
 
 export default async function HomePage() {
-  redirect(PATH_AFTER_LOGIN);
+  // redirect(PATH_AFTER_LOGIN);
+  redirect('./dashboard');
 }

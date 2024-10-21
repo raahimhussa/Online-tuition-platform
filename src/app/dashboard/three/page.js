@@ -1,5 +1,5 @@
 // sections
-import ThreeView from 'src/sections/three/view';
+import Service from 'src/sections/three/view';
 
 // ----------------------------------------------------------------------
 
@@ -8,5 +8,5 @@ export const metadata = {
 };
 
 export default function Page() {
-  return <ThreeView />;
+  return <Service />;
 }

@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
+
 // routes
+
 import { paths } from 'src/routes/paths';
 // components
 import SvgColor from 'src/components/svg-color';
@@ -49,12 +51,13 @@ export function useNavData() {
       // OVERVIEW
       // ----------------------------------------------------------------------
       {
-        subheader: 'overview v5.4.0',
+        subheader: 'New Tutor',
         items: [
-          { title: 'one', path: paths.dashboard.root, icon: ICONS.dashboard },
-          { title: 'two', path: paths.dashboard.two, icon: ICONS.ecommerce },
+          { title: 'Setup Profile', path: paths.dashboard.user.new, icon: ICONS.user },
+          { title: 'Terms & Conditions', path: paths.dashboard.root, icon: ICONS.dashboard },
+          { title: 'Availability', path: paths.dashboard.two, icon: ICONS.ecommerce },
           {
-            title: 'three',
+            title: 'Service',
             path: paths.dashboard.three,
             icon: ICONS.analytics,
           },
@@ -63,21 +66,24 @@ export function useNavData() {
 
       // MANAGEMENT
       // ----------------------------------------------------------------------
-      {
-        subheader: 'management',
-        items: [
-          {
-            title: 'user',
-            path: paths.dashboard.group.root,
-            icon: ICONS.user,
-            children: [
-              { title: 'four', path: paths.dashboard.group.root },
-              { title: 'five', path: paths.dashboard.group.five },
-              { title: 'six', path: paths.dashboard.group.six },
-            ],
-          },
-        ],
-      },
+      // {
+      //   subheader: 'management',
+      //   items: [
+      //     {
+      //       title: 'user',
+      //       path: paths.dashboard.user.root,
+      //       icon: ICONS.user,
+      //       children: [
+      //         { title: 'profile', path: paths.dashboard.user.root },
+      //         { title: 'cards', path: paths.dashboard.user.cards },
+      //         { title: 'list', path: paths.dashboard.user.list },
+      //         { title: 'create', path: paths.dashboard.user.new },
+      //         { title: 'edit', path: paths.dashboard.user.demo.edit },
+      //         // { title: 'account', path: paths.dashboard.user.account },
+      //       ],
+      //     },
+      //   ],
+      // },
     ],
     []
   );
