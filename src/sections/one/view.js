@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useState } from 'react';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -12,6 +13,8 @@ import Stack from '@mui/material/Stack';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
+import Snackbar from '@mui/material/Snackbar'; 
+import Alert from '@mui/material/Alert'; 
 
 // components
 import { useSettingsContext } from 'src/components/settings';
@@ -20,6 +23,29 @@ import { useSettingsContext } from 'src/components/settings';
 
 export default function TermsAndConditionsView() {
   const settings = useSettingsContext();
+  const [checkedStates, setCheckedStates] = useState([false, false, false, false]);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+  const handleNextClick = () => {
+    const allChecked = checkedStates.every(Boolean);
+    if (!allChecked) {
+      setSnackbarOpen(true);
+    } else {
+      console.log('All conditions met. Proceeding to the next step.');
+    }
+  };
+
+  const handleCheckboxChange = (index) => (event) => {
+    const newCheckedStates = [...checkedStates];
+    newCheckedStates[index] = event.target.checked;
+    setCheckedStates(newCheckedStates);
+  };
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'md'}>
@@ -31,7 +57,10 @@ export default function TermsAndConditionsView() {
         <CardContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <FormControlLabel
-              control={<Checkbox defaultChecked />}
+              control={<Checkbox
+                checked={checkedStates[0]}
+                onChange={handleCheckboxChange(0)}
+              />}
               label={
                 <Typography variant="body2">
                   You agree to the{' '}
@@ -43,15 +72,24 @@ export default function TermsAndConditionsView() {
               }
             />
             <FormControlLabel
-              control={<Checkbox defaultChecked />}
+              control={<Checkbox
+                checked={checkedStates[1]}
+                onChange={handleCheckboxChange(1)}
+              />}
               label="You agree to stay on the TheTutor.Me platform while tutoring learners you've connected with."
             />
             <FormControlLabel
-              control={<Checkbox defaultChecked />}
+              control={ <Checkbox
+                checked={checkedStates[2]}
+                onChange={handleCheckboxChange(2)}
+              />}
               label="You agree that the platform may obtain information about you from a third-party consumer reporting agency."
             />
             <FormControlLabel
-              control={<Checkbox defaultChecked />}
+              control={<Checkbox
+                checked={checkedStates[3]}
+                onChange={handleCheckboxChange(3)}
+              />}
               label="TheTutor.Me charges a sliding commission rate between 10%-15% on sessions conducted and materials sold via the platform."
             />
           </Box>
@@ -63,11 +101,26 @@ export default function TermsAndConditionsView() {
           Save & Continue
         </Button>
       </Box> */}
-      <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-        <LoadingButton type="submit" variant="contained">
+     <Stack alignItems="flex-end" sx={{ mt: 3 }}>
+        <LoadingButton 
+          type="button" 
+          variant="contained" 
+          onClick={handleNextClick} 
+        >
           Next
         </LoadingButton>
       </Stack>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={10000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert onClose={handleSnackbarClose} severity="warning">
+          Please select all the options before proceeding.
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }
