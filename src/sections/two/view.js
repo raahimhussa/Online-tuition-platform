@@ -109,9 +109,17 @@ export default function AvailabilityView() {
         <Button variant="outlined" startIcon={<iconify-icon icon="typcn:arrow-back" />}>
           Back
         </Button>
+        <Stack
+          alignItems="flex-end"
+          sx={{ mt: 3, display: 'flex', justifyContent: 'space-between' }}
+        >
+          <LoadingButton type="submit" variant="contained">
+            Next
+          </LoadingButton>
+        </Stack>
         <Stack alignItems="flex-end" sx={{ mt: 3 }}>
           <LoadingButton type="submit" variant="contained">
-            Save
+            Next
           </LoadingButton>
         </Stack>
       </Box>

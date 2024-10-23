@@ -65,7 +65,7 @@ export default function TermsAndConditionsView() {
       </Box> */}
       <Stack alignItems="flex-end" sx={{ mt: 3 }}>
         <LoadingButton type="submit" variant="contained">
-          Save
+          Next
         </LoadingButton>
       </Stack>
     </Container>
