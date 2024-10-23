@@ -1,4 +1,4 @@
-import { query } from '../lib/db';  // Import the query function
+import { query } from './db';  // Import the query function
 
 // Create a new user in the 'users' table
 // Function to create a new user in the users table
@@ -12,12 +12,8 @@ export async function createUser({ email, hashedPassword, name, phone_number, ge
     return result.rows[0];
   }
   // Function to get user by ID
-export async function getUserById(id) {
-    const result = await query(`SELECT * FROM users WHERE user_id = $1`, [user_id]);
-    return result.rows[0];
-}
 
-//get all users
+// get all users
 export async function getAllUsers() {
     const result = await query(`SELECT * FROM users`);
     return result.rows;

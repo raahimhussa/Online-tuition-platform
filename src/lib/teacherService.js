@@ -1,7 +1,7 @@
 // lib/teacherService.js
 import { query } from './db';
 
-//create teacher
+// create teacher
 export async function createTeacherProfile({ user_id, teaching_mode, bio, experience_years, hourly_rate, education, duration_per_session }) {
     const text = `
         INSERT INTO teachers (user_id, teaching_mode, bio, experience_years, hourly_rate, education, duration_per_session)
@@ -11,7 +11,7 @@ export async function createTeacherProfile({ user_id, teaching_mode, bio, experi
     const result = await query(text, values);
     return result.rows[0];
 }
-//get all
+// get all
 export async function getAllTeachers() {
     const text = `
       SELECT 
@@ -50,7 +50,7 @@ export async function getAllTeachers() {
     return result.rows;
 }
 
-//get by id
+// get by id
 export async function getTeacherById(id) {
     const result = await query(`
         SELECT 

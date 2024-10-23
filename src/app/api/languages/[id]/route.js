@@ -1,4 +1,5 @@
 import { query } from '../../../../lib/db';
+
 export async function POST(req) {
     try {
         const { name } = await req.json();

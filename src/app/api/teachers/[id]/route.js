@@ -1,5 +1,5 @@
 import { getTeacherById ,updateTeacherProfile} from '../../../../lib/teacherService';
-
+import {query} from '../../../../lib/db'
 export async function GET(req, { params }) {
     const { id } = params;
 
