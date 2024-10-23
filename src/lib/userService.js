@@ -13,7 +13,7 @@ export async function createUser({ email, hashedPassword, name, phone_number, ge
   }
   // Function to get user by ID
 export async function getUserById(id) {
-    const result = await query(`SELECT * FROM users WHERE user_id = $1`, [id]);
+    const result = await query(`SELECT * FROM users WHERE user_id = $1`, [user_id]);
     return result.rows[0];
 }
 

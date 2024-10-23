@@ -4,15 +4,26 @@ CREATE TABLE cities (
     city_name VARCHAR(255) NOT NULL,
     region VARCHAR(255) NOT NULL
 );
+CREATE TABLE teacher_languages (
+    teacher_id INT NOT NULL REFERENCES teachers(teacher_id) ON DELETE CASCADE,
+    language_id INT NOT NULL REFERENCES languages(language_id) ON DELETE CASCADE,
+    PRIMARY KEY (teacher_id, language_id)  -- Composite key to ensure uniqueness
+);
+
 
 -- Grade Levels Table
 CREATE TABLE grade_levels (
     grade_level_id SERIAL PRIMARY KEY,
     domain VARCHAR(50) NOT NULL,  -- E.g., O-level, A-level, Intermediate
-    sub_level VARCHAR(50),  -- E.g., O1, O2, AS, A2, etc.
-    parent_level_id INT REFERENCES grade_levels(grade_level_id)  -- For hierarchical levels
+    sub_level VARCHAR(50),  -- E.g., O1, O2, AS, A2, etc.-- For hierarchical levels
+);
+CREATE TABLE teacher_grade_levels (
+    teacher_id INT NOT NULL REFERENCES teachers(teacher_id) ON DELETE CASCADE,
+    grade_level_id INT NOT NULL REFERENCES grade_levels(grade_level_id) ON DELETE CASCADE,
+    PRIMARY KEY (teacher_id, grade_level_id)  -- Composite key to ensure uniqueness
 );
 
+    
 -- Languages Table
 CREATE TABLE languages (
     language_id SERIAL PRIMARY KEY,
@@ -54,11 +65,11 @@ CREATE TABLE teachers (
     education VARCHAR(255),  -- Education background
     rating DECIMAL(3, 2),  -- Rating out of 5
     hourly_rate DECIMAL(10, 2),  -- Hourly rate in decimal format
-    grade_level_id INT REFERENCES grade_levels(grade_level_id) ON DELETE SET NULL,  -- Reference to grade levels
-    language_id INT REFERENCES languages(language_id) ON DELETE SET NULL,  -- Reference to languages
+    duration_per_session INT,  -- Duration per session in minutes
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 -- Students Table
 CREATE TABLE students (
@@ -86,7 +97,7 @@ CREATE TABLE teacher_availability (
     end_time TIME NOT NULL
 );
 
--- Student Subjects Table
+-- Student Subjects Table   
 CREATE TABLE student_subjects (
     student_subject_id SERIAL PRIMARY KEY,
     student_id INT NOT NULL REFERENCES students(student_id) ON DELETE CASCADE,

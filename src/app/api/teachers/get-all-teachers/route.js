@@ -1,9 +1,17 @@
-import {getAllTeachers} from '../../../../lib/teacherService';
-export async function GET(req, res) {
+import { getAllTeachers } from '../../../../lib/teacherService';
+
+export async function GET(req) {
     try {
         const teachers = await getAllTeachers();
-        return res.status(200).json(teachers);
+        return new Response(JSON.stringify(teachers), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+        });
     } catch (error) {
-        return res.status(500).json({ message: 'Error fetching teachers', error: error.message });
+        console.error('Error fetching teachers:', error); // Log the error for debugging
+        return new Response(JSON.stringify({ message: 'Error fetching teachers', error: error.message }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
+        });
     }
 }
