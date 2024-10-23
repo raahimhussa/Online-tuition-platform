@@ -1,128 +1,289 @@
 'use client';
 
+import React from 'react';
 import {
   Box,
-  Button,
   Container,
   Grid,
   Typography,
   Checkbox,
   IconButton,
-  TextField,
   FormControlLabel,
+  Select,
+  MenuItem,
+  Button,
 } from '@mui/material';
 import { Icon } from '@iconify/react';
-// import addCircleOutline from '@iconify/icons-mdi/add-circle-outline';
-// import arrowBack from '@iconify/icons-mdi/arrow-back';
 import Stack from '@mui/material/Stack';
 import LoadingButton from '@mui/lab/LoadingButton';
-// components
+import { useForm, Controller } from 'react-hook-form';
+import * as Yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useSettingsContext } from 'src/components/settings';
 
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const times = [
+  '09:00 AM',
+  '09:30 AM',
+  '10:00 AM',
+  '10:30 AM',
+  '11:00 AM',
+  '11:30 AM',
+  '12:00 PM',
+  '12:30 PM',
+  '01:00 PM',
+  '01:30 PM',
+  '02:00 PM',
+  '02:30 PM',
+  '03:00 PM',
+  '03:30 PM',
+  '04:00 PM',
+  '04:30 PM',
+  '05:00 PM',
+  '05:30 PM',
+  '06:00 PM',
+  '06:30 PM',
+  '07:00 PM',
+  '07:30 PM',
+  '08:00 PM',
+];
+
+const convertToDate = (timeString) => {
+  const [time, modifier] = timeString.split(' ');
+  let [hours, minutes] = time.split(':');
+  hours = parseInt(hours, 10);
+  minutes = parseInt(minutes, 10);
+
+  if (modifier === 'PM' && hours !== 12) {
+    hours += 12;
+  }
+  if (modifier === 'AM' && hours === 12) {
+    hours = 0;
+  }
+
+  return new Date(0, 0, 0, hours, minutes);
+};
+
+const validationSchema = Yup.object().shape({
+  availability: Yup.object().shape(
+    days.reduce((acc, day) => {
+      acc[day] = Yup.object().shape({
+        checked: Yup.boolean().required(),
+        slots: Yup.array().of(
+          Yup.object().shape({
+            start: Yup.string().required(),
+            end: Yup.string()
+              .required()
+              .test('is-greater', 'End time must be greater than start time', function (value) {
+                const { start } = this.parent;
+                return convertToDate(value) > convertToDate(start);
+              }),
+          })
+        ),
+      });
+      return acc;
+    }, {})
+  ),
+});
 
 export default function AvailabilityView() {
   const settings = useSettingsContext();
 
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    getValues,
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
+      availability: days.reduce((acc, day) => {
+        acc[day] = {
+          checked: true,
+          slots: [{ start: '09:00 AM', end: '05:00 PM' }],
+        };
+        return acc;
+      }, {}),
+    },
+  });
+
+  const onSubmit = (data) => {
+    console.log('Submitted data:', data);
+  };
+
+  const addSlot = (day) => {
+    const currentSlots = getValues(`availability.${day}.slots`);
+    const newSlot = { start: '09:00 AM', end: '05:00 PM' };
+    setValue(`availability.${day}.slots`, [...currentSlots, newSlot]);
+  };
+
+  const removeSlot = (day, index) => {
+    const currentSlots = getValues(`availability.${day}.slots`);
+    const newSlots = currentSlots.filter((_, idx) => idx !== index);
+    setValue(`availability.${day}.slots`, newSlots);
+  };
+
+  const handleCheckboxChange = (day) => {
+    const isChecked = getValues(`availability.${day}.checked`);
+    setValue(`availability.${day}.checked`, !isChecked);
+
+    if (!isChecked) {
+      // If checked, set the first slot to default values
+      setValue(`availability.${day}.slots[0].start`, '09:00 AM');
+      setValue(`availability.${day}.slots[0].end`, '05:00 PM');
+    } else {
+      // If unchecked, clear the slots
+      setValue(`availability.${day}.slots`, []);
+    }
+  };
+
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-      {/* Header */}
-      <Typography variant="h4" sx={{ mb: 3 }}>
+      <Typography variant="h5" sx={{ mb: 4, fontSize: '1.25rem' }}>
         Availability
       </Typography>
 
-      {/* Availability Form */}
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Grid container spacing={2}>
-            <Grid item xs={2}>
-              <Typography variant="subtitle1">Day</Typography>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Grid container spacing={2}>
+              <Grid item xs={2}>
+                <Typography variant="body2" sx={{ fontSize: '0.875rem', mb: 2 }}>
+                  Day
+                </Typography>
+              </Grid>
+              <Grid item xs={4}>
+                <Typography variant="body2" sx={{ fontSize: '0.875rem', mb: 2 }}>
+                  Start Time
+                </Typography>
+              </Grid>
+              <Grid item xs={4}>
+                <Typography variant="body2" sx={{ fontSize: '0.875rem', mb: 2 }}>
+                  End Time
+                </Typography>
+              </Grid>
             </Grid>
-            <Grid item xs={4}>
-              <Typography variant="subtitle1">Start Time</Typography>
-            </Grid>
-            <Grid item xs={4}>
-              <Typography variant="subtitle1">End Time</Typography>
-            </Grid>
+
+            {days.map((day) => (
+              <Grid container spacing={2} alignItems="center" sx={{ mb: 4 }} key={day}>
+                <Grid item xs={2}>
+                  <Controller
+                    name={`availability.${day}.checked`}
+                    control={control}
+                    render={({ field }) => (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            {...field}
+                            checked={field.value}
+                            onChange={() => handleCheckboxChange(day)}
+                          />
+                        }
+                        label={
+                          <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
+                            {day}
+                          </Typography>
+                        }
+                      />
+                    )}
+                  />
+                </Grid>
+                <Grid item xs={10}>
+                  <Box>
+                    <Controller
+                      name={`availability.${day}.slots`}
+                      control={control}
+                      render={({ field }) => (
+                        <Box>
+                          {field.value.map((slot, index) => (
+                            <Grid container spacing={2} alignItems="center" key={index}>
+                              <Grid item xs={4}>
+                                <Select
+                                  fullWidth
+                                  value={slot.start}
+                                  onChange={(e) => {
+                                    const updatedSlots = [...field.value];
+                                    updatedSlots[index].start = e.target.value;
+                                    setValue(`availability.${day}.slots`, updatedSlots);
+                                  }}
+                                  variant="outlined"
+                                  displayEmpty
+                                  sx={{ height: '56px', mb: 1 }}
+                                >
+                                  {times.map((time) => (
+                                    <MenuItem key={time} value={time}>
+                                      <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
+                                        {time}
+                                      </Typography>
+                                    </MenuItem>
+                                  ))}
+                                </Select>
+                              </Grid>
+                              <Grid item xs={4}>
+                                <Select
+                                  fullWidth
+                                  value={slot.end}
+                                  onChange={(e) => {
+                                    const updatedSlots = [...field.value];
+                                    updatedSlots[index].end = e.target.value;
+                                    setValue(`availability.${day}.slots`, updatedSlots);
+                                  }}
+                                  variant="outlined"
+                                  displayEmpty
+                                  sx={{ height: '56px', mb: 1 }}
+                                >
+                                  {times.map((time) => (
+                                    <MenuItem key={time} value={time}>
+                                      <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
+                                        {time}
+                                      </Typography>
+                                    </MenuItem>
+                                  ))}
+                                </Select>
+                                {errors.availability?.[day]?.slots?.[index]?.end && (
+                                  <Typography color="error" sx={{ fontSize: '0.75rem', mb: 1 }}>
+                                    {errors.availability[day].slots[index].end.message}
+                                  </Typography>
+                                )}
+                              </Grid>
+                              <Grid item xs={2}>
+                                <IconButton
+                                  color="error"
+                                  sx={{ ml: 3 }}
+                                  onClick={() => removeSlot(day, index)}
+                                >
+                                  <Icon icon="ion:trash-outline" />
+                                </IconButton>
+                              </Grid>
+                            </Grid>
+                          ))}
+                          <Button onClick={() => addSlot(day)} sx={{ mt: 3 }} variant="outlined">
+                            Add Slot
+                          </Button>
+                        </Box>
+                      )}
+                    />
+                  </Box>
+                </Grid>
+              </Grid>
+            ))}
           </Grid>
-
-          {/* Days with Time Inputs */}
-          {days.map((day) => (
-            <Grid container spacing={2} alignItems="center" sx={{ mb: 2 }} key={day}>
-              <Grid item xs={2}>
-                <FormControlLabel control={<Checkbox defaultChecked />} label={day} />
-              </Grid>
-              <Grid item xs={2}>
-                <TextField
-                  fullWidth
-                  defaultValue="09"
-                  InputProps={{ sx: { textAlign: 'center' }, inputMode: 'numeric' }}
-                />
-              </Grid>
-              <Grid item xs={1}>
-                <TextField
-                  fullWidth
-                  defaultValue="00"
-                  InputProps={{ sx: { textAlign: 'center' }, inputMode: 'numeric' }}
-                />
-              </Grid>
-              <Grid item xs={1}>
-                <TextField
-                  fullWidth
-                  defaultValue="AM"
-                  InputProps={{ sx: { textAlign: 'center' } }}
-                />
-              </Grid>
-              <Grid item xs={2}>
-                <TextField
-                  fullWidth
-                  defaultValue="05"
-                  InputProps={{ sx: { textAlign: 'center' }, inputMode: 'numeric' }}
-                />
-              </Grid>
-              <Grid item xs={1}>
-                <TextField
-                  fullWidth
-                  defaultValue="00"
-                  InputProps={{ sx: { textAlign: 'center' }, inputMode: 'numeric' }}
-                />
-              </Grid>
-              <Grid item xs={1}>
-                <TextField
-                  fullWidth
-                  defaultValue="PM"
-                  InputProps={{ sx: { textAlign: 'center' } }}
-                />
-              </Grid>
-              <Grid item xs={1}>
-                <IconButton color="primary">
-                  <iconify-icon icon="ion:add-circle-outline" />
-                </IconButton>
-              </Grid>
-            </Grid>
-          ))}
         </Grid>
-      </Grid>
 
-      {/* Actions */}
-      <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between' }}>
-        <Button variant="outlined" startIcon={<iconify-icon icon="typcn:arrow-back" />}>
-          Back
-        </Button>
-        <Stack
-          alignItems="flex-end"
-          sx={{ mt: 3, display: 'flex', justifyContent: 'space-between' }}
-        >
-          <LoadingButton type="submit" variant="contained">
-            Next
-          </LoadingButton>
-        </Stack>
-        <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-          <LoadingButton type="submit" variant="contained">
-            Next
-          </LoadingButton>
-        </Stack>
-      </Box>
+        <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
+          <Stack sx={{ mt: 2 }}>
+            <LoadingButton type="button" variant="contained">
+              Back
+            </LoadingButton>
+          </Stack>
+          <Stack alignItems="flex-end" sx={{ mt: 2 }}>
+            <LoadingButton type="submit" variant="contained">
+              Next
+            </LoadingButton>
+          </Stack>
+        </Box>
+      </form>
     </Container>
   );
 }
