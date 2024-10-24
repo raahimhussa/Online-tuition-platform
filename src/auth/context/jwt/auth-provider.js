@@ -105,9 +105,11 @@ export function AuthProvider({ children }) {
 
     const response = await axios.post(endpoints.auth.login, data);
 
-    const { accessToken, user } = response.data;
-
-    setSession(accessToken);
+    const { token, user } = response.data;
+    console.log(user.role)
+      sessionStorage.setItem(STORAGE_KEY, token);
+      sessionStorage.setItem('userRole', user.role);
+    setSession(token);
 
     dispatch({
       type: 'LOGIN',
@@ -138,10 +140,10 @@ export function AuthProvider({ children }) {
       const response = await axios.post(endpoints.auth.register, data);
   
       // Destructure response to get access token and user info
-      const { accessToken, user } = response.data;
+      const { token, user } = response.data;
   
       // Store the access token in sessionStorage
-      sessionStorage.setItem(STORAGE_KEY, accessToken);
+      sessionStorage.setItem(STORAGE_KEY, token);
   
       // Dispatch the REGISTER action with the user data
       dispatch({
