@@ -123,8 +123,8 @@ export default function JwtRegisterView() {
       await register(formData); // If you still need to call the register function
       reset();
       setErrorMsg('');
-      router.push(PATH_AFTER_LOGIN); // Redirect after successful registration
-    } catch (error) {
+      router.push(paths.auth.jwt.login); // Redirect after successful registration
+    } catch (error) { 
       console.error('Registration error:', error);
       setErrorMsg(typeof error === 'string' ? error : error.message);
       reset();
