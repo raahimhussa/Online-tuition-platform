@@ -119,7 +119,7 @@ export default function Service(currentUser) {
                   </Typography>
 
                   {/* Dropdown for Grade Level */}
-                  <FormControl sx={{ mb: 5 }} fullWidth error={Boolean(errors.educationLevel)}>
+                  {/* <FormControl sx={{ mb: 5 }} fullWidth error={Boolean(errors.educationLevel)}>
                     <InputLabel id="education-level-label">Choose Grade Level</InputLabel>
                     <Controller
                       name="educationLevel"
@@ -141,7 +141,7 @@ export default function Service(currentUser) {
                     {errors.educationLevel && (
                       <Typography color="error">{errors.educationLevel.message}</Typography>
                     )}
-                  </FormControl>
+                  </FormControl> */}
 
                   {/* Dropdown for Subject */}
                   <FormControl fullWidth sx={{ mb: 5 }} error={Boolean(errors.subject)}>
