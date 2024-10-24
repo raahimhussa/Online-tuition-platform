@@ -145,8 +145,7 @@ export default function JwtRegisterView() {
       </Stack>
 
       {/* Form */}
-      <FormProvider methods={methods}>
-        <form onSubmit={handleSubmit(onSubmit)}>
+      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2.5}>
           {!!errorMsg && <Alert severity="error">{errorMsg}</Alert>}
 
@@ -257,7 +256,6 @@ export default function JwtRegisterView() {
             Create account
           </LoadingButton>
         </Stack>
-        </form>
       </FormProvider>
 
       {/* Terms and Conditions */}

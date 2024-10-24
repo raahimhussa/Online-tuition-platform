@@ -123,8 +123,7 @@ export function AuthProvider({ children }) {
     const data = {
       email: formData.email,
       password: formData.password,
-      firstName: formData.firstName,
-      lastName: formData.lastName,
+      name: formData.name,
       phone_number: formData.phone_number, // Add more fields as needed
       gender: formData.gender,
       dob: formData.dob, // Date of birth
