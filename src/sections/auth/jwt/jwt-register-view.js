@@ -1,9 +1,10 @@
 'use client';
 
 import * as Yup from 'yup';
+import RadioGroup from '@mui/material/RadioGroup';
 import Radio from '@mui/material/Radio';
 import { useForm, Controller } from 'react-hook-form';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui components
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -42,6 +43,24 @@ export default function JwtRegisterView() {
   const searchParams = useSearchParams();
   const returnTo = searchParams.get('returnTo');
   const password = useBoolean();
+  const [cities, setCities] = useState([]); // State to store cities
+  const [selectedCity, setSelectedCity] = useState('');
+
+    // Fetch cities from backend on component load
+    useEffect(() => {
+      const fetchCities = async () => {
+        try {
+          const response = await fetch('/api/cities'); // Adjust API URL as needed
+          const data = await response.json();
+          console.log(data); // Log the cities data for debugging
+          setCities(data); // Assuming data is an array of city objects with id and name
+        } catch (error) {
+          console.error('Error fetching cities:', error);
+        }
+      };
+      
+      fetchCities();
+    }, []);
 
   // Validation schema
   const RegisterSchema = Yup.object().shape({
@@ -52,11 +71,9 @@ export default function JwtRegisterView() {
     phoneNumber: Yup.string().required('Phone number is required'),
     gender: Yup.string().required('gender is required'),
     dob: Yup.date().required('Date of birth is required'),
-
-    city_name: Yup.string().required('City is required'),
-    region: Yup.string().required('region is required'),
+    city_id: Yup.number().required('City is required').integer(), // city_id is an integer
     area: Yup.string().required('area code is required'),
-    // role: Yup.string().required('role code is required'),
+    role: Yup.string().required('role code is required'),
   });
 
   const defaultValues = {
@@ -66,11 +83,9 @@ export default function JwtRegisterView() {
     password: '',
     phoneNumber: '',
     gender: '',
-    year: '',
-    city_name: '',
-    region: '',
-    area: '',
-    role: 'tutor',
+    city_id: '',
+    area: '', 
+    role: 'student',
     dob: null, // Add dob to the default values
   };
 
@@ -78,36 +93,37 @@ export default function JwtRegisterView() {
     resolver: yupResolver(RegisterSchema),
     defaultValues,
   });
-  const handleRoleChange = (event, role) => {
-    console.log(' event.target.checked ', role);
-    setValue('role', role);
-  };
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting ,errors},
     reset,
   } = methods;
-
+  console.log('form errors',errors)
+  
   const onSubmit = async (data) => {
     console.info('Form submitted with data:', data);
-    // Validate day, month, year before combining into dob
-    const { day, month, year } = data;
-    if (!day || !month || !year) {
-      setErrorMsg('Please provide a valid date of birth.');
-      return;
-    }
 
-    const dob = `${year}-${month}-${day}`;
-
-    // Proceed with registration
-    const formData = { ...data, dob };
+    // Transform form data to match the required backend format
+    const formData = {
+      email: data.email,
+      password: data.password,
+      name: `${data.firstName} ${data.lastName}`, // Combine first and last name
+      phone_number: data.phoneNumber,
+      gender: data.gender.charAt(0).toUpperCase() + data.gender.slice(1).toLowerCase(), // Capitalize gender
+      dob: data.dob.toISOString().split('T')[0], // Convert date to YYYY-MM-DD format
+      city_id: parseInt(data.city_id, 10), // Convert city_id to an integer
+      area: data.area,
+      role: data.role.toLowerCase(),
+    };
+  
     try {
-      console.info('Submitting registration for:', formData);
-      await register(formData); // Handle registration logic
+      console.info('Submitting registration for:', formData);  
+      // Handle successful registration
+      await register(formData); // If you still need to call the register function
       reset();
       setErrorMsg('');
-      router.push(returnTo || PATH_AFTER_LOGIN);
+      router.push(PATH_AFTER_LOGIN); // Redirect after successful registration
     } catch (error) {
       console.error('Registration error:', error);
       setErrorMsg(typeof error === 'string' ? error : error.message);
@@ -129,7 +145,8 @@ export default function JwtRegisterView() {
       </Stack>
 
       {/* Form */}
-      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+      <FormProvider methods={methods}>
+        <form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2.5}>
           {!!errorMsg && <Alert severity="error">{errorMsg}</Alert>}
 
@@ -166,35 +183,68 @@ export default function JwtRegisterView() {
           </Stack>
 
           {/* Date of Birth Fields */}
-          <RHFTextField name="dob" label="Date of Birth" type="date" />
+          <RHFTextField
+            name="dob"
+            label="Date of Birth"
+            type="date"
+            InputLabelProps={{
+              shrink: true,
+            }}
+            sx={{ '& .MuiInputLabel-root': { top: '-5px' } }} // Custom styling
+          />
 
-          {/* City, Region, Area */}
-          <RHFTextField name="city_name" label="City" />
-          <RHFTextField name="region" label="Region" />
+           {/* City Dropdown */}
+           <FormControl fullWidth>
+            <InputLabel>City</InputLabel>
+            <Controller
+              name="city_id"
+              control={methods.control}
+              defaultValue=""
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  value={selectedCity}
+                  onChange={(e) => {
+                    setSelectedCity(e.target.value);
+                    field.onChange(e); // Update form state
+                  }}
+                >
+                  {cities.map((city) => (
+                    <MenuItem key={city.city_id} value={city.city_id}>
+                      {city.city_name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              )}
+            />
+          </FormControl>
           <RHFTextField name="area" label="Area" />
 
           {/* Role Checkboxes */}
 
           <Stack direction="row" spacing={2}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={watch('role') === 'learner'}
-                  onChange={(e) => handleRoleChange(e, 'learner')}
-                />
-              }
-              label="Sign up as Learner"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={watch('role') === 'tutor'}
-                  onChange={(e) => handleRoleChange(e, 'tutor')}
-                />
-              }
-              label="Sign up as Tutor"
-            />
-          </Stack>
+  <Controller
+    name="role"
+    control={methods.control}
+    defaultValue="student" // Set a default role
+    render={({ field }) => (
+      <RadioGroup {...field} row>
+        <FormControlLabel
+          value="student"
+          control={<Radio />}
+          label="Sign up as Learner"
+          onChange={(e) => field.onChange(e.target.value)} // Update form state
+        />
+        <FormControlLabel
+          value="teacher"
+          control={<Radio />}
+          label="Sign up as Tutor"
+          onChange={(e) => field.onChange(e.target.value)} // Update form state
+        />
+      </RadioGroup>
+    )}
+  />
+</Stack>
           {/* Submit Button */}
           <LoadingButton
             fullWidth
@@ -207,6 +257,7 @@ export default function JwtRegisterView() {
             Create account
           </LoadingButton>
         </Stack>
+        </form>
       </FormProvider>
 
       {/* Terms and Conditions */}

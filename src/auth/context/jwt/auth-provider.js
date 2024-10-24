@@ -118,26 +118,43 @@ export function AuthProvider({ children }) {
   }, []);
 
   // REGISTER
-  const register = useCallback(async (email, password, firstName, lastName) => {
+  const register = useCallback(async (formData) => {
+    // Construct the data object with all required fields
     const data = {
-      email,
-      password,
-      firstName,
-      lastName,
+      email: formData.email,
+      password: formData.password,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      phone_number: formData.phone_number, // Add more fields as needed
+      gender: formData.gender,
+      dob: formData.dob, // Date of birth
+      city_id: formData.city_id,
+      area: formData.area,
+      role: formData.role, // E.g., 'teacher', 'student'
+      profile_picture: formData.profile_picture, // Optional
     };
-
-    const response = await axios.post(endpoints.auth.register, data);
-
-    const { accessToken, user } = response.data;
-
-    sessionStorage.setItem(STORAGE_KEY, accessToken);
-
-    dispatch({
-      type: 'REGISTER',
-      payload: {
-        user,
-      },
-    });
+  
+    try {
+      // Make the registration request
+      const response = await axios.post(endpoints.auth.register, data);
+  
+      // Destructure response to get access token and user info
+      const { accessToken, user } = response.data;
+  
+      // Store the access token in sessionStorage
+      sessionStorage.setItem(STORAGE_KEY, accessToken);
+  
+      // Dispatch the REGISTER action with the user data
+      dispatch({
+        type: 'REGISTER',
+        payload: {
+          user,
+        },
+      });
+    } catch (error) {
+      console.error('Registration error:', error);
+      throw new Error(error.response?.data?.message || 'Registration failed');
+    }
   }, []);
 
   // LOGOUT

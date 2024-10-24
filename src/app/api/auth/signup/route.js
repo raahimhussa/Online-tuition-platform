@@ -4,7 +4,8 @@ import { createUser } from '../../../../lib/userService';
 export async function POST(req) {
     try {
         // Parse the incoming JSON request body
-        const { email, password, name, phone_number, gender, age, city_id, area, profile_picture, role } = await req.json();
+        const { email, password, name, phone_number, gender, age, city_id, area, profile_picture, role ,dob} = await req.json();
+        console.log({ email, password, name, phone_number, gender, age, city_id, area, profile_picture, role, dob });
 
         // Ensure role is valid (it must be 'teacher', 'student', or 'admin')
         if (!['teacher', 'student', 'admin'].includes(role)) {
@@ -28,7 +29,8 @@ export async function POST(req) {
             role,  // Role will now be set from the request body (teacher, student, or admin)
             city_id,
             area,
-            profile_picture
+            profile_picture,
+            dob
         });
 
         // Respond with success and the newly created user data
