@@ -57,14 +57,14 @@ export default function UserNewEditForm({ currentUser }) {
       .typeError('Must be a valid date')
       .max(new Date(), 'Date of birth cannot be in the future'),
 
-    experience_years: Yup.number()
-      .nullable()
-      .min(0, 'Experience years must be 0 or more')
-      .max(100, 'Experience years must be realistic'),
-    education: Yup.string().max(100, 'Education details must not exceed 100 characters').nullable(),
+    // experience_years: Yup.number()
+    //   .nullable()
+    //   .min(0, 'Experience years must be 0 or more')
+    //   .max(100, 'Experience years must be realistic'),
+    // education: Yup.string().max(100, 'Education details must not exceed 100 characters').nullable(),
     region: Yup.string().required('region is required'),
     area: Yup.string().required('area code is required'),
-    bio: Yup.string().max(500, 'Bio must not exceed 500 characters').nullable(), // Allow empty strings for optional fields
+    // bio: Yup.string().max(500, 'Bio must not exceed 500 characters').nullable(), // Allow empty strings for optional fields
     avatarUrl: Yup.mixed().nullable().required('Avatar is required'),
     // not required
 
@@ -84,12 +84,12 @@ export default function UserNewEditForm({ currentUser }) {
       gender: currentUser?.gender || '',
       dob: currentUser?.dob || '',
       area: currentUser?.area || '',
-      education: currentUser?.education || '',
+      // education: currentUser?.education || '',
       // company: currentUser?.company || '',
       avatarUrl: currentUser?.avatarUrl || null,
       phoneNumber: currentUser?.phoneNumber || '',
-      experience_years: currentUser?.experience_years || '',
-      bio: currentUser?.bio || '',
+      // experience_years: currentUser?.experience_years || '',
+      // bio: currentUser?.bio || '',
       isVerified: currentUser?.isVerified || true,
     }),
     [currentUser]
@@ -243,31 +243,39 @@ export default function UserNewEditForm({ currentUser }) {
 
               <RHFTextField name="area" label="area" />
               <RHFTextField name="city" label="City" />
-              <RHFTextField name="education" label="education" />
-              <RHFTextField name="region" label="region" />
-              <RHFTextField name="dob" label="Date of Birth" type="date" />
-              {/* <RHFTextField name="company" label="Company" /> */}
+              {/* <RHFTextField name="education" label="education" /> */}
               <RHFTextField name="region" label="region" />
               <RHFTextField
+            name="dob"
+            label="Date of Birth"
+            type="date"
+            InputLabelProps={{
+              shrink: true,
+            }}
+            sx={{ '& .MuiInputLabel-root': { top: '5px' } }} // Custom styling
+          />
+              {/* <RHFTextField name="company" label="Company" /> */}
+              {/* <RHFTextField name="region" label="region" /> */}
+              {/* <RHFTextField
                 name="experience_years"
                 label="Years of Experience"
                 type="number"
                 InputProps={{
                   inputProps: { min: 0, max: 100 }, // set min and max attributes for the input
                 }}
-              />
+              /> */}
             </Box>
           </Card>
 
           {/* New Card for Bio */}
-          <Card sx={{ p: 3, mt: 3 }}>
+          {/* <Card sx={{ p: 3, mt: 3 }}>
             <Typography sx={{ mb: 2 }} variant="h6">
               Bio
             </Typography>
             <Box display="grid" gridTemplateColumns={{ xs: 'repeat(1, 1fr)' }}>
               <RHFTextField name="bio" label="Bio" multiline rows={4} />
             </Box>
-          </Card>
+          </Card> */}
           <Stack alignItems="flex-end" sx={{ mt: 3 }}>
             <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
               Next

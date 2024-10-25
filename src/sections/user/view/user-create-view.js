@@ -18,7 +18,7 @@ export default function UserCreateView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading="Create a new user"
+        heading="Update your credentials"
         links={[
           {
             name: 'Dashboard',
