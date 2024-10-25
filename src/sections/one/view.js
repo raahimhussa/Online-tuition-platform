@@ -15,6 +15,8 @@ import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import Snackbar from '@mui/material/Snackbar'; 
 import Alert from '@mui/material/Alert'; 
+import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hooks';
 
 // components
 import { useSettingsContext } from 'src/components/settings';
@@ -22,6 +24,7 @@ import { useSettingsContext } from 'src/components/settings';
 // ----------------------------------------------------------------------
 
 export default function TermsAndConditionsView() {
+  const router = useRouter();
   const settings = useSettingsContext();
   const [checkedStates, setCheckedStates] = useState([false, false, false, false]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -33,6 +36,8 @@ export default function TermsAndConditionsView() {
     setSnackbarOpen(false);
   };
   const handleNextClick = () => {
+    router.push(paths.dashboard.two);
+
     const allChecked = checkedStates.every(Boolean);
     if (!allChecked) {
       setSnackbarOpen(true);

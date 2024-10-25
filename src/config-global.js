@@ -32,4 +32,4 @@ export const AUTH0_API = {
 export const MAPBOX_API = process.env.NEXT_PUBLIC_MAPBOX_API;
 
 // ROOT PATH AFTER LOGIN SUCCESSFUL
-export const PATH_AFTER_LOGIN = paths.auth.jwt.login; // as '/dashboard'
+export const PATH_AFTER_LOGIN = paths.dashboard.user.new; // as '/dashboard'

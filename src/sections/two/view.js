@@ -20,6 +20,8 @@ import { useForm, Controller } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useSettingsContext } from 'src/components/settings';
+import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hooks';
 
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const times = [
@@ -87,6 +89,7 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function AvailabilityView() {
+  const router = useRouter();
   const settings = useSettingsContext();
 
   const {
@@ -109,6 +112,7 @@ export default function AvailabilityView() {
   });
 
   const onSubmit = (data) => {
+    router.push(paths.dashboard.three);
     console.log('Submitted data:', data);
   };
 

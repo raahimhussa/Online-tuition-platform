@@ -19,7 +19,7 @@ export const paths = {
     },
   },
   // DASHBOARD
-  dashboard: {
+dashboard: {
     root: ROOTS.DASHBOARD,
     one: `${ROOTS.DASHBOARD}/one`,
     two: `${ROOTS.DASHBOARD}/two`,

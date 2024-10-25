@@ -21,6 +21,9 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
+import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hooks';
+
 
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
 // Sample domains data
@@ -31,17 +34,27 @@ const domains = [
 ];
 
 // Sample subjects for different education levels
-const subjects = {
-  Primary: ['Math', 'Science', 'English'],
-  Matric: ['Physics', 'Chemistry', 'Math', 'Biology'],
-  Olevel: ['Physics', 'Chemistry', 'Math', 'English'],
-  Alevel: ['Math', 'Physics', 'Economics', 'Business'],
-  Intermediate: ['Physics', 'Chemistry', 'Biology'],
-};
+// const subjects = {
+//   Primary: ['Math', 'Science', 'English'],
+//   Matric: ['Physics', 'Chemistry', 'Math', 'Biology'],
+//   Olevel: ['Physics', 'Chemistry', 'Math', 'English'],
+//   Alevel: ['Math', 'Physics', 'Economics', 'Business'],
+//   Intermediate: ['Physics', 'Chemistry', 'Biology'],
+// };
+const subjects = [
+  'Math',
+  'Science',
+  'English',
+  'Physics',
+  'Chemistry',
+  'Biology',
+  'Economics',
+  'Business'
+];
+
 
 // Yup validation schema
 const validationSchema = Yup.object({
-  educationLevel: Yup.string().required('Grade level is required'),
   subject: Yup.string().required('Subject is required'),
   domain: Yup.string().required('Domain is required'),
   subLevel: Yup.string().required('Sublevel is required'),
@@ -57,6 +70,8 @@ const validationSchema = Yup.object({
 });
 
 export default function Service(currentUser) {
+  const router = useRouter();
+
   const [selectedDomain, setSelectedDomain] = useState('');
   const [selectedSubLevel, setSelectedSubLevel] = useState('');
   const [errorBar, setErrorBar] = useState(false);
@@ -66,7 +81,7 @@ export default function Service(currentUser) {
   const methods = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      educationLevel: '',
+   
       subject: '',
       domain: '',
       subLevel: '',
@@ -87,6 +102,7 @@ export default function Service(currentUser) {
 
   // Handle form submission
   const onSubmit = (data) => {
+    router.push(paths.dashboard.one);
     console.log('Form values:', data);
   };
 
@@ -118,54 +134,29 @@ export default function Service(currentUser) {
                     Choose Subject, Domain, and Grade Level
                   </Typography>
 
-                  {/* Dropdown for Grade Level */}
-                  {/* <FormControl sx={{ mb: 5 }} fullWidth error={Boolean(errors.educationLevel)}>
-                    <InputLabel id="education-level-label">Choose Grade Level</InputLabel>
-                    <Controller
-                      name="educationLevel"
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          labelId="education-level-label"
-                          label="Choose Grade Level"
-                          {...field}
-                        >
-                          <MenuItem value="Primary">Primary</MenuItem>
-                          <MenuItem value="Matric">Matric</MenuItem>
-                          <MenuItem value="Olevel">O-level</MenuItem>
-                          <MenuItem value="Alevel">A-level</MenuItem>
-                          <MenuItem value="Intermediate">Intermediate</MenuItem>
-                        </Select>
-                      )}
-                    />
-                    {errors.educationLevel && (
-                      <Typography color="error">{errors.educationLevel.message}</Typography>
-                    )}
-                  </FormControl> */}
+            
 
                   {/* Dropdown for Subject */}
                   <FormControl fullWidth sx={{ mb: 5 }} error={Boolean(errors.subject)}>
-                    <InputLabel id="subject-label">Choose Subject</InputLabel>
-                    <Controller
-                      name="subject"
-                      control={control}
-                      render={({ field }) => (
-                        <Select labelId="subject-label" label="Choose Subject" {...field}>
-                          {/* Check for subjects based on the selected education level */}
-                          {subjects[control._formValues.educationLevel] &&
-                            subjects[control._formValues.educationLevel].map((subject) => (
-                              <MenuItem key={subject} value={subject}>
-                                {subject}
-                              </MenuItem>
-                            ))}
-                        </Select>
-                      )}
-                    />
-                    {/* Display error message if subject has an error */}
-                    {errors.subject && (
-                      <Typography color="error">{errors.subject.message}</Typography>
-                    )}
-                  </FormControl>
+  <InputLabel id="subject-label">Choose Subject</InputLabel>
+  <Controller
+    name="subject"
+    control={control}
+    render={({ field }) => (
+      <Select labelId="subject-label" label="Choose Subject" {...field}>
+        {/* Map through the subjects array */}
+        {subjects.map((subject) => (
+          <MenuItem key={subject} value={subject}>
+            {subject}
+          </MenuItem>
+        ))}
+      </Select>
+    )}
+  />
+  {/* Display error message if subject has an error */}
+  {errors.subject && <Typography color="error">{errors.subject.message}</Typography>}
+</FormControl>
+
 
                   {/* Dropdown for Domain */}
                   <FormControl fullWidth sx={{ mb: 5 }} error={Boolean(errors.domain)}>
@@ -298,7 +289,7 @@ export default function Service(currentUser) {
 
         <Stack alignItems="flex-end" sx={{ mt: 5 }}>
           <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-            {!currentUser ? ' Save' : 'Save Changes'}
+            Next
           </LoadingButton>
         </Stack>
       </Container>
