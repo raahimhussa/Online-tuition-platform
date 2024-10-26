@@ -158,3 +158,59 @@ export async function addTeacherLanguages(teacherId, languageId) {
     const result = await query(text, values); // Use the imported query function
     return result.rows[0]; // Return the newly created row
 }
+// very important function
+export const getTeacherIdByUserId = async (userId) => {
+    const query = 'SELECT teacher_id FROM teachers WHERE user_id = $1';
+    const values = [userId];
+
+    const result = await db.query(query, values);
+
+    // Check if a teacher exists for the provided user ID
+    if (result.rows.length > 0) {
+        return result.rows[0].teacher_id; // Return the teacher_id
+    } else {
+        throw new Error('No teacher found for this user ID');
+    }
+};
+// save teacher availability information
+export const saveTeacherAvailability = async ({ teacher_id, day, start_time, end_time }) => {
+    const query = `
+        INSERT INTO teacher_availability (teacher_id, day, start_time, end_time)
+        VALUES ($1, $2, $3, $4)
+    `;
+    const values = [teacher_id, day, start_time, end_time];
+    
+    await db.query(query, values);
+};
+export const getTeacherAvailabilityByTeacherId = async (teacher_id) => {
+    const query = `
+        SELECT day, start_time, end_time
+        FROM teacher_availability
+        WHERE teacher_id = $1
+    `;
+    const values = [teacher_id];
+    
+    const { rows } = await db.query(query, values);
+    return rows;
+};
+export const updateTeacherAvailability = async ({ availability_id, start_time, end_time }) => {
+    const query = `
+        UPDATE teacher_availability
+        SET start_time = $1, end_time = $2
+        WHERE availability_id = $3
+    `;
+    const values = [start_time, end_time, availability_id];
+
+    await db.query(query, values);
+};
+export const deleteTeacherAvailability = async (availability_id) => {
+    const query = `
+        DELETE FROM teacher_availability
+        WHERE availability_id = $1
+    `;
+    const values = [availability_id];
+
+    await db.query(query, values);
+};
+
+// need to create update ,delete ,get ,teacher availbility  as well

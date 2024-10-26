@@ -4,9 +4,22 @@ export const saveUser = createAsyncThunk(
   'user/saveUser',
   async (userData, { rejectWithValue }) => {
     try {
-      // Simulate API call to save user data
-      const response = await new Promise((resolve) => setTimeout(() => resolve(userData), 500));
-      return response;
+      const response = await fetch('/api/teachers/complete-profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save user data');
+      }
+      const data = await response.json(); // Returns the saved user data
+
+      localStorage.setItem('teacher_id', data.teacher.teacher_id);
+      return data; // Returns the saved user data
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -17,7 +30,7 @@ const initialState = {
   education: '',
   experience_years: '',
   bio: '',
-  teachingMode: 'online', // Default value for teaching mode
+  teachingMode: 'online',
   loading: false,
   error: null,
 };

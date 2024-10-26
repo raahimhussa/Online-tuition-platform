@@ -55,8 +55,9 @@ export default function UserNewEditForm({ currentUser }) {
 
   const onSubmit = async (data) => {
     try {
-      dispatch(updateSetup(data));
+      dispatch(saveUser(data));
       // await new Promise((resolve) => setTimeout(resolve, 500));
+      alert('Form submitted successfully!');
       console.info('DATA', data);
       alert('Form submitted successfully!');
     } catch (error) {
@@ -79,7 +80,7 @@ export default function UserNewEditForm({ currentUser }) {
           <FormControl fullWidth>
             <InputLabel>Teaching Mode</InputLabel>
             <Controller
-              name="teachingMode"
+              name="teaching_mode"
               control={control}
               render={({ field }) => (
                 <Select {...field} label="Teaching Mode">
