@@ -22,6 +22,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useSettingsContext } from 'src/components/settings';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
+import { useDispatch, useSelector } from 'react-redux'; 
+import { saveAvailability } from 'src/app/store/slices/availabilityslice';
 
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const times = [
@@ -91,6 +93,8 @@ const validationSchema = Yup.object().shape({
 export default function AvailabilityView() {
   const router = useRouter();
   const settings = useSettingsContext();
+  const dispatch = useDispatch();
+  const availability = useSelector((state) => state.availability);
 
   const {
     control,
@@ -112,6 +116,7 @@ export default function AvailabilityView() {
   });
 
   const onSubmit = (data) => {
+    dispatch(saveAvailability(data.availability));
     router.push(paths.dashboard.three);
     console.log('Submitted data:', data);
   };
@@ -282,7 +287,7 @@ export default function AvailabilityView() {
             </LoadingButton>
           </Stack>
           <Stack alignItems="flex-end" sx={{ mt: 2 }}>
-            <LoadingButton type="submit" variant="contained">
+            <LoadingButton type="submit" variant="contained" >
               Next
             </LoadingButton>
           </Stack>

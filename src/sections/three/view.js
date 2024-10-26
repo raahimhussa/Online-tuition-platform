@@ -23,6 +23,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
+import { useDispatch, useSelector } from 'react-redux';
+import { saveService } from 'src/app/store/slices/serviceslice';
 
 
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
@@ -71,10 +73,12 @@ const validationSchema = Yup.object({
 
 export default function Service(currentUser) {
   const router = useRouter();
-
   const [selectedDomain, setSelectedDomain] = useState('');
   const [selectedSubLevel, setSelectedSubLevel] = useState('');
   const [errorBar, setErrorBar] = useState(false);
+  const [successBar, setSuccessBar] = useState(false);
+  const dispatch = useDispatch();
+  const service = useSelector((state) => state.service);
 
   // React Hook Form setup
 
@@ -105,7 +109,8 @@ export default function Service(currentUser) {
 const onSubmit = async (data) => {
   try {
     console.log('Form values:', data);
-    router.push(paths.dashboard.one);
+    dispatch(saveService(data.service));
+    setSuccessSnackbar(true);
   } catch (error) {
     console.error('Submission error:', error);
     setErrorBar(true); // Display error message if submission fails
@@ -299,6 +304,15 @@ const onSubmit = async (data) => {
             Next
           </LoadingButton>
         </Stack>
+        <Snackbar
+          open={successBar}
+          autoHideDuration={30000}
+          onClose={() => setSuccessBar(false)}
+        >
+          <Alert onClose={() => setSuccessSnackbar(false)} severity="success">
+            User information has been updated!
+          </Alert>
+        </Snackbar>
       </Container>
     </FormProvider>
   );

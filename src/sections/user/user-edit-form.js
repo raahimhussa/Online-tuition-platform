@@ -11,10 +11,15 @@ import Stack from '@mui/material/Stack';
 import LoadingButton from '@mui/lab/LoadingButton';
 // components
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
+import { useDispatch, useSelector } from 'react-redux';
+import { saveUser } from 'src/app/store/slices/setupslice';
 
 // ----------------------------------------------------------------------
 
 export default function UserNewEditForm({ currentUser }) {
+  const dispatch = useDispatch();
+  const setupData = useSelector((state) => state.setup);
+
   const NewUserSchema = Yup.object().shape({
     experience_years: Yup.number()
       .required('Experience years are required')
@@ -50,7 +55,8 @@ export default function UserNewEditForm({ currentUser }) {
 
   const onSubmit = async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      dispatch(updateSetup(data));
+      // await new Promise((resolve) => setTimeout(resolve, 500));
       console.info('DATA', data);
       alert('Form submitted successfully!');
     } catch (error) {
