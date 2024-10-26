@@ -1,129 +1,105 @@
 import PropTypes from 'prop-types';
-
 import * as Yup from 'yup';
-import { useCallback, useMemo } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDispatch, useSelector } from 'react-redux';
-// @mui
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import { MenuItem, Select, InputLabel, FormControl } from '@mui/material';
+import { MenuItem, FormControlLabel, Switch } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Button from '@mui/material/Button';
-import Switch from '@mui/material/Switch';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
-import FormControlLabel from '@mui/material/FormControlLabel';
-// utils
-import { fData } from 'src/utils/format-number';
-// routes
-import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hooks';
-// assets
-import { countries } from 'src/assets/data';
-// components
-import Label from 'src/components/label';
-
-import { RHFSelect } from 'src/components/hook-form/rhf-select';
-import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
-import FormProvider, {
-  RHFSwitch,
-  RHFTextField,
-  RHFUploadAvatar,
-  RHFAutocomplete,
-} from 'src/components/hook-form';
+import FormProvider, { RHFTextField, RHFUploadAvatar, RHFSelect } from 'src/components/hook-form';
+import { getUserById, saveUser } from '../../app/store/slices/usersliice';
+import { fetchCities, selectCities } from '../../app/store/slices/citySlice'; // Import the fetchCities and selectCities
 
-// ----------------------------------------------------------------------
+import { useRouter } from 'src/routes/hooks';
+import { fData } from 'src/utils/format-number';
 
-export default function UserNewEditForm({ currentUser }) {
-  const router = useRouter();
+export default function UserNewEditForm({ userId }) {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user); 
-
+  const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
+  const currentUser = useSelector((state) => state.user.currentUser);
+  const cities = useSelector(selectCities); // Get cities from the Redux store
+  const [selectedCity, setSelectedCity] = useState('');
+  const [selectedGender, setSelectedGender] = useState('');
+
+  console.log(currentUser);
+  // Adjust according to your Redux state
 
   const NewUserSchema = Yup.object().shape({
     firstName: Yup.string().required('First Name is required'),
     lastName: Yup.string().required('Last Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     phoneNumber: Yup.string().required('Phone number is required'),
-    // address: Yup.string().required('Address is required'),
-    gender: Yup.string().required('gender is required'),
-    // company: Yup.string().required('Company is required'),
-    // state: Yup.string().required('State is required'),
+    gender: Yup.string().required('Gender is required'),
     city: Yup.string().required('City is required'),
     dob: Yup.date()
       .nullable()
       .required('Date of birth is required')
       .typeError('Must be a valid date')
       .max(new Date(), 'Date of birth cannot be in the future'),
-
-    // experience_years: Yup.number()
-    //   .nullable()
-    //   .min(0, 'Experience years must be 0 or more')
-    //   .max(100, 'Experience years must be realistic'),
-    // education: Yup.string().max(100, 'Education details must not exceed 100 characters').nullable(),
-    region: Yup.string().required('region is required'),
-    area: Yup.string().required('area code is required'),
-    // bio: Yup.string().max(500, 'Bio must not exceed 500 characters').nullable(), // Allow empty strings for optional fields
+    area: Yup.string().required('Area code is required'),
     avatarUrl: Yup.mixed().nullable().required('Avatar is required'),
-    // not required
-
     isVerified: Yup.boolean(),
   });
 
-  const defaultValues = useMemo(
-    () => ({
-      firstName: currentUser?.firstName || '',
-      lastName: currentUser?.lastName || '',
-      city: currentUser?.city || '',
-      region: currentUser?.region || '',
-      email: currentUser?.email || '',
-      // state: currentUser?.state || '',
-
-      // address: currentUser?.address || '',
-      gender: currentUser?.gender || '',
-      dob: currentUser?.dob || '',
-      area: currentUser?.area || '',
-      // education: currentUser?.education || '',
-      // company: currentUser?.company || '',
-      avatarUrl: currentUser?.avatarUrl || null,
-      phoneNumber: currentUser?.phoneNumber || '',
-      // experience_years: currentUser?.experience_years || '',
-      // bio: currentUser?.bio || '',
-      isVerified: currentUser?.isVerified || true,
-    }),
-    [currentUser]
-  );
-
   const methods = useForm({
     resolver: yupResolver(NewUserSchema),
-    defaultValues,
   });
 
   const {
     reset,
-    watch,
-    control,
-    setValue,
     handleSubmit,
+    setValue,
     formState: { isSubmitting },
   } = methods;
 
-  const values = watch();
+  useEffect(() => {
+    dispatch(getUserById());
+    dispatch(fetchCities());
+  }, [dispatch]);
 
- 
+  useEffect(() => {
+    if (currentUser) {
+      console.log('Setting form values for user:', currentUser);
+      const [firstName, ...lastNameArr] = currentUser.name.split(' ');
+      const lastName = lastNameArr.join(' '); // Join the rest in case of multiple last names
+      reset({
+        firstName: firstName || '',
+        lastName: lastName || '',
+        email: currentUser.email || '',
+        phoneNumber: currentUser.phone_number || '', // Adjusted to match backend field
+        gender: currentUser.gender || '', // Normalize to lowercase
+        dob: currentUser.dob ? currentUser.dob.split('T')[0] : '',
+        area: currentUser.area || '',
+        city: currentUser.city_id || '', // Adjust if you're fetching city names separately // Adjust according to your backend data
+        avatarUrl: currentUser.avatarUrl || null,
+        isVerified: currentUser.isVerified || true,
+      });
+      setSelectedCity(currentUser.city_id || '');
+      setSelectedGender(currentUser.gender || '');
+    }
+  }, [currentUser, reset]);
+  const handleCityChange = (e) => {
+    setSelectedCity(e.target.value);
+    setValue('city', e.target.value); // Update the form value as well
+  };
+  const handleGenderChange = (e) => {
+    setSelectedGender(e.target.value);
+    setValue('gender', e.target.value); // Update the form value as well
+  };
+
   const onSubmit = handleSubmit(async (data) => {
     try {
-      // Dispatch the saveUser action with the form data
-      await dispatch((data)); // This will trigger the async thunk
-      reset();
+      await dispatch(saveUser(data)); // Use your save user action here
       enqueueSnackbar(currentUser ? 'Update success!' : 'Create success!');
-      router.push(paths.dashboard.one);
-      console.info('DATA', data);
+      router.push('/dashboard'); // Change to your desired path
     } catch (error) {
       console.error(error);
     }
@@ -132,11 +108,9 @@ export default function UserNewEditForm({ currentUser }) {
   const handleDrop = useCallback(
     (acceptedFiles) => {
       const file = acceptedFiles[0];
-
       const newFile = Object.assign(file, {
         preview: URL.createObjectURL(file),
       });
-
       if (file) {
         setValue('avatarUrl', newFile, { shouldValidate: true });
       }
@@ -149,19 +123,6 @@ export default function UserNewEditForm({ currentUser }) {
       <Grid container spacing={3}>
         <Grid xs={12} md={4}>
           <Card sx={{ pt: 10, pb: 5, px: 3 }}>
-            {currentUser && (
-              <Label
-                color={
-                  (values.status === 'active' && 'success') ||
-                  (values.status === 'banned' && 'error') ||
-                  'warning'
-                }
-                sx={{ position: 'absolute', top: 24, right: 24 }}
-              >
-                {values.status}
-              </Label>
-            )}
-
             <Box sx={{ mb: 5 }}>
               <RHFUploadAvatar
                 name="avatarUrl"
@@ -184,14 +145,13 @@ export default function UserNewEditForm({ currentUser }) {
                 }
               />
             </Box>
-
             {currentUser && (
               <FormControlLabel
                 labelPlacement="start"
                 control={
                   <Controller
                     name="status"
-                    control={control}
+                    control={methods.control}
                     render={({ field }) => (
                       <Switch
                         {...field}
@@ -203,20 +163,10 @@ export default function UserNewEditForm({ currentUser }) {
                     )}
                   />
                 }
-                label={
-                  <>
-                    <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                      Banned
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                      Apply disable account
-                    </Typography>
-                  </>
-                }
+                label={<Typography variant="subtitle2">Banned</Typography>}
                 sx={{ mx: 0, mb: 3, width: 1, justifyContent: 'space-between' }}
               />
             )}
-
             {currentUser && (
               <Stack justifyContent="center" alignItems="center" sx={{ mt: 3 }}>
                 <Button variant="soft" color="error">
@@ -229,64 +179,108 @@ export default function UserNewEditForm({ currentUser }) {
 
         <Grid xs={12} md={8}>
           <Card sx={{ p: 3 }}>
-            <Box
-              rowGap={3}
-              columnGap={2}
-              display="grid"
-              gridTemplateColumns={{
-                xs: 'repeat(1, 1fr)',
-                sm: 'repeat(2, 1fr)',
-              }}
-            >
-              <RHFTextField name="firstName" label="First Name" />
-              <RHFTextField name="lastName" label="Last Name" />
-              <RHFTextField name="email" label="Email Address" />
-              <RHFTextField name="phoneNumber" label="Phone Number" />
-              <RHFSelect name="gender" label="Gender">
-                <MenuItem value="male">Male</MenuItem>
-                <MenuItem value="female">Female</MenuItem>
-              </RHFSelect>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <RHFTextField
+                  name="firstName"
+                  label="First Name"
+                  InputLabelProps={{
+                    shrink: methods.getValues('firstName') ? true : false,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <RHFTextField
+                  name="lastName"
+                  label="Last Name"
+                  InputLabelProps={{
+                    shrink: methods.getValues('lastName') ? true : false,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <RHFTextField
+                  name="email"
+                  label="Email Address"
+                  InputLabelProps={{
+                    shrink: methods.getValues('email') ? true : false,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <RHFTextField
+                  name="phoneNumber"
+                  label="Phone Number"
+                  InputLabelProps={{
+                    shrink: methods.getValues('phoneNumber') ? true : false,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Controller
+                  name="gender"
+                  control={methods.control}
+                  render={({ field }) => (
+                    <RHFSelect
+                      {...field}
+                      label="Gender"
+                      value={selectedGender}
+                      onChange={handleGenderChange}
+                    >
+                      <MenuItem value="Male">Male</MenuItem>
+                      <MenuItem value="Female">Female</MenuItem>
+                      <MenuItem value="Other">Other</MenuItem>{' '}
+                      {/* Add any additional options as needed */}
+                    </RHFSelect>
+                  )}
+                />
+              </Grid>
 
-              <RHFTextField name="area" label="area" />
-              <RHFTextField name="city" label="City" />
-              {/* <RHFTextField name="education" label="education" /> */}
-              <RHFTextField name="region" label="region" />
-              <RHFTextField
-            name="dob"
-            label="Date of Birth"
-            type="date"
-            InputLabelProps={{
-              shrink: true,
-            }}
-            sx={{ '& .MuiInputLabel-root': { top: '5px' } }} // Custom styling
-          />
-              {/* <RHFTextField name="company" label="Company" /> */}
-              {/* <RHFTextField name="region" label="region" /> */}
-              {/* <RHFTextField
-                name="experience_years"
-                label="Years of Experience"
-                type="number"
-                InputProps={{
-                  inputProps: { min: 0, max: 100 }, // set min and max attributes for the input
-                }}
-              /> */}
-            </Box>
+              <Grid item xs={12} sm={6}>
+                <RHFTextField
+                  name="area"
+                  label="Area"
+                  InputLabelProps={{
+                    shrink: methods.getValues('area') ? true : false,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Controller
+                  name="city"
+                  control={methods.control}
+                  render={({ field }) => (
+                    <RHFSelect
+                      {...field}
+                      label="City"
+                      value={selectedCity}
+                      onChange={handleCityChange}
+                    >
+                      {cities.map((city) => (
+                        <MenuItem key={city.city_id} value={city.city_id}>
+                          {city.city_name}
+                        </MenuItem>
+                      ))}
+                    </RHFSelect>
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <RHFTextField
+                  name="dob"
+                  label="Date of Birth"
+                  type="date"
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ '& .MuiInputLabel-root': { top: '5px' } }} // Custom styling
+                />
+              </Grid>
+            </Grid>
+            <Stack alignItems="flex-end" sx={{ mt: 3 }}>
+              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                Next
+              </LoadingButton>
+            </Stack>
           </Card>
-
-          {/* New Card for Bio */}
-          {/* <Card sx={{ p: 3, mt: 3 }}>
-            <Typography sx={{ mb: 2 }} variant="h6">
-              Bio
-            </Typography>
-            <Box display="grid" gridTemplateColumns={{ xs: 'repeat(1, 1fr)' }}>
-              <RHFTextField name="bio" label="Bio" multiline rows={4} />
-            </Box>
-          </Card> */}
-          <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-            <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-              Next
-            </LoadingButton>
-          </Stack>
         </Grid>
       </Grid>
     </FormProvider>
@@ -294,5 +288,5 @@ export default function UserNewEditForm({ currentUser }) {
 }
 
 UserNewEditForm.propTypes = {
-  currentUser: PropTypes.object,
+  userId: PropTypes.string.isRequired, // Pass the userId as a prop
 };

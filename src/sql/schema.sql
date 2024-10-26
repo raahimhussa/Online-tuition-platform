@@ -38,7 +38,7 @@ CREATE TABLE users (
     name VARCHAR(255) NOT NULL,
     phone_number VARCHAR(20),
     gender VARCHAR(10),
-    age INT,
+    dob DATE NOT NULL,
     role VARCHAR(20) NOT NULL CHECK (role IN ('teacher', 'student', 'admin')),
     profile_picture VARCHAR(255),
     city_id INT REFERENCES cities(city_id) ON DELETE SET NULL,

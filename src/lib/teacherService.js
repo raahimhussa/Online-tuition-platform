@@ -20,7 +20,7 @@ export async function getAllTeachers() {
         u.email, 
         u.phone_number, 
         u.gender, 
-        u.age, 
+        u.dob, 
         u.profile_picture, 
         u.area, 
         c.city_name, 
@@ -59,7 +59,7 @@ export async function getTeacherById(id) {
             u.name, 
             u.phone_number, 
             u.gender, 
-            u.age, 
+            u.dob, 
             u.city_id, 
             u.area, 
             t.teaching_mode, 
@@ -93,7 +93,7 @@ export async function getTeacherById(id) {
 
 // Update teacher profile
 export async function updateTeacherProfile(user_id, updates) {
-    const { name, phone_number, gender, age, city_id, area, teaching_mode, bio, experience_years, education, hourly_rate } = updates;
+    const { name, phone_number, gender, dob, city_id, area, teaching_mode, bio, experience_years, education, hourly_rate } = updates;
 
     // Start a transaction
     await query('BEGIN');
@@ -102,9 +102,9 @@ export async function updateTeacherProfile(user_id, updates) {
         // Update the users table
         await query(`
             UPDATE users
-            SET name = $1, phone_number = $2, gender = $3, age = $4, city_id = $5, area = $6, updated_at = NOW()
+            SET name = $1, phone_number = $2, gender = $3, dob = $4, city_id = $5, area = $6, updated_at = NOW()
             WHERE user_id = $7
-        `, [name, phone_number, gender, age, city_id, area, user_id]);
+        `, [name, phone_number, gender, dob, city_id, area, user_id]);
 
         // Update the teachers table
         await query(`
