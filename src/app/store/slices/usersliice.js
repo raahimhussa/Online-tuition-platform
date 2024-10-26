@@ -3,15 +3,19 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 // Thunks for asynchronous actions
 export const saveUser = createAsyncThunk('user/saveUser', async (userData, { rejectWithValue }) => {
   try {
-    const response = await fetch('/api/users', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userData),
+    const response = await fetch('/api/user', { // Ensure this matches your API endpoint
+      method: 'PUT', // Change method to PUT
+      headers: { 
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`, // Access token from sessionStorage
+      },
+      body: JSON.stringify(userData), // Send the user data
     });
-    if (!response.ok) throw new Error('Failed to create user');
-    return await response.json();
+
+    if (!response.ok) throw new Error('Failed to update user'); // Update error message accordingly
+    return await response.json(); // Return the updated user data
   } catch (error) {
-    return rejectWithValue(error.message);
+    return rejectWithValue(error.message); // Handle errors
   }
 });
 
@@ -89,7 +93,6 @@ const initialState = {
   region: '',
   dob: '',
   avatarUrl: null,
-  isVerified: true,
   status: 'active',
 };
 
@@ -108,7 +111,6 @@ const userSlice = createSlice({
     setRegion: (state, action) => { state.region = action.payload; },
     setDob: (state, action) => { state.dob = action.payload; },
     setAvatarUrl: (state, action) => { state.avatarUrl = action.payload; },
-    setIsVerified: (state, action) => { state.isVerified = action.payload; },
     setStatus: (state, action) => { state.status = action.payload; },
   },
   extraReducers: (builder) => {
@@ -160,7 +162,6 @@ export const {
   setRegion,
   setDob,
   setAvatarUrl,
-  setIsVerified,
   setStatus,
 } = userSlice.actions;
 

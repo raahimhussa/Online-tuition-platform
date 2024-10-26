@@ -45,7 +45,7 @@ export default function UserNewEditForm({ userId }) {
       .typeError('Must be a valid date')
       .max(new Date(), 'Date of birth cannot be in the future'),
     area: Yup.string().required('Area code is required'),
-    avatarUrl: Yup.mixed().nullable().required('Avatar is required'),
+    avatarUrl: Yup.mixed().nullable(),
     isVerified: Yup.boolean(),
   });
 
@@ -97,11 +97,26 @@ export default function UserNewEditForm({ userId }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await dispatch(saveUser(data)); // Use your save user action here
-      enqueueSnackbar(currentUser ? 'Update success!' : 'Create success!');
-      router.push('/dashboard'); // Change to your desired path
+      // Prepare the data to match the backend structure
+      const payload = {
+        email: data.email,
+        name: `${data.firstName} ${data.lastName}`, // Concatenate first and last name
+        phone_number: data.phoneNumber, // Map to backend expected field
+        gender: data.gender,
+        city_id: data.city, // Ensure this matches your backend's expected field name
+        area: data.area,
+        dob: data.dob,
+        avatarUrl: data.avatarUrl, // If needed, map this to the expected field
+      };
+  
+      // Dispatch the saveUser action with the prepared payload
+      await dispatch(saveUser(payload)); // Use your save user action here
+  
+      enqueueSnackbar(currentUser ? 'Update success!' : 'Create success!', { variant: 'success' });
+      router.push('/dashboard'); // Redirect to your desired path
     } catch (error) {
       console.error(error);
+      enqueueSnackbar('Failed to save user: ' + error.message, { variant: 'error' }); // Notify error
     }
   });
 
