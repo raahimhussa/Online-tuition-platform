@@ -81,7 +81,7 @@ export default function TermsAndConditionsView() {
                 checked={checkedStates[1]}
                 onChange={handleCheckboxChange(1)}
               />}
-              label="You agree to stay on the TheTutor.Me platform while tutoring learners you've connected with."
+              label="You agree to stay on the Tutorly.pk platform while tutoring learners you've connected with."
             />
             <FormControlLabel
               control={ <Checkbox
@@ -95,7 +95,7 @@ export default function TermsAndConditionsView() {
                 checked={checkedStates[3]}
                 onChange={handleCheckboxChange(3)}
               />}
-              label="TheTutor.Me charges a sliding commission rate between 10%-15% on sessions conducted and materials sold via the platform."
+              label=" Tutorly.pk charges a sliding commission rate between 10%-15% on sessions conducted and materials sold via the platform."
             />
           </Box>
         </CardContent>

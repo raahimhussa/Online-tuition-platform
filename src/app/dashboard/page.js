@@ -1,12 +1,12 @@
 // sections
-import OneView from 'src/sections/one/view';
+import { UserCreateView } from 'src/sections/user/newview';
 
 // ----------------------------------------------------------------------
 
 export const metadata = {
-  title: 'Dashboard: One',
+  title: 'Dashboard: Setup profile as a teacher',
 };
 
-export default function Page() {
-  return <OneView />;
+export default function UserCreatePage() {
+  return <UserCreateView />;
 }
