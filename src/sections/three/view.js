@@ -101,10 +101,17 @@ export default function Service(currentUser) {
   } = methods;
 
   // Handle form submission
-  const onSubmit = (data) => {
-    router.push(paths.dashboard.one);
+  // Handle form submission
+const onSubmit = async (data) => {
+  try {
     console.log('Form values:', data);
-  };
+    router.push(paths.dashboard.one);
+  } catch (error) {
+    console.error('Submission error:', error);
+    setErrorBar(true); // Display error message if submission fails
+  }
+};
+
 
   // Handle domain selection
   const handleDomainSelect = (e) => {
