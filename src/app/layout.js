@@ -5,22 +5,25 @@ import 'simplebar-react/dist/simplebar.min.css';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 
 // ----------------------------------------------------------------------
-
+// External Libraries
 import PropTypes from 'prop-types';
-// theme
+
+// Theme
 import ThemeProvider from 'src/theme';
 import { primaryFont } from 'src/theme/typography';
-// components
+
+// Components
 import ProgressBar from 'src/components/progress-bar';
 import { MotionLazy } from 'src/components/animate/motion-lazy';
 import { SettingsProvider, SettingsDrawer } from 'src/components/settings';
-// auth
+
+// Auth
 import { AuthProvider, AuthConsumer } from 'src/auth/context/jwt';
+import ClientProvider from "./ClientProvider";
 
 // ----------------------------------------------------------------------
-
 export const metadata = {
-  title: 'Minimal UI Kit',
+  title: 'Tutorly',
   description:
     'The starting point for your next project with Minimal UI Kit, built on the newest version of Material-UI ©, ready to be customized to your style',
   keywords: 'react,material,kit,application,dashboard,admin,template',
@@ -55,7 +58,6 @@ export const metadata = {
     },
   ],
 };
-
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={primaryFont.className}>
@@ -63,11 +65,11 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           <SettingsProvider
             defaultSettings={{
-              themeMode: 'light', // 'light' | 'dark'
-              themeDirection: 'ltr', //  'rtl' | 'ltr'
-              themeContrast: 'default', // 'default' | 'bold'
-              themeLayout: 'vertical', // 'vertical' | 'horizontal' | 'mini'
-              themeColorPresets: 'default', // 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'
+              themeMode: 'light',
+              themeDirection: 'ltr',
+              themeContrast: 'default',
+              themeLayout: 'vertical',
+              themeColorPresets: 'default',
               themeStretch: false,
             }}
           >
@@ -75,7 +77,9 @@ export default function RootLayout({ children }) {
               <MotionLazy>
                 <SettingsDrawer />
                 <ProgressBar />
-                <AuthConsumer>{children}</AuthConsumer>
+                <AuthConsumer>
+                  <ClientProvider>{children}</ClientProvider>
+                </AuthConsumer>
               </MotionLazy>
             </ThemeProvider>
           </SettingsProvider>
@@ -86,5 +90,5 @@ export default function RootLayout({ children }) {
 }
 
 RootLayout.propTypes = {
-  children: PropTypes.node,
+  children: PropTypes.node.isRequired,
 };

@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
+
 import * as Yup from 'yup';
 import { useCallback, useMemo } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useDispatch, useSelector } from 'react-redux';
 // @mui
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -38,6 +40,8 @@ import FormProvider, {
 
 export default function UserNewEditForm({ currentUser }) {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user); 
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -111,9 +115,11 @@ export default function UserNewEditForm({ currentUser }) {
 
   const values = watch();
 
+ 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      // Dispatch the saveUser action with the form data
+      await dispatch((data)); // This will trigger the async thunk
       reset();
       enqueueSnackbar(currentUser ? 'Update success!' : 'Create success!');
       router.push(paths.dashboard.one);
