@@ -299,11 +299,18 @@ const onSubmit = async (data) => {
           </Grid>
         </form>
 
-        <Stack alignItems="flex-end" sx={{ mt: 5 }}>
-          <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-            Next
-          </LoadingButton>
-        </Stack>
+        <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
+          <Stack sx={{ mt: 2 }}>
+            <LoadingButton type="button" variant="contained">
+              Back
+            </LoadingButton>
+          </Stack>
+          <Stack alignItems="flex-end" sx={{ mt: 2 }}>
+            <LoadingButton type="submit" variant="contained" >
+              Next
+            </LoadingButton>
+          </Stack>
+        </Box>
         <Snackbar
           open={successBar}
           autoHideDuration={30000}

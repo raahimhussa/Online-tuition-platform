@@ -16,7 +16,7 @@ import { saveUser } from 'src/app/store/slices/setupslice';
 
 // ----------------------------------------------------------------------
 
-export default function UserNewEditForm({ currentUser }) {
+export default function UserEditForm({ currentUser }) {
   const dispatch = useDispatch();
   const setupData = useSelector((state) => state.setup);
 
@@ -100,15 +100,22 @@ export default function UserNewEditForm({ currentUser }) {
         </Box>
       </Card>
 
-      <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-        <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-          Next
-        </LoadingButton>
-      </Stack>
+      <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
+          <Stack sx={{ mt: 2 }}>
+            <LoadingButton type="button" variant="contained">
+              Back
+            </LoadingButton>
+          </Stack>
+          <Stack alignItems="flex-end" sx={{ mt: 2 }}>
+            <LoadingButton type="submit" variant="contained" >
+              Next
+            </LoadingButton>
+          </Stack>
+        </Box>
     </FormProvider>
   );
 }
 
-UserNewEditForm.propTypes = {
+UserEditForm.propTypes = {
   currentUser: PropTypes.object,
 };

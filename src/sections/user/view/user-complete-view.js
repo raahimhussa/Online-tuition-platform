@@ -8,11 +8,11 @@ import { paths } from 'src/routes/paths';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 //
-import UserNewEditForm from '../user-edit-form';
+import UserEditForm from '../user-edit-form';
 
 // ----------------------------------------------------------------------
 
-export default function UserCreateView() {
+export default function UserCompleteView() {
   const settings = useSettingsContext();
 
   return (
@@ -24,18 +24,14 @@ export default function UserCreateView() {
             name: 'Dashboard',
             href: paths.dashboard.root,
           },
-          {
-            name: 'User',
-            href: paths.dashboard.user.root,
-          },
-          { name: 'New user' },
+          { name: 'Complete user' },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
         }}
       />
 
-      <UserNewEditForm />
+      <UserEditForm />
     </Container>
   );
 }

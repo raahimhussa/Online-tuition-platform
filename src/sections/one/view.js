@@ -9,41 +9,46 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import Stack from '@mui/material/Stack';
 import LoadingButton from '@mui/lab/LoadingButton';
-import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
-import Snackbar from '@mui/material/Snackbar'; 
-import Alert from '@mui/material/Alert'; 
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
-
-// components
 import { useSettingsContext } from 'src/components/settings';
-
-// ----------------------------------------------------------------------
 
 export default function TermsAndConditionsView() {
   const router = useRouter();
   const settings = useSettingsContext();
   const [checkedStates, setCheckedStates] = useState([false, false, false, false]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [isBackLoading, setIsBackLoading] = useState(false);
+  const [isNextLoading, setIsNextLoading] = useState(false);
 
   const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
+    if (reason === 'clickaway') return;
     setSnackbarOpen(false);
   };
-  const handleNextClick = () => {
-    router.push(paths.dashboard.two);
 
+  const handleNextClick = () => {
     const allChecked = checkedStates.every(Boolean);
-    if (!allChecked) {
-      setSnackbarOpen(true);
+    if (allChecked) {
+      setIsNextLoading(true);
+      setTimeout(() => {
+        router.push(paths.dashboard.two);
+        setIsNextLoading(false);
+      }, 1000); // Simulate async call
     } else {
-      console.log('All conditions met. Proceeding to the next step.');
+      setSnackbarOpen(true);
     }
+  };
+
+  const handleBackClick = () => {
+    setIsBackLoading(true);
+    setTimeout(() => {
+      router.push(paths.dashboard.user.complete);
+      setIsBackLoading(false);
+    }, 1000); // Simulate async call
   };
 
   const handleCheckboxChange = (index) => (event) => {
@@ -62,10 +67,7 @@ export default function TermsAndConditionsView() {
         <CardContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <FormControlLabel
-              control={<Checkbox
-                checked={checkedStates[0]}
-                onChange={handleCheckboxChange(0)}
-              />}
+              control={<Checkbox checked={checkedStates[0]} onChange={handleCheckboxChange(0)} />}
               label={
                 <Typography variant="body2">
                   You agree to the{' '}
@@ -77,44 +79,40 @@ export default function TermsAndConditionsView() {
               }
             />
             <FormControlLabel
-              control={<Checkbox
-                checked={checkedStates[1]}
-                onChange={handleCheckboxChange(1)}
-              />}
+              control={<Checkbox checked={checkedStates[1]} onChange={handleCheckboxChange(1)} />}
               label="You agree to stay on the Tutorly.pk platform while tutoring learners you've connected with."
             />
             <FormControlLabel
-              control={ <Checkbox
-                checked={checkedStates[2]}
-                onChange={handleCheckboxChange(2)}
-              />}
+              control={<Checkbox checked={checkedStates[2]} onChange={handleCheckboxChange(2)} />}
               label="You agree that the platform may obtain information about you from a third-party consumer reporting agency."
             />
             <FormControlLabel
-              control={<Checkbox
-                checked={checkedStates[3]}
-                onChange={handleCheckboxChange(3)}
-              />}
+              control={<Checkbox checked={checkedStates[3]} onChange={handleCheckboxChange(3)} />}
               label=" Tutorly.pk charges a sliding commission rate between 10%-15% on sessions conducted and materials sold via the platform."
             />
           </Box>
         </CardContent>
       </Card>
-      {/* 
-      <Box sx={{ mt: 3, textAlign: 'right' }}>
-        <Button variant="contained" color="primary" sx={{ borderRadius: 2 }}>
-          Save & Continue
-        </Button>
-      </Box> */}
-     <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-        <LoadingButton 
-          type="button" 
-          variant="contained" 
-          onClick={handleNextClick} 
+
+      <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
+        <LoadingButton
+          type="submit"
+          variant="contained"
+
+          onClick={handleBackClick}
+          loading={isBackLoading}
+        >
+          Back
+        </LoadingButton>
+        <LoadingButton
+          type="submit"
+          variant="contained"
+          onClick={handleNextClick}
+          loading={isNextLoading}
         >
           Next
         </LoadingButton>
-      </Stack>
+      </Box>
 
       <Snackbar
         open={snackbarOpen}

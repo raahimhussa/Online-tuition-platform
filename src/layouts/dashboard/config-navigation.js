@@ -55,7 +55,7 @@ export function useNavData() {
         items: [
          
           { title: 'Update Profile', path: paths.dashboard.user.new, icon: ICONS.user },
-          { title: 'Setup Profile', path: paths.dashboard.root, icon: ICONS.dashboard },
+          { title: 'Setup Profile', path: paths.dashboard.user.complete, icon: ICONS.dashboard },
           { title: 'Terms & Conditions', path: paths.dashboard.one, icon: ICONS.order },
           { title: 'Availability', path: paths.dashboard.two, icon: ICONS.ecommerce },
           {

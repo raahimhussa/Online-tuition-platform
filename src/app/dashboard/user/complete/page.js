@@ -1,5 +1,5 @@
 // sections
-import { UserCreateView } from 'src/sections/user/newview';
+import { UserCompleteView } from 'src/sections/user/view';
 
 // ----------------------------------------------------------------------
 
@@ -7,6 +7,6 @@ export const metadata = {
   title: 'Dashboard: Setup profile as a teacher',
 };
 
-export default function UserCreatePage() {
-  return <UserCreateView />;
+export default function UserCompletePage() {
+  return <UserCompleteView />;
 }
