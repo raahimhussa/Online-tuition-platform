@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Container,
@@ -96,6 +96,9 @@ export default function AvailabilityView() {
   const dispatch = useDispatch();
   const availability = useSelector((state) => state.availability);
 
+  const [isBackLoading, setIsBackLoading] = useState(false);
+  const [isNextLoading, setIsNextLoading] = useState(false);
+
   const {
     control,
     handleSubmit,
@@ -116,9 +119,29 @@ export default function AvailabilityView() {
   });
 
   const onSubmit = (data) => {
+    setIsNextLoading(true);
     dispatch(saveAvailability(data.availability));
-    router.push(paths.dashboard.three);
-    console.log('Submitted data:', data);
+    setTimeout(() => {
+      router.push(paths.dashboard.three);
+      setIsNextLoading(false);
+    }, 1000);
+  };
+
+  const handleNextClick = () => {
+    setIsNextLoading(true);
+    setTimeout(() => {
+      router.push(paths.dashboard.three);
+      setIsNextLoading(false);
+    }, 1000); 
+  };
+  
+
+  const handleBackClick = () => {
+    setIsBackLoading(true);
+    setTimeout(() => {
+      router.push(paths.dashboard.one);
+      setIsBackLoading(false);
+    }, 1000); 
   };
 
   const addSlot = (day) => {
@@ -282,12 +305,12 @@ export default function AvailabilityView() {
 
         <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
           <Stack sx={{ mt: 2 }}>
-            <LoadingButton type="button" variant="contained">
+            <LoadingButton type="submit" variant="contained" onClick={handleBackClick} loading={isBackLoading}>
               Back
             </LoadingButton>
           </Stack>
           <Stack alignItems="flex-end" sx={{ mt: 2 }}>
-            <LoadingButton type="submit" variant="contained" >
+            <LoadingButton type="submit" variant="contained" onClick={handleNextClick} loading={isNextLoading}>
               Next
             </LoadingButton>
           </Stack>

@@ -14,11 +14,20 @@ import FormProvider, { RHFTextField } from 'src/components/hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { saveUser } from 'src/app/store/slices/setupslice';
 
+import { useRouter } from 'src/routes/hooks';
+import React, { useState } from 'react';
+import { paths } from 'src/routes/paths';
+import { useSnackbar } from 'src/components/snackbar';
+
 // ----------------------------------------------------------------------
 
 export default function UserEditForm({ currentUser }) {
   const dispatch = useDispatch();
+  const router = useRouter();
   const setupData = useSelector((state) => state.setup);
+  const [isBackLoading, setIsBackLoading] = useState(false);
+  const [isNextLoading, setIsNextLoading] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   const NewUserSchema = Yup.object().shape({
     experience_years: Yup.number()
@@ -65,6 +74,31 @@ export default function UserEditForm({ currentUser }) {
     }
   };
 
+  const handleNextClick = () => {
+    const formValues = methods.getValues();
+    const allFieldsFilled = Object.keys(formValues).every((field) => formValues[field] !== '' && formValues[field] !== null);
+  
+    if (allFieldsFilled) {
+      setIsNextLoading(true);
+      setTimeout(() => {
+        router.push(paths.dashboard.one);
+        setIsNextLoading(false);
+      }, 1000);
+    } else {
+      enqueueSnackbar('Please fill in all required fields before proceeding.', { variant: 'warning' });
+    }
+  };
+  
+  
+
+  const handleBackClick = () => {
+    setIsBackLoading(true);
+    setTimeout(() => {
+      router.push(paths.dashboard.user.new);
+      setIsBackLoading(false);
+    }, 1000); 
+  };
+
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       {/* First Card */}
@@ -102,12 +136,12 @@ export default function UserEditForm({ currentUser }) {
 
       <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
           <Stack sx={{ mt: 2 }}>
-            <LoadingButton type="button" variant="contained">
+            <LoadingButton type="button" variant="contained" onClick={handleBackClick} loading={isBackLoading}>
               Back
             </LoadingButton>
           </Stack>
           <Stack alignItems="flex-end" sx={{ mt: 2 }}>
-            <LoadingButton type="submit" variant="contained" >
+            <LoadingButton type="submit" variant="contained"onClick={handleNextClick} loading={isNextLoading} >
               Next
             </LoadingButton>
           </Stack>

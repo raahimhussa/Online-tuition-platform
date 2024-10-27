@@ -19,6 +19,7 @@ import { fetchCities, selectCities } from '../../app/store/slices/citySlice'; //
 
 import { useRouter } from 'src/routes/hooks';
 import { fData } from 'src/utils/format-number';
+import { paths } from 'src/routes/paths';
 
 export default function UserNewEditForm({ userId }) {
   const dispatch = useDispatch();
@@ -28,6 +29,7 @@ export default function UserNewEditForm({ userId }) {
   const cities = useSelector(selectCities); // Get cities from the Redux store
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedGender, setSelectedGender] = useState('');
+  const [isNextLoading, setIsNextLoading] = useState(false);
 
   console.log(currentUser);
   // Adjust according to your Redux state
@@ -132,6 +134,27 @@ export default function UserNewEditForm({ userId }) {
     },
     [setValue]
   );
+
+  const handleNextClick = () => {
+    const formValues = methods.getValues();
+  
+    NewUserSchema.validate(formValues, { abortEarly: false })
+      .then(() => {
+        setIsNextLoading(true);
+        setTimeout(() => {
+          router.push(paths.dashboard.user.complete);
+          setIsNextLoading(false);
+        }, 1000);
+      })
+      .catch((validationErrors) => {
+        enqueueSnackbar('Please fill in all required fields before proceeding.', { variant: 'warning' });
+  
+        validationErrors.inner.forEach((error) => {
+          enqueueSnackbar(error.message, { variant: 'warning' });
+        });
+      });
+  };
+  
 
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
@@ -291,7 +314,7 @@ export default function UserNewEditForm({ userId }) {
               </Grid>
             </Grid>
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+              <LoadingButton type="submit" variant="contained" loading={isSubmitting || isNextLoading} onClick={handleNextClick}>
                 {currentUser ? 'Update' : 'Next'}
               </LoadingButton>
             </Stack>
