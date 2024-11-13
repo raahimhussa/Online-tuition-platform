@@ -14,7 +14,6 @@ import {
   Button,
 } from '@mui/material';
 import { Icon } from '@iconify/react';
-import Stack from '@mui/material/Stack';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useForm, Controller } from 'react-hook-form';
 import * as Yup from 'yup';
@@ -250,14 +249,13 @@ export default function AvailabilityView() {
           </Grid>
         </Grid>
         <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
-        <Stack direction="row" spacing={1.5} sx={{ mt: 3 }}>
+  
           <LoadingButton type="button" loading={isBackLoading} onClick={handleBackClick} variant="contained" color="inherit">
             Back
           </LoadingButton>
           <LoadingButton type="submit" variant="contained" loading={isNextLoading}>
             Next
           </LoadingButton>
-        </Stack>
         </Box>
       </form>
     </Container>

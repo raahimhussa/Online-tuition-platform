@@ -16,7 +16,6 @@ import {
   Snackbar,
   Alert,
 } from '@mui/material';
-import Stack from '@mui/material/Stack';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -80,7 +79,6 @@ export default function Service(currentUser) {
   const methods = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-   
       subject: '',
       domain: '',
       subLevel: '',
@@ -91,21 +89,17 @@ export default function Service(currentUser) {
   });
 
   const {
-    reset,
-    watch,
     control,
     setValue,
     handleSubmit,
-    formState: { isSubmitting, errors }, // Capture errors here
+    formState: { errors }, 
   } = methods;
 
-  // Handle form submission
-  // Handle form submission
-const onSubmit = async (data) => {
+const onSubmit = (data) => {
   try {
     console.log('Form values:', data);
-    dispatch(saveService(data.service));
-    setSuccessSnackbar(true);
+    dispatch(saveService(data));
+    setSuccessBar(true);
   } catch (error) {
     console.error('Submission error:', error);
     setErrorBar(true); // Display error message if submission fails
@@ -123,6 +117,10 @@ const onSubmit = async (data) => {
     if (!selectedDomainObj) {
       setErrorBar(true);
     }
+  };
+
+  const handleNextClick = () => {
+    handleSubmit(onSubmit)();
   };
 
   const handleBackClick = () => {
@@ -303,29 +301,24 @@ const onSubmit = async (data) => {
         </form>
 
         <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
-          <Stack sx={{ mt: 2 }}>
           <LoadingButton
           type="submit"
           variant="contained"
-
           onClick={handleBackClick}
           loading={isBackLoading}
         >
           Back
         </LoadingButton>
-          </Stack>
-          <Stack alignItems="flex-end" sx={{ mt: 2 }}>
-            <LoadingButton type="submit" variant="contained" >
+            <LoadingButton variant="contained" onClick={handleNextClick}>
               Next
             </LoadingButton>
-          </Stack>
         </Box>
         <Snackbar
           open={successBar}
           autoHideDuration={30000}
           onClose={() => setSuccessBar(false)}
         >
-          <Alert onClose={() => setSuccessSnackbar(false)} severity="success">
+          <Alert onClose={() => setSuccessBar(false)} severity="success">
             User information has been updated!
           </Alert>
         </Snackbar>
