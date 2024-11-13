@@ -35,14 +35,7 @@ const domains = [
   { domain: 'Intermediate', subLevels: ['Part 1', 'Part 2'] },
 ];
 
-// Sample subjects for different education levels
-// const subjects = {
-//   Primary: ['Math', 'Science', 'English'],
-//   Matric: ['Physics', 'Chemistry', 'Math', 'Biology'],
-//   Olevel: ['Physics', 'Chemistry', 'Math', 'English'],
-//   Alevel: ['Math', 'Physics', 'Economics', 'Business'],
-//   Intermediate: ['Physics', 'Chemistry', 'Biology'],
-// };
+
 const subjects = [
   'Math',
   'Science',
@@ -71,11 +64,13 @@ const validationSchema = Yup.object({
     .typeError('Discount must be a number'),
 });
 
+
 export default function Service(currentUser) {
   const router = useRouter();
   const [selectedDomain, setSelectedDomain] = useState('');
   const [selectedSubLevel, setSelectedSubLevel] = useState('');
   const [errorBar, setErrorBar] = useState(false);
+    const [isBackLoading, setIsBackLoading] = useState(false);
   const [successBar, setSuccessBar] = useState(false);
   const dispatch = useDispatch();
   const service = useSelector((state) => state.service);
@@ -130,6 +125,13 @@ const onSubmit = async (data) => {
     }
   };
 
+  const handleBackClick = () => {
+    setIsBackLoading(true);
+    setTimeout(() => {
+      router.push(paths.dashboard.two);
+      setIsBackLoading(false);
+    }, 1000); // Simulate async call
+  };
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Container>
@@ -230,7 +232,8 @@ const onSubmit = async (data) => {
                   <Snackbar
                     open={errorBar}
                     autoHideDuration={3000}
-                    onClose={() => setErrorBar(false)}
+                    // onClose={() => setErrorBar(false)}
+                    onClose={() => setSuccessBar(false)} 
                   >
                     <Alert onClose={() => setErrorBar(false)} severity="error">
                       Please select a domain first!
@@ -301,9 +304,15 @@ const onSubmit = async (data) => {
 
         <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
           <Stack sx={{ mt: 2 }}>
-            <LoadingButton type="button" variant="contained">
-              Back
-            </LoadingButton>
+          <LoadingButton
+          type="submit"
+          variant="contained"
+
+          onClick={handleBackClick}
+          loading={isBackLoading}
+        >
+          Back
+        </LoadingButton>
           </Stack>
           <Stack alignItems="flex-end" sx={{ mt: 2 }}>
             <LoadingButton type="submit" variant="contained" >

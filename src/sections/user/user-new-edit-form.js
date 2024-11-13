@@ -14,12 +14,14 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, { RHFTextField, RHFUploadAvatar, RHFSelect } from 'src/components/hook-form';
-import { getUserById, saveUser } from '../../app/store/slices/usersliice';
-import { fetchCities, selectCities } from '../../app/store/slices/citySlice'; // Import the fetchCities and selectCities
+// Import the fetchCities and selectCities
 
 import { useRouter } from 'src/routes/hooks';
 import { fData } from 'src/utils/format-number';
 import { paths } from 'src/routes/paths';
+import { getUserById, saveUser } from '../../app/store/slices/usersliice';
+import { fetchCities, selectCities } from '../../app/store/slices/citySlice'; 
+
 
 export default function UserNewEditForm({ userId }) {
   const dispatch = useDispatch();
@@ -118,7 +120,7 @@ export default function UserNewEditForm({ userId }) {
       router.push('/dashboard'); // Redirect to your desired path
     } catch (error) {
       console.error(error);
-      enqueueSnackbar('Failed to save user: ' + error.message, { variant: 'error' }); // Notify error
+      // enqueueSnackbar('Failed to save user: '+ error.message, { variant: 'error' }); // Notify error
     }
   });
 
@@ -223,7 +225,7 @@ export default function UserNewEditForm({ userId }) {
                   name="firstName"
                   label="First Name"
                   InputLabelProps={{
-                    shrink: methods.getValues('firstName') ? true : false,
+                    shrink: methods.getValues('firstName') ,
                   }}
                 />
               </Grid>
@@ -232,7 +234,7 @@ export default function UserNewEditForm({ userId }) {
                   name="lastName"
                   label="Last Name"
                   InputLabelProps={{
-                    shrink: methods.getValues('lastName') ? true : false,
+                    shrink: methods.getValues('lastName') ,
                   }}
                 />
               </Grid>
@@ -241,7 +243,7 @@ export default function UserNewEditForm({ userId }) {
                   name="email"
                   label="Email Address"
                   InputLabelProps={{
-                    shrink: methods.getValues('email') ? true : false,
+                    shrink: methods.getValues('email') ,
                   }}
                 />
               </Grid>
@@ -250,7 +252,7 @@ export default function UserNewEditForm({ userId }) {
                   name="phoneNumber"
                   label="Phone Number"
                   InputLabelProps={{
-                    shrink: methods.getValues('phoneNumber') ? true : false,
+                    shrink: methods.getValues('phoneNumber') ,
                   }}
                 />
               </Grid>
@@ -279,7 +281,7 @@ export default function UserNewEditForm({ userId }) {
                   name="area"
                   label="Area"
                   InputLabelProps={{
-                    shrink: methods.getValues('area') ? true : false,
+                    shrink: methods.getValues('area') ,
                   }}
                 />
               </Grid>

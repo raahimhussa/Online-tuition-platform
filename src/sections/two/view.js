@@ -27,29 +27,9 @@ import { saveAvailability } from 'src/app/store/slices/availabilityslice';
 
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const times = [
-  '09:00 AM',
-  '09:30 AM',
-  '10:00 AM',
-  '10:30 AM',
-  '11:00 AM',
-  '11:30 AM',
-  '12:00 PM',
-  '12:30 PM',
-  '01:00 PM',
-  '01:30 PM',
-  '02:00 PM',
-  '02:30 PM',
-  '03:00 PM',
-  '03:30 PM',
-  '04:00 PM',
-  '04:30 PM',
-  '05:00 PM',
-  '05:30 PM',
-  '06:00 PM',
-  '06:30 PM',
-  '07:00 PM',
-  '07:30 PM',
-  '08:00 PM',
+  '09:00 AM', '09:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM',
+  '01:00 PM', '01:30 PM', '02:00 PM', '02:30 PM', '03:00 PM', '03:30 PM', '04:00 PM', '04:30 PM',
+  '05:00 PM', '05:30 PM', '06:00 PM', '06:30 PM', '07:00 PM', '07:30 PM', '08:00 PM',
 ];
 
 const convertToDate = (timeString) => {
@@ -58,12 +38,8 @@ const convertToDate = (timeString) => {
   hours = parseInt(hours, 10);
   minutes = parseInt(minutes, 10);
 
-  if (modifier === 'PM' && hours !== 12) {
-    hours += 12;
-  }
-  if (modifier === 'AM' && hours === 12) {
-    hours = 0;
-  }
+  if (modifier === 'PM' && hours !== 12) hours += 12;
+  if (modifier === 'AM' && hours === 12) hours = 0;
 
   return new Date(0, 0, 0, hours, minutes);
 };
@@ -99,13 +75,7 @@ export default function AvailabilityView() {
   const [isBackLoading, setIsBackLoading] = useState(false);
   const [isNextLoading, setIsNextLoading] = useState(false);
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-    getValues,
-  } = useForm({
+  const { control, handleSubmit, formState: { errors }, setValue, getValues } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       availability: days.reduce((acc, day) => {
@@ -119,22 +89,14 @@ export default function AvailabilityView() {
   });
 
   const onSubmit = (data) => {
+    console.log('Submitted Data:', data);
     setIsNextLoading(true);
-    dispatch(saveAvailability(data.availability));
+    dispatch(saveAvailability(data));
     setTimeout(() => {
-      router.push(paths.dashboard.three);
       setIsNextLoading(false);
+      router.push(paths.dashboard.three);
     }, 1000);
   };
-
-  const handleNextClick = () => {
-    setIsNextLoading(true);
-    setTimeout(() => {
-      router.push(paths.dashboard.three);
-      setIsNextLoading(false);
-    }, 1000); 
-  };
-  
 
   const handleBackClick = () => {
     setIsBackLoading(true);
@@ -159,13 +121,10 @@ export default function AvailabilityView() {
   const handleCheckboxChange = (day) => {
     const isChecked = getValues(`availability.${day}.checked`);
     setValue(`availability.${day}.checked`, !isChecked);
-
     if (!isChecked) {
-      // If checked, set the first slot to default values
       setValue(`availability.${day}.slots[0].start`, '09:00 AM');
       setValue(`availability.${day}.slots[0].end`, '05:00 PM');
     } else {
-      // If unchecked, clear the slots
       setValue(`availability.${day}.slots`, []);
     }
   };
@@ -212,11 +171,7 @@ export default function AvailabilityView() {
                             onChange={() => handleCheckboxChange(day)}
                           />
                         }
-                        label={
-                          <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
-                            {day}
-                          </Typography>
-                        }
+                        label={<Typography variant="body2" sx={{ fontSize: '0.875rem' }}>{day}</Typography>}
                       />
                     )}
                   />
@@ -245,9 +200,7 @@ export default function AvailabilityView() {
                                 >
                                   {times.map((time) => (
                                     <MenuItem key={time} value={time}>
-                                      <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
-                                        {time}
-                                      </Typography>
+                                      <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>{time}</Typography>
                                     </MenuItem>
                                   ))}
                                 </Select>
@@ -267,9 +220,7 @@ export default function AvailabilityView() {
                                 >
                                   {times.map((time) => (
                                     <MenuItem key={time} value={time}>
-                                      <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
-                                        {time}
-                                      </Typography>
+                                      <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>{time}</Typography>
                                     </MenuItem>
                                   ))}
                                 </Select>
@@ -280,11 +231,7 @@ export default function AvailabilityView() {
                                 )}
                               </Grid>
                               <Grid item xs={2}>
-                                <IconButton
-                                  color="error"
-                                  sx={{ ml: 3 }}
-                                  onClick={() => removeSlot(day, index)}
-                                >
+                                <IconButton color="error" sx={{ ml: 3 }} onClick={() => removeSlot(day, index)}>
                                   <Icon icon="ion:trash-outline" />
                                 </IconButton>
                               </Grid>
@@ -302,18 +249,15 @@ export default function AvailabilityView() {
             ))}
           </Grid>
         </Grid>
-
         <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
-          <Stack sx={{ mt: 2 }}>
-            <LoadingButton type="submit" variant="contained" onClick={handleBackClick} loading={isBackLoading}>
-              Back
-            </LoadingButton>
-          </Stack>
-          <Stack alignItems="flex-end" sx={{ mt: 2 }}>
-            <LoadingButton type="submit" variant="contained" onClick={handleNextClick} loading={isNextLoading}>
-              Next
-            </LoadingButton>
-          </Stack>
+        <Stack direction="row" spacing={1.5} sx={{ mt: 3 }}>
+          <LoadingButton type="button" loading={isBackLoading} onClick={handleBackClick} variant="contained" color="inherit">
+            Back
+          </LoadingButton>
+          <LoadingButton type="submit" variant="contained" loading={isNextLoading}>
+            Next
+          </LoadingButton>
+        </Stack>
         </Box>
       </form>
     </Container>

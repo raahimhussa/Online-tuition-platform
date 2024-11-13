@@ -1,33 +1,21 @@
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
-import { useMemo } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-// @mui
 import Card from '@mui/material/Card';
 import Box from '@mui/material/Box';
 import { MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import LoadingButton from '@mui/lab/LoadingButton';
-// components
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { saveUser } from 'src/app/store/slices/setupslice';
 
-import { useRouter } from 'src/routes/hooks';
-import React, { useState } from 'react';
-import { paths } from 'src/routes/paths';
-import { useSnackbar } from 'src/components/snackbar';
-
-// ----------------------------------------------------------------------
+import React, { useState, useMemo } from 'react';
 
 export default function UserEditForm({ currentUser }) {
   const dispatch = useDispatch();
-  const router = useRouter();
-  const setupData = useSelector((state) => state.setup);
   const [isBackLoading, setIsBackLoading] = useState(false);
-  const [isNextLoading, setIsNextLoading] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
 
   const NewUserSchema = Yup.object().shape({
     experience_years: Yup.number()
@@ -60,43 +48,20 @@ export default function UserEditForm({ currentUser }) {
     defaultValues,
   });
 
-  const { handleSubmit, control, formState: { isSubmitting } } = methods;
+  const { handleSubmit, control } = methods;
 
-  const onSubmit = async (data) => {
-    try {
-      dispatch(saveUser(data));
-      // await new Promise((resolve) => setTimeout(resolve, 500));
-      alert('Form submitted successfully!');
-      console.info('DATA', data);
-      alert('Form submitted successfully!');
-    } catch (error) {
-      console.error(error);
-    }
+  const onSubmit = (data) => {
+    console.log('Form Data:', data);
+    dispatch(saveUser(data));
+    alert('Form submitted successfully!');
   };
-
-  const handleNextClick = () => {
-    const formValues = methods.getValues();
-    const allFieldsFilled = Object.keys(formValues).every((field) => formValues[field] !== '' && formValues[field] !== null);
-  
-    if (allFieldsFilled) {
-      setIsNextLoading(true);
-      setTimeout(() => {
-        router.push(paths.dashboard.one);
-        setIsNextLoading(false);
-      }, 1000);
-    } else {
-      enqueueSnackbar('Please fill in all required fields before proceeding.', { variant: 'warning' });
-    }
-  };
-  
-  
 
   const handleBackClick = () => {
     setIsBackLoading(true);
     setTimeout(() => {
-      router.push(paths.dashboard.user.new);
+      // Add your back navigation logic here
       setIsBackLoading(false);
-    }, 1000); 
+    }, 1000);
   };
 
   return (
@@ -135,17 +100,17 @@ export default function UserEditForm({ currentUser }) {
       </Card>
 
       <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
-          <Stack sx={{ mt: 2 }}>
-            <LoadingButton type="button" variant="contained" onClick={handleBackClick} loading={isBackLoading}>
-              Back
-            </LoadingButton>
-          </Stack>
-          <Stack alignItems="flex-end" sx={{ mt: 2 }}>
-            <LoadingButton type="submit" variant="contained"onClick={handleNextClick} loading={isNextLoading} >
-              Next
-            </LoadingButton>
-          </Stack>
-        </Box>
+        <Stack sx={{ mt: 2 }}>
+          <LoadingButton type="button" variant="contained" onClick={handleBackClick} loading={isBackLoading}>
+            Back
+          </LoadingButton>
+        </Stack>
+        <Stack alignItems="flex-end" sx={{ mt: 2 }}>
+          <LoadingButton type="submit" variant="contained">
+            Submit
+          </LoadingButton>
+        </Stack>
+      </Box>
     </FormProvider>
   );
 }
