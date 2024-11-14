@@ -1,5 +1,8 @@
+"use client";
+
 // scrollbar
 import 'simplebar-react/dist/simplebar.min.css';
+import { SessionProvider } from 'next-auth/react';
 
 // image
 import 'react-lazy-load-image-component/src/effects/blur.css';
@@ -20,75 +23,43 @@ import { SettingsProvider, SettingsDrawer } from 'src/components/settings';
 // Auth
 import { AuthProvider, AuthConsumer } from 'src/auth/context/jwt';
 import ClientProvider from "./ClientProvider";
+import { metadata } from './metadata';
 
 // ----------------------------------------------------------------------
-export const metadata = {
-  title: 'Tutorly',
-  description:
-    'The starting point for your next project with Minimal UI Kit, built on the newest version of Material-UI ©, ready to be customized to your style',
-  keywords: 'react,material,kit,application,dashboard,admin,template',
-  themeColor: '#000000',
-  manifest: '/manifest.json',
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-  },
-  icons: [
-    {
-      rel: 'icon',
-      url: '/logo/final-logo.png',
-    },
-    {
-      rel: 'icon',
-      type: 'image/png',
-      sizes: '16x16',
-      url: '/logo/final-logo.png',
-    },
-    {
-      rel: 'icon',
-      type: 'image/png',
-      sizes: '32x32',
-      url: '/logo/final-logo.png',
-    },
-    {
-      rel: 'apple-touch-icon',
-      sizes: '180x180',
-      url: '/logo/final-logo.png',
-    },
-  ],
-};
-export default function RootLayout({ children }) {
+
+export default function RootLayout({ children, session }) {
   return (
     <html lang="en" className={primaryFont.className}>
       <body>
-        <AuthProvider>
-          <SettingsProvider
-            defaultSettings={{
-              themeMode: 'light',
-              themeDirection: 'ltr',
-              themeContrast: 'default',
-              themeLayout: 'vertical',
-              themeColorPresets: 'default',
-              themeStretch: false,
-            }}
-          >
-            <ThemeProvider>
-              <MotionLazy>
-                <SettingsDrawer />
-                <ProgressBar />
-                <AuthConsumer>
-                  <ClientProvider>{children}</ClientProvider>
-                </AuthConsumer>
-              </MotionLazy>
-            </ThemeProvider>
-          </SettingsProvider>
-        </AuthProvider>
+        <SessionProvider session={session}>
+          <AuthProvider>
+            <SettingsProvider
+              defaultSettings={{
+                themeMode: 'light',
+                themeDirection: 'ltr',
+                themeContrast: 'default',
+                themeLayout: 'vertical',
+                themeColorPresets: 'default',
+                themeStretch: false,
+              }}
+            >
+              <ThemeProvider>
+                <MotionLazy>
+                  <SettingsDrawer />
+                  <ProgressBar />
+                  <AuthConsumer>
+                    <ClientProvider>{children}</ClientProvider>
+                  </AuthConsumer>
+                </MotionLazy>
+              </ThemeProvider>
+            </SettingsProvider>
+          </AuthProvider>
+        </SessionProvider>
       </body>
     </html>
   );
 }
-
 RootLayout.propTypes = {
   children: PropTypes.node.isRequired,
+  session: PropTypes.object,
 };
