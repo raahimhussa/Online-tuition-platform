@@ -10,15 +10,22 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
 import { useDispatch } from 'react-redux';
 import { saveUser } from 'src/app/store/slices/setupslice';
+import { useRouter } from 'src/routes/hooks';
+import { paths } from 'src/routes/paths';
+import { useSnackbar } from 'src/components/snackbar';
 
 import React, { useState, useMemo } from 'react';
 
 export default function UserEditForm({ currentUser }) {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [isBackLoading, setIsBackLoading] = useState(false);
+  const [isNextLoading, setIsNextLoading] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   const NewUserSchema = Yup.object().shape({
     experience_years: Yup.number()
+      .typeError('Experience years are required')
       .required('Experience years are required')
       .min(0, 'Experience years must be 1 or more')
       .max(100, 'Experience years must be realistic'),
@@ -56,12 +63,27 @@ export default function UserEditForm({ currentUser }) {
     alert('Form submitted successfully!');
   };
 
+  const handleNextClick = () => {
+    const formValues = methods.getValues();
+    const allFieldsFilled = Object.keys(formValues).every((field) => formValues[field] !== '' && formValues[field] !== null);
+  
+    if (allFieldsFilled) {
+      setIsNextLoading(true);
+      setTimeout(() => {
+        router.push(paths.dashboard.one);
+        setIsNextLoading(false);
+      }, 1000);
+    } else {
+      enqueueSnackbar('Please fill in all required fields before proceeding.', { variant: 'warning' });
+    }
+  };
+  
   const handleBackClick = () => {
     setIsBackLoading(true);
     setTimeout(() => {
-      // Add your back navigation logic here
+      router.push(paths.dashboard.user.new);
       setIsBackLoading(false);
-    }, 1000);
+    }, 1000); 
   };
 
   return (
@@ -106,7 +128,7 @@ export default function UserEditForm({ currentUser }) {
           </LoadingButton>
         </Stack>
         <Stack alignItems="flex-end" sx={{ mt: 2 }}>
-          <LoadingButton type="submit" variant="contained">
+          <LoadingButton type="submit" variant="contained" onClick={handleNextClick} loading={isNextLoading}>
             Submit
           </LoadingButton>
         </Stack>
