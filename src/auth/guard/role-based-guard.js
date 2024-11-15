@@ -9,12 +9,15 @@ import { useMockedUser } from 'src/hooks/use-mocked-user';
 import { ForbiddenIllustration } from 'src/assets/illustrations';
 // components
 import { MotionContainer, varBounce } from 'src/components/animate';
+import { useAuthContext } from '../hooks';
 
 // ----------------------------------------------------------------------
 
 export default function RoleBasedGuard({ hasContent, roles, children, sx }) {
   // Logic here to get current user role
-  const { user } = useMockedUser();
+  // const { user } = useMockedUser();
+  const { user } = useAuthContext();
+  
 
   // const currentRole = 'user';
   const currentRole = user?.role; // admin;

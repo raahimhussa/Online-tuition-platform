@@ -31,6 +31,7 @@ const ICONS = {
   kanban: icon('ic_kanban'),
   folder: icon('ic_folder'),
   banking: icon('ic_banking'),
+
   booking: icon('ic_booking'),
   invoice: icon('ic_invoice'),
   product: icon('ic_product'),
@@ -53,15 +54,41 @@ export function useNavData() {
       {
         subheader: 'New Tutor',
         items: [
-         
-          { title: 'Update Profile', path: paths.dashboard.user.new, icon: ICONS.user },
-          { title: 'Setup Profile', path: paths.dashboard.user.complete, icon: ICONS.dashboard },
-          { title: 'Terms & Conditions', path: paths.dashboard.one, icon: ICONS.order },
-          { title: 'Availability', path: paths.dashboard.two, icon: ICONS.ecommerce },
+          {
+            title: 'Update Profile',
+            path: paths.dashboard.user.new,
+            icon: ICONS.user,
+            roles: ['teacher'],
+          },
+          {
+            title: 'Setup Profile',
+            path: paths.dashboard.user.complete,
+            icon: ICONS.dashboard,
+            roles: ['teacher'],
+          },
+          {
+            title: 'Terms & Conditions',
+            path: paths.dashboard.one,
+            icon: ICONS.order,
+            roles: ['teacher',],
+          },
+          {
+            title: 'Availability',
+            path: paths.dashboard.two,
+            icon: ICONS.ecommerce,
+            roles: ['teacher'],
+          },
           {
             title: 'Service',
             path: paths.dashboard.three,
             icon: ICONS.analytics,
+            roles: ['teacher'],
+          },
+          {
+            title: 'ITEM',
+            path: paths.dashboard.group.six,
+            icon: ICONS.analytics,
+            roles: ['teacher',],
           },
         ],
       },

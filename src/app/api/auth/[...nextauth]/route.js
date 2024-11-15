@@ -12,7 +12,7 @@ export default NextAuth({
       authorize: async (credentials) => {
         // Replace with your logic to fetch user data from localStorage or an API
         const userRole = localStorage.getItem("userRole"); // Example, get from localStorage
-
+        console.log("userRole AUTHORIZE", userRole);
         if (userRole) {
           return { id: 1, name: "User", role: userRole };
         }
