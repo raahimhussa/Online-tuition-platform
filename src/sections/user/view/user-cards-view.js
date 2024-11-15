@@ -23,22 +23,22 @@ export default function UserCardsView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading="User Cards"
+        heading="Teacher Cards"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'User', href: paths.dashboard.user.root },
-          { name: 'Cards' },
+          // { name: 'User', href: paths.dashboard.user.root },
+          // { name: 'Cards' },
         ]}
-        action={
-          <Button
-            component={RouterLink}
-            href={paths.dashboard.user.new}
-            variant="contained"
-            startIcon={<Iconify icon="mingcute:add-line" />}
-          >
-            New User
-          </Button>
-        }
+        // action={
+        //   <Button
+        //     component={RouterLink}
+        //     href={paths.dashboard.user.new}
+        //     variant="contained"
+        //     startIcon={<Iconify icon="mingcute:add-line" />}
+        //   >
+        //     New User
+        //   </Button>
+        // }
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 

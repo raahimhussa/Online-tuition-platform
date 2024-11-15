@@ -1,6 +1,8 @@
 // src/app/api/teachers/complete-profile/route.js
 import { createTeacherProfile,addTeacherGradeLevels,addTeacherLanguages,addTeacherSubjects} from '../../../../lib/teacherService';
+
 import { getUserById } from '../../../../lib/userService';
+
 import { verifyToken } from '../../../../lib/auth';
 
 export async function POST(req) {

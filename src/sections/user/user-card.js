@@ -89,12 +89,12 @@ export default function UserCard({ user }) {
 
       <Divider sx={{ borderStyle: 'dashed' }} />
 
-      <Box
+      {/* <Box
         display="grid"
         gridTemplateColumns="repeat(3, 1fr)"
         sx={{ py: 3, typography: 'subtitle1' }}
-      >
-        <div>
+      > */}
+        {/* <div>
           <Typography variant="caption" component="div" sx={{ mb: 0.5, color: 'text.secondary' }}>
             Follower
           </Typography>
@@ -114,8 +114,8 @@ export default function UserCard({ user }) {
             Total Post
           </Typography>
           {fShortenNumber(totalPosts)}
-        </div>
-      </Box>
+        </div> */}
+      {/* </Box> */}
     </Card>
   );
 }

@@ -90,6 +90,12 @@ export function useNavData() {
             icon: ICONS.analytics,
             roles: ['teacher',],
           },
+          {
+            title: 'Teachers Cards',
+            path:paths.dashboard.user.cards,
+            icon: ICONS.dashboard,
+            roles: ['student'],
+          },
         ],
       },
 
