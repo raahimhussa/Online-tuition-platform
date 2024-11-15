@@ -6,120 +6,103 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import ListItemText from '@mui/material/ListItemText';
-// utils
-import { fShortenNumber } from 'src/utils/format-number';
-// _mock
-import { _socials } from 'src/_mock';
-// assets
-import { AvatarShape } from 'src/assets/illustrations';
-// components
-import Image from 'src/components/image';
-import Iconify from 'src/components/iconify';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
 
 // ----------------------------------------------------------------------
 
 export default function UserCard({ user }) {
   const theme = useTheme();
 
-  const { name, coverUrl, role, totalFollowers, totalPosts, avatarUrl, totalFollowing } = user;
+  const { name,
+    experience,
+    students,
+    avatarUrl,
+    languages = [],   
+    grades = [],       
+    subjects = [],     
+    price,
+    freeTrial, } = user;
 
   return (
-    <Card sx={{ textAlign: 'center' }}>
-      <Box sx={{ position: 'relative' }}>
-        <AvatarShape
-          sx={{
-            left: 0,
-            right: 0,
-            zIndex: 10,
-            mx: 'auto',
-            bottom: -26,
-            position: 'absolute',
-          }}
-        />
-
-        <Avatar
+    <Card sx={{ textAlign: 'left', padding: 2, maxWidth: 320, boxShadow: 3 }}>
+      <Stack direction="row" alignItems="center" spacing={2}>
+      <Avatar
           alt={name}
           src={avatarUrl}
           sx={{
             width: 64,
             height: 64,
-            zIndex: 11,
-            left: 0,
-            right: 0,
-            bottom: -32,
-            mx: 'auto',
-            position: 'absolute',
           }}
         />
-
-        <Image
-          src={coverUrl}
-          alt={coverUrl}
-          ratio="16/9"
-          overlay={alpha(theme.palette.grey[900], 0.48)}
-        />
-      </Box>
-
-      <ListItemText
-        sx={{ mt: 7, mb: 1 }}
-        primary={name}
-        secondary={role}
-        primaryTypographyProps={{ typography: 'subtitle1' }}
-        secondaryTypographyProps={{ component: 'span', mt: 0.5 }}
-      />
-
-      <Stack direction="row" alignItems="center" justifyContent="center" sx={{ mb: 2.5 }}>
-        {_socials.map((social) => (
-          <IconButton
-            key={social.name}
-            sx={{
-              color: social.color,
-              '&:hover': {
-                bgcolor: alpha(social.color, 0.08),
-              },
-            }}
-          >
-            <Iconify icon={social.icon} />
-          </IconButton>
-        ))}
+        <Box>
+          <Typography variant="h6">{name}</Typography>
+          <Typography variant="body2" color="text.secondary">
+            {experience} yr. experience | {students} students
+          </Typography>
+        </Box>
       </Stack>
 
-      <Divider sx={{ borderStyle: 'dashed' }} />
+      <Typography variant="body1" sx={{ mt: 2, mb: 2 }}>
+        Hi, I am {name}. I have....
+      </Typography>
 
-      {/* <Box
-        display="grid"
-        gridTemplateColumns="repeat(3, 1fr)"
-        sx={{ py: 3, typography: 'subtitle1' }}
-      > */}
-        {/* <div>
-          <Typography variant="caption" component="div" sx={{ mb: 0.5, color: 'text.secondary' }}>
-            Follower
+      <Divider sx={{ my: 2 }} />
+
+      <Stack direction="column" spacing={1}>
+        <Typography variant="subtitle2" color="text.secondary">Languages</Typography>
+        <Stack direction="row" spacing={1}>
+          {languages.map((curr, index) => (
+            <Chip key={index} label={curr} size="small" color="primary" variant="outlined" />
+          ))}
+        </Stack>
+
+        <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2 }}>Grades</Typography>
+        <Stack direction="row" spacing={1}>
+          {grades.map((grade, index) => (
+            <Chip key={index} label={grade} size="small" variant="outlined" />
+          ))}
+        </Stack>
+
+        <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2 }}>Subjects</Typography>
+        <Stack direction="row" spacing={1}>
+          {subjects.map((subject, index) => (
+            <Chip key={index} label={subject} size="small" color="secondary" variant="outlined" />
+          ))}
+        </Stack>
+      </Stack>
+
+      <Divider sx={{ my: 2 }} />
+
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        {freeTrial ? (
+          <Button variant="contained" color="success" sx={{ fontWeight: 'bold' }}>
+            Free Trial
+          </Button>
+        ) : (
+          <Typography variant="subtitle1" color="text.primary" sx={{ fontWeight: 'bold' }}>
+            ${price} /session
           </Typography>
-          {fShortenNumber(totalFollowers)}
-        </div>
-
-        <div>
-          <Typography variant="caption" component="div" sx={{ mb: 0.5, color: 'text.secondary' }}>
-            Following
-          </Typography>
-
-          {fShortenNumber(totalFollowing)}
-        </div>
-
-        <div>
-          <Typography variant="caption" component="div" sx={{ mb: 0.5, color: 'text.secondary' }}>
-            Total Post
-          </Typography>
-          {fShortenNumber(totalPosts)}
-        </div> */}
-      {/* </Box> */}
+        )}
+        <Button variant="contained" color="primary">
+          Book Now
+        </Button>
+      </Stack>
     </Card>
   );
 }
 
 UserCard.propTypes = {
-  user: PropTypes.object,
+  user: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    experience: PropTypes.string.isRequired,
+    students: PropTypes.number.isRequired,
+    avatarUrl: PropTypes.string.isRequired,
+    languages: PropTypes.arrayOf(PropTypes.string),
+    grades: PropTypes.arrayOf(PropTypes.string),
+    subjects: PropTypes.arrayOf(PropTypes.string),
+    price: PropTypes.number,
+    freeTrial: PropTypes.bool,
+  }),
 };
