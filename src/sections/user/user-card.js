@@ -22,8 +22,7 @@ export default function UserCard({ user }) {
     languages = [],   
     grades = [],       
     subjects = [],     
-    price,
-    freeTrial, } = user;
+    price, } = user;
 
   return (
     <Card sx={{ textAlign: 'left', padding: 2, maxWidth: 320, boxShadow: 3 }}>
@@ -76,15 +75,9 @@ export default function UserCard({ user }) {
       <Divider sx={{ my: 2 }} />
 
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        {freeTrial ? (
-          <Button variant="contained" color="success" sx={{ fontWeight: 'bold' }}>
-            Free Trial
-          </Button>
-        ) : (
           <Typography variant="subtitle1" color="text.primary" sx={{ fontWeight: 'bold' }}>
             ${price} /session
           </Typography>
-        )}
         <Button variant="contained" color="primary">
           Book Now
         </Button>
@@ -103,6 +96,5 @@ UserCard.propTypes = {
     grades: PropTypes.arrayOf(PropTypes.string),
     subjects: PropTypes.arrayOf(PropTypes.string),
     price: PropTypes.number,
-    freeTrial: PropTypes.bool,
   }),
 };
