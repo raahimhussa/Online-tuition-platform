@@ -112,10 +112,11 @@ export default function UserNewEditForm({ userId }) {
         dob: data.dob,
         avatarUrl: data.avatarUrl, // If needed, map this to the expected field
       };
+      console.log('printing payload:',payload)
   
       // Dispatch the saveUser action with the prepared payload
       await dispatch(saveUser(payload)); // Use your save user action here
-  
+      
       enqueueSnackbar(currentUser ? 'Update success!' : 'Create success!', { variant: 'success' });
       router.push('/dashboard'); // Redirect to your desired path
     } catch (error) {
