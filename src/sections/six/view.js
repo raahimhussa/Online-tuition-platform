@@ -19,7 +19,7 @@ const developers = [
   },
   {
     name: 'Dev 3',
-    image: '/assets/raahim.jpg', // Correct path for Next.js
+    image: '/assets/raahim1.jpg', // Correct path for Next.js
     description: 'Raahim',
     linkedIn: '#',
     github: '#',

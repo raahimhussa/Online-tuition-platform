@@ -96,6 +96,12 @@ export function useNavData() {
             icon: ICONS.dashboard,
             roles: ['student'],
           },
+          {
+            title: 'Teachers profile',
+            path:paths.dashboard.user.root,
+            icon: ICONS.user,
+            roles: ['student'],
+          },
         ],
       },
 

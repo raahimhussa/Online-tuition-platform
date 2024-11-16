@@ -36,7 +36,7 @@ export default function ProfileHome({ info, posts }) {
 
   const renderFollows = (
     <Card sx={{ py: 3, textAlign: 'center', typography: 'h4' }}>
-      <Stack
+      {/* <Stack
         direction="row"
         divider={<Divider orientation="vertical" flexItem sx={{ borderStyle: 'dashed' }} />}
       >
@@ -53,7 +53,7 @@ export default function ProfileHome({ info, posts }) {
             Following
           </Box>
         </Stack>
-      </Stack>
+      </Stack> */}
     </Card>
   );
 

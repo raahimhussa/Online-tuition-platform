@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-export default NextAuth({
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -10,12 +10,21 @@ export default NextAuth({
         password: { label: "Password", type: "password" }
       },
       authorize: async (credentials) => {
-        // Replace with your logic to fetch user data from localStorage or an API
-        const userRole = localStorage.getItem("userRole"); // Example, get from localStorage
-        console.log("userRole AUTHORIZE", userRole);
-        if (userRole) {
-          return { id: 1, name: "User", role: userRole };
+        const { username, password } = credentials;
+
+        // Mocked authentication logic (replace with real logic)
+        let userRole = null;
+        if (username === "admin" && password === "password123") {
+          userRole = "admin";
+        } else if (username === "user" && password === "userpass") {
+          userRole = "user";
         }
+
+        if (userRole) {
+          return { id: 1, name: username, role: userRole };
+        }
+
+        // Return null if authentication fails
         return null;
       }
     })
@@ -33,4 +42,6 @@ export default NextAuth({
     }
   },
   secret: process.env.NEXTAUTH_SECRET
-});
+};
+
+export default NextAuth(authOptions);
