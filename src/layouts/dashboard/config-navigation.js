@@ -42,6 +42,7 @@ const ICONS = {
   ecommerce: icon('ic_ecommerce'),
   analytics: icon('ic_analytics'),
   dashboard: icon('ic_dashboard'),
+  
 };
 
 // ----------------------------------------------------------------------
@@ -85,10 +86,10 @@ export function useNavData() {
             roles: ['teacher'],
           },
           {
-            title: 'ITEM',
+            title: 'DEVS',
             path: paths.dashboard.group.six,
-            icon: ICONS.analytics,
-            roles: ['teacher',],
+            icon: ICONS.ecommerce,
+            roles: ['teacher','student'],
           },
           {
             title: 'Teachers Cards',
@@ -99,6 +100,12 @@ export function useNavData() {
           {
             title: 'Teachers profile',
             path:paths.dashboard.user.root,
+            icon: ICONS.user,
+            roles: ['student'],
+          },
+          {
+            title: 'Reviews ',
+            path:paths.dashboard.seven,
             icon: ICONS.user,
             roles: ['student'],
           },

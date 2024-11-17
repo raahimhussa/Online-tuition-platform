@@ -9,13 +9,14 @@ import CardHeader from '@mui/material/CardHeader';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
-import ProfilePostItem from './profile-post-item';
+
 import SchoolIcon from '@mui/icons-material/School';
 import InfoIcon from '@mui/icons-material/Info';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import BookIcon from '@mui/icons-material/Book';
 import LanguageIcon from '@mui/icons-material/Language';
 import LayersIcon from '@mui/icons-material/Layers';
+import ProfilePostItem from './profile-post-item';
 // ----------------------------------------------------------------------
 
 export default function ProfileHome({ info, posts }) {

@@ -27,8 +27,6 @@ import ResultItem from './result-item';
 import { useNavData } from '../../dashboard/config-navigation';
 import { applyFilter, groupedData, getAllItems } from './utils';
 
-// ----------------------------------------------------------------------
-
 function Searchbar() {
   const theme = useTheme();
 
@@ -59,7 +57,7 @@ function Searchbar() {
   const handleClick = useCallback(
     (path) => {
       if (path.includes('http')) {
-        window.open(path);
+        window.open(path, '_blank');
       } else {
         router.push(path);
       }
@@ -89,9 +87,12 @@ function Searchbar() {
           {data[group].map((item) => {
             const { title, path } = item;
 
-            const partsTitle = parse(title, match(title, searchQuery));
+            // Safeguard for match and parse
+            const matchedTitle = match(title, searchQuery) || [];
+            const matchedPath = match(path, searchQuery) || [];
 
-            const partsPath = parse(path, match(path, searchQuery));
+            const partsTitle = parse(title, matchedTitle);
+            const partsPath = parse(path, matchedPath);
 
             return (
               <ResultItem
