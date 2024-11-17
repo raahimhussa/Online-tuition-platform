@@ -5,12 +5,14 @@ import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import ListItemText from '@mui/material/ListItemText';
 import { useTheme, alpha } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 // theme
 import { bgGradient } from 'src/theme/css';
 
 // ----------------------------------------------------------------------
 
-export default function ProfileCover({ name, avatarUrl, role, coverUrl }) {
+export default function ProfileCover({ name, avatarUrl, role, coverUrl, phone_number, email, city_name }) {
   const theme = useTheme();
 
   return (
@@ -28,9 +30,9 @@ export default function ProfileCover({ name, avatarUrl, role, coverUrl }) {
         direction={{ xs: 'column', md: 'row' }}
         sx={{
           left: { md: 24 },
-          bottom: { md: 24 },
+          bottom: { md: 20 },
           zIndex: { md: 10 },
-          pt: { xs: 6, md: 0 },
+          pt: { xs: 4, md: 2 },
           position: { md: 'absolute' },
         }}
       >
@@ -47,24 +49,77 @@ export default function ProfileCover({ name, avatarUrl, role, coverUrl }) {
 
         <ListItemText
           sx={{
-            mt: 3,
+            mt: 2,
             ml: { md: 3 },
             textAlign: { xs: 'center', md: 'unset' },
+            color: theme.palette.mode === 'light' ? 'common.white' : 'text.primary',
           }}
           primary={name}
-          secondary={role}
+          secondary={
+            <>
+              <Typography variant="body2"
+              sx={{
+                opacity: 0.7,
+                color: theme.palette.mode === 'light' ? 'common.white' : 'text.secondary',
+              }}
+            >
+                {role}
+              </Typography>
+              {phone_number && (
+                <Typography variant="body2" 
+                sx={{
+                  opacity: 0.7,
+                  mt: 0.5,
+                  color: theme.palette.mode === 'light' ? 'common.white' : 'text.secondary', 
+                }}
+              >
+                  📞 {phone_number}
+                </Typography>
+              )}
+              {email && (
+                <Typography variant="body2" 
+                sx={{
+                  opacity: 0.7,
+                  mt: 0.5,
+                  color: theme.palette.mode === 'light' ? 'common.white' : 'text.secondary', 
+                }}
+              >
+                  ✉️ {email}
+                </Typography>
+              )}
+              {city_name && (
+                <Typography variant="body2" 
+                sx={{
+                  opacity: 0.7,
+                  mt: 0.5,
+                  color: theme.palette.mode === 'light' ? 'common.white' : 'text.secondary', 
+                }}
+              >
+                  📍 {city_name}
+                </Typography>
+              )}
+            </>
+          }
           primaryTypographyProps={{
             typography: 'h4',
           }}
-          secondaryTypographyProps={{
-            mt: 0.5,
-            color: 'inherit',
-            component: 'span',
-            typography: 'body2',
-            sx: { opacity: 0.48 },
-          }}
         />
       </Stack>
+      <Button
+        variant="contained"
+        sx={{
+          position: 'absolute',
+          bottom: 25,
+          right: 16,
+          backgroundColor: theme.palette.primary.dark,
+          color: 'common.white',
+          '&:hover': {
+            backgroundColor: theme.palette.primary.main,
+          },
+        }}
+      >
+        Book a Session
+      </Button>
     </Box>
   );
 }
@@ -74,4 +129,7 @@ ProfileCover.propTypes = {
   coverUrl: PropTypes.string,
   name: PropTypes.string,
   role: PropTypes.string,
+  phone_number: PropTypes.string,
+  email: PropTypes.string,
+  city_name: PropTypes.string,
 };

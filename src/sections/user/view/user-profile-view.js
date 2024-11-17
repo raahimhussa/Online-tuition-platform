@@ -19,13 +19,8 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 //
 import ProfileHome from '../profile-home';
 import ProfileCover from '../profile-cover';
-
-
 // ----------------------------------------------------------------------
 
-
-
-// ----------------------------------------------------------------------
 
 export default function UserProfileView() {
   const settings = useSettingsContext();
@@ -69,6 +64,9 @@ export default function UserProfileView() {
           name={user?.displayName}
           avatarUrl={user?.photoURL}
           coverUrl={_userAbout.coverUrl}
+          city_name={_userAbout.city_name}
+          email={_userAbout.email}
+          phone={_userAbout.phone}
         />
 
     
@@ -78,3 +76,4 @@ export default function UserProfileView() {
     </Container>
   );
 }
+
