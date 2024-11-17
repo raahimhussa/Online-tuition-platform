@@ -1,7 +1,7 @@
 // src/app/api/teachers/complete-profile/route.js
 import { createTeacherProfile,addTeacherGradeLevels,addTeacherLanguages,addTeacherSubjects} from '../../../../lib/teacherService';
 
-import { getUserById } from '../../../../lib/userService';
+// import { getUserById } from '../../../../lib/userService';
 
 import { verifyToken } from '../../../../lib/auth';
 
@@ -54,17 +54,23 @@ export async function POST(req) {
         });
 
         // Handle multiple languages
+        // eslint-disable-next-line no-restricted-syntax
         for (const languageId of languages) {
+            // eslint-disable-next-line no-await-in-loop
             await addTeacherLanguages(newTeacherProfile.teacher_id, languageId);
         }
 
         // Handle multiple grade levels
+        // eslint-disable-next-line no-restricted-syntax
         for (const gradeLevelId of grade_levels) {
+            // eslint-disable-next-line no-await-in-loop
             await addTeacherGradeLevels(newTeacherProfile.teacher_id, gradeLevelId);
         }
 
         // Handle multiple subjects
+        // eslint-disable-next-line no-restricted-syntax
         for (const subjectId of subjects) {
+            // eslint-disable-next-line no-await-in-loop
             await addTeacherSubjects(newTeacherProfile.teacher_id, subjectId);
         }
 
