@@ -38,6 +38,9 @@ export default function UserEditForm({ currentUser }) {
     teachingMode: Yup.string()
       .oneOf(['online', 'physical', 'hybrid'], 'Teaching mode must be online, physical, or hybrid')
       .required('Teaching mode is required'),
+    languages: Yup.array()
+      .of(Yup.string().required('Language is required'))
+      .min(1, 'At least one language must be selected'),
   });
 
   const defaultValues = useMemo(
@@ -46,9 +49,12 @@ export default function UserEditForm({ currentUser }) {
       experience_years: currentUser?.experience_years || '',
       bio: currentUser?.bio || '',
       teaching_mode: currentUser?.teaching_mode || 'online',
+      languages: currentUser?.languages || [],
     }),
     [currentUser]
   );
+
+  const languagesOptions = ['English', 'Urdu', 'Spanish', 'French', 'German', 'Mandarin', 'Arabic', 'Russian', 'Japanese'];
 
   const methods = useForm({
     resolver: yupResolver(NewUserSchema),
@@ -99,6 +105,29 @@ export default function UserEditForm({ currentUser }) {
               )}
             />
           </FormControl>
+
+          <FormControl fullWidth>
+          <InputLabel>Languages</InputLabel>
+          <Controller
+            name="languages"
+            control={control}
+            render={({ field }) => (
+              <Select
+                {...field}
+                multiple
+                value={field.value || []}
+                onChange={(e) => field.onChange(e.target.value)}
+                label="Languages"
+              >
+                {languagesOptions.map((language) => (
+                  <MenuItem key={language} value={language}>
+                    {language}
+                  </MenuItem>
+                ))}
+              </Select>
+            )}
+          />
+        </FormControl>
         </Box>
       </Card>
 
