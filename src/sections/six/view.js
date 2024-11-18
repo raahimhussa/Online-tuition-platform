@@ -5,7 +5,7 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 const developers = [
   {
     name: 'Dev 1',
-    image: '/assets/hashir.png', // Correct path for Next.js
+    image: '/assets/hashir.jpeg', // Correct path for Next.js
     description: 'Hashir',
     linkedIn: '#',
     github: '#',

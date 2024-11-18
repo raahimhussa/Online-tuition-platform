@@ -99,7 +99,8 @@ export default function UserNewEditForm({ userId }) {
     setValue('gender', e.target.value); // Update the form value as well
   };
 
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmit = async (data) => {
+
     try {
       // Prepare the data to match the backend structure
       const payload = {
@@ -115,15 +116,15 @@ export default function UserNewEditForm({ userId }) {
       console.log('printing payload:',payload)
   
       // Dispatch the saveUser action with the prepared payload
-      await dispatch(saveUser(payload)); // Use your save user action here
+      await dispatch(saveUser(payload)).unwrap(); // Use your save user action here
       
       enqueueSnackbar(currentUser ? 'Update success!' : 'Create success!', { variant: 'success' });
-      router.push('/dashboard'); // Redirect to your desired path
+      router.push(paths.dashboard.user.complete);
     } catch (error) {
       console.error(error);
       // enqueueSnackbar('Failed to save user: '+ error.message, { variant: 'error' }); // Notify error
     }
-  });
+  };
 
   const handleDrop = useCallback(
     (acceptedFiles) => {
@@ -160,7 +161,7 @@ export default function UserNewEditForm({ userId }) {
   
 
   return (
-    <FormProvider methods={methods} onSubmit={onSubmit}>
+    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
         <Grid xs={12} md={4}>
           <Card sx={{ pt: 10, pb: 5, px: 3 }}>
@@ -317,7 +318,11 @@ export default function UserNewEditForm({ userId }) {
               </Grid>
             </Grid>
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-              <LoadingButton type="submit" variant="contained" loading={isSubmitting || isNextLoading} onClick={handleNextClick}>
+              <LoadingButton
+                variant="contained"
+                loading={isSubmitting || isNextLoading}
+                onClick={currentUser ? handleSubmit(onSubmit) : handleNextClick}
+              >
                 {currentUser ? 'Update' : 'Next'}
               </LoadingButton>
             </Stack>

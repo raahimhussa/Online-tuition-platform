@@ -45,7 +45,7 @@ export default function UserEditForm({ currentUser }) {
       education: currentUser?.education || '',
       experience_years: currentUser?.experience_years || '',
       bio: currentUser?.bio || '',
-      teachingMode: currentUser?.teachingMode || 'online',
+      teaching_mode: currentUser?.teaching_mode || 'online',
     }),
     [currentUser]
   );
@@ -63,20 +63,7 @@ export default function UserEditForm({ currentUser }) {
     alert('Form submitted successfully!');
   };
 
-  const handleNextClick = () => {
-    const formValues = methods.getValues();
-    const allFieldsFilled = Object.keys(formValues).every((field) => formValues[field] !== '' && formValues[field] !== null);
-  
-    if (allFieldsFilled) {
-      setIsNextLoading(true);
-      setTimeout(() => {
-        router.push(paths.dashboard.one);
-        setIsNextLoading(false);
-      }, 1000);
-    } else {
-      enqueueSnackbar('Please fill in all required fields before proceeding.', { variant: 'warning' });
-    }
-  };
+  const handleNextClick = handleSubmit(onSubmit);  // Directly use handleSubmit to submit the form
   
   const handleBackClick = () => {
     setIsBackLoading(true);
@@ -129,7 +116,7 @@ export default function UserEditForm({ currentUser }) {
         </Stack>
         <Stack alignItems="flex-end" sx={{ mt: 2 }}>
           <LoadingButton type="submit" variant="contained" onClick={handleNextClick} loading={isNextLoading}>
-            Submit
+          {currentUser ? 'Update' : 'Next'}
           </LoadingButton>
         </Stack>
       </Box>
