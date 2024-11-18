@@ -1,13 +1,25 @@
 import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 // @mui
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack'; 
 //
 import UserCard from './user-card';
+import UserFilter from './user-filter';
 
 // ----------------------------------------------------------------------
 
 export default function UserCardList({ users }) {
+  const [filters, setFilters] = useState({});
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+    console.log('Filters:', newFilters); 
+  };
   return (
+    <Stack spacing={4}>
+      <UserFilter onFilterChange={handleFilterChange} />
+
     <Box
       gap={3}
       display="grid"
@@ -21,6 +33,7 @@ export default function UserCardList({ users }) {
         <UserCard key={user.id} user={user} />
       ))}
     </Box>
+  </Stack>
   );
 }
 
