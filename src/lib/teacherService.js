@@ -163,7 +163,7 @@ export const getTeacherIdByUserId = async (userId) => {
     const query = 'SELECT teacher_id FROM teachers WHERE user_id = $1';
     const values = [userId];
 
-    const result = await db.query(query, values);
+    const result = await query(query, values);
 
     // Check if a teacher exists for the provided user ID
     if (result.rows.length > 0) {
@@ -172,6 +172,26 @@ export const getTeacherIdByUserId = async (userId) => {
         throw new Error('No teacher found for this user ID');
     }
 };
+
+export const getTeacherByUserId = async (userId) => {
+    const text = 'SELECT * FROM teachers WHERE user_id = $1';
+    const values = [userId];
+
+    try {
+        const result = await query(text, values);
+
+        // Check if a teacher exists for the provided user ID
+        if (result.rows.length > 0) {
+            return result.rows[0]; // Return all teacher details
+        } else {
+            return null; // Return null if no teacher found
+        }
+    } catch (error) {
+        console.error('Database query error:', error);
+        throw new Error('Failed to fetch teacher details'); // More generic error message
+    }
+};
+
 // save teacher availability information
 export const saveTeacherAvailability = async ({ teacher_id, day, start_time, end_time }) => {
     const query = `
@@ -180,7 +200,7 @@ export const saveTeacherAvailability = async ({ teacher_id, day, start_time, end
     `;
     const values = [teacher_id, day, start_time, end_time];
     
-    await db.query(query, values);
+    await query(query, values);
 };
 export const getTeacherAvailabilityByTeacherId = async (teacher_id) => {
     const query = `
@@ -190,7 +210,7 @@ export const getTeacherAvailabilityByTeacherId = async (teacher_id) => {
     `;
     const values = [teacher_id];
     
-    const { rows } = await db.query(query, values);
+    const { rows } = await query(query, values);
     return rows;
 };
 export const updateTeacherAvailability = async ({ availability_id, start_time, end_time }) => {
@@ -201,7 +221,7 @@ export const updateTeacherAvailability = async ({ availability_id, start_time, e
     `;
     const values = [start_time, end_time, availability_id];
 
-    await db.query(query, values);
+    await query(query, values);
 };
 export const deleteTeacherAvailability = async (availability_id) => {
     const query = `
@@ -210,7 +230,7 @@ export const deleteTeacherAvailability = async (availability_id) => {
     `;
     const values = [availability_id];
 
-    await db.query(query, values);
+    await query(query, values);
 };
 
 // need to create update ,delete ,get ,teacher availbility  as well

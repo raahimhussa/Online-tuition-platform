@@ -25,6 +25,30 @@ export const saveUser = createAsyncThunk(
     }
   }
 );
+// Thunk for updating existing user data
+export const updateUser = createAsyncThunk(
+  'user/updateUser',
+  async (userData, { rejectWithValue }) => {
+    try {
+      const response = await fetch('/api/teachers/update-profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update user data');
+      }
+      const data = await response.json();
+      return data; // Returns the updated user data
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 const initialState = {
   education: '',
@@ -54,6 +78,7 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Cases for saveUser thunk
       .addCase(saveUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -63,6 +88,20 @@ const userSlice = createSlice({
         Object.assign(state, action.payload); // Update state with saved user data
       })
       .addCase(saveUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Cases for updateUser thunk
+      .addCase(updateUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.loading = false;
+        Object.assign(state, action.payload); // Update state with updated user data
+      })
+      .addCase(updateUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

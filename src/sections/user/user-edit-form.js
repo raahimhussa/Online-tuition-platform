@@ -8,21 +8,25 @@ import { MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import LoadingButton from '@mui/lab/LoadingButton';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
-import { useDispatch } from 'react-redux';
-import { saveUser } from 'src/app/store/slices/setupslice';
+import { useDispatch, useSelector } from 'react-redux';
+import { saveUser,updateUser } from 'src/app/store/slices/setupslice';
+import { fetchTeacherByUserId, selectTeacher } from 'src/app/store/slices/teacherslice'; // Updated imports
 import { useRouter } from 'src/routes/hooks';
 import { paths } from 'src/routes/paths';
 import { useSnackbar } from 'src/components/snackbar';
-
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function UserEditForm({ currentUser }) {
   const dispatch = useDispatch();
   const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
+  const teacherData = useSelector(selectTeacher);
+
   const [isBackLoading, setIsBackLoading] = useState(false);
   const [isNextLoading, setIsNextLoading] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
+  const [languages, setLanguages] = useState([]); // State to hold languages from backend
 
+  // Validation schema
   const NewUserSchema = Yup.object().shape({
     experience_years: Yup.number()
       .typeError('Experience years are required')
@@ -35,7 +39,7 @@ export default function UserEditForm({ currentUser }) {
     bio: Yup.string()
       .required('Bio is required')
       .max(500, 'Bio must not exceed 500 characters'),
-    teachingMode: Yup.string()
+    teaching_mode: Yup.string()
       .oneOf(['online', 'physical', 'hybrid'], 'Teaching mode must be online, physical, or hybrid')
       .required('Teaching mode is required'),
     languages: Yup.array()
@@ -43,45 +47,91 @@ export default function UserEditForm({ currentUser }) {
       .min(1, 'At least one language must be selected'),
   });
 
-  const defaultValues = useMemo(
-    () => ({
-      education: currentUser?.education || '',
-      experience_years: currentUser?.experience_years || '',
-      bio: currentUser?.bio || '',
-      teaching_mode: currentUser?.teaching_mode || 'online',
-      languages: currentUser?.languages || [],
-    }),
-    [currentUser]
-  );
-
-  const languagesOptions = ['English', 'Urdu', 'Spanish', 'French', 'German', 'Mandarin', 'Arabic', 'Russian', 'Japanese'];
-
   const methods = useForm({
     resolver: yupResolver(NewUserSchema),
-    defaultValues,
+    defaultValues: {
+      education: '',
+      experience_years: '',
+      bio: '',
+      teaching_mode: 'online',
+      languages: [],
+    },
   });
 
-  const { handleSubmit, control } = methods;
+  const { handleSubmit, control, reset } = methods;
+
+  // Fetch teacher data if not already available
+  useEffect(() => {
+    if (!currentUser) {
+      dispatch(fetchTeacherByUserId());
+    }
+  }, [dispatch, currentUser]);
+
+  // Populate form fields when teacherData becomes available
+  useEffect(() => {
+    if (teacherData) {
+      reset({
+        education: teacherData.education || '',
+        experience_years: teacherData.experience_years || '',
+        bio: teacherData.bio || '',
+        teaching_mode: teacherData.teaching_mode || 'online',
+        languages: teacherData.languages || [],
+      });
+    }
+  }, [teacherData, reset]);
+
+  // Fetch languages from API
+  useEffect(() => {
+    const fetchLanguages = async () => {
+      try {
+        const response = await fetch('/api/languages');
+        if (!response.ok) throw new Error('Failed to fetch languages');
+        
+        const data = await response.json();
+        setLanguages(data); // Set languages in state
+      } catch (error) {
+        console.error('Error fetching languages:', error);
+      }
+    };
+
+    fetchLanguages();
+  }, []);
 
   const onSubmit = (data) => {
-    console.log('Form Data:', data);
-    dispatch(saveUser(data));
-    alert('Form submitted successfully!');
+    // Map selected languages from names to their IDs
+    const languageIds = data.languages.map(
+      (languageName) => languages.find((lang) => lang.name === languageName)?.language_id
+    );
+
+    const submissionData = {
+      ...data,
+      languages: languageIds, // Replace language names with IDs
+    };
+
+    if (currentUser) {
+      // Update if currentUser data exists
+      dispatch(updateUser(submissionData));
+      enqueueSnackbar('User updated successfully!', { variant: 'success' });
+      router.push(paths.dashboard.one)
+    } else {
+      // Save new user if currentUser is empty
+      dispatch(saveUser(submissionData));
+      enqueueSnackbar('User saved successfully!', { variant: 'success' });
+    }
   };
 
-  const handleNextClick = handleSubmit(onSubmit);  // Directly use handleSubmit to submit the form
-  
+  const handleNextClick = handleSubmit(onSubmit);
+
   const handleBackClick = () => {
     setIsBackLoading(true);
     setTimeout(() => {
       router.push(paths.dashboard.user.new);
       setIsBackLoading(false);
-    }, 1000); 
+    }, 1000);
   };
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-      {/* First Card */}
       <Card sx={{ p: 3, mb: 3 }}>
         <Box
           display="grid"
@@ -107,27 +157,27 @@ export default function UserEditForm({ currentUser }) {
           </FormControl>
 
           <FormControl fullWidth>
-          <InputLabel>Languages</InputLabel>
-          <Controller
-            name="languages"
-            control={control}
-            render={({ field }) => (
-              <Select
-                {...field}
-                multiple
-                value={field.value || []}
-                onChange={(e) => field.onChange(e.target.value)}
-                label="Languages"
-              >
-                {languagesOptions.map((language) => (
-                  <MenuItem key={language} value={language}>
-                    {language}
-                  </MenuItem>
-                ))}
-              </Select>
-            )}
-          />
-        </FormControl>
+            <InputLabel>Languages</InputLabel>
+            <Controller
+              name="languages"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  multiple
+                  value={field.value || []}
+                  onChange={(e) => field.onChange(e.target.value)}
+                  label="Languages"
+                >
+                  {languages.map((language) => (
+                    <MenuItem key={language.language_id} value={language.name}>
+                      {language.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              )}
+            />
+          </FormControl>
         </Box>
       </Card>
 
@@ -145,7 +195,7 @@ export default function UserEditForm({ currentUser }) {
         </Stack>
         <Stack alignItems="flex-end" sx={{ mt: 2 }}>
           <LoadingButton type="submit" variant="contained" onClick={handleNextClick} loading={isNextLoading}>
-          {currentUser ? 'Update' : 'Next'}
+            {currentUser ? 'Update' : 'Save'}
           </LoadingButton>
         </Stack>
       </Box>
