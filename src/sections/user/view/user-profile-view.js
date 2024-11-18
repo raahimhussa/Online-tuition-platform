@@ -45,8 +45,8 @@ export default function UserProfileView() {
         heading="Profile"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'User', href: paths.dashboard.user.root },
-          { name: user?.displayName },
+          // { name: 'User', href: paths.dashboard.user.root },
+          // { name: user?.displayName },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
