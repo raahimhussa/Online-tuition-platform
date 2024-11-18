@@ -5,7 +5,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 export const fetchTeachers = createAsyncThunk('teachers/fetchTeachers', async () => {
   // eslint-disable-next-line no-useless-catch
   try {
-    const response = await fetch('http://localhost:3009/api/teachers/get-all-teachers/');
+    const response = await fetch('http://localhost:3035/api/teachers/get-all-teachers/');
     if (!response.ok) {
       throw new Error('Failed to fetch teachers');
     }
