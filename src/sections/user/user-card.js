@@ -67,7 +67,7 @@ export default function UserCard({ user }) {
       </Stack>
 
       <Typography variant="body1" sx={{ mt: 2, mb: 2 }}>
-        Hi, I am {name}. I have...
+        Hi, I am {name}. I have {experience} years of experience teaching {subjects.join(', ')} to students in grades{' '}
       </Typography>
 
       <Divider sx={{ my: 2 }} />
