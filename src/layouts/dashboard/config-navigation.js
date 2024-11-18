@@ -42,6 +42,7 @@ const ICONS = {
   ecommerce: icon('ic_ecommerce'),
   analytics: icon('ic_analytics'),
   dashboard: icon('ic_dashboard'),
+  
 };
 
 // ----------------------------------------------------------------------
@@ -87,8 +88,8 @@ export function useNavData() {
           {
             title: 'Devs',
             path: paths.dashboard.group.six,
-            icon: ICONS.analytics,
-            roles: ['teacher',],
+            icon: ICONS.ecommerce,
+            roles: ['teacher','student'],
           },
           {
             title: 'Teachers Cards',
