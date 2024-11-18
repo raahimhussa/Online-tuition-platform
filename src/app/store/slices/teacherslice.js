@@ -1,14 +1,22 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // Thunk for fetching teacher data
+// Thunk for fetching teacher data
 export const fetchTeachers = createAsyncThunk('teachers/fetchTeachers', async () => {
-  const response = await fetch('/api/teachers/get-all-teachers/');
-  console.log(response) // Adjust the API endpoint if needed
-  if (!response.ok) {
-    throw new Error('Failed to fetch teachers');
+  // eslint-disable-next-line no-useless-catch
+  try {
+    const response = await fetch('http://localhost:3009/api/teachers/get-all-teachers/');
+    if (!response.ok) {
+      throw new Error('Failed to fetch teachers');
+    }
+    const data = await response.json(); // The API response is an array of teacher objects
+    return data;
+  } catch (error) {
+    // If an error occurs, throw it to be caught in the rejected case of the thunk
+    throw error;
   }
-  return response.json(); // The API response is an array of teacher objects
 });
+
 
 // Teacher slice
 const teacherSlice = createSlice({
@@ -31,7 +39,7 @@ const teacherSlice = createSlice({
       })
       .addCase(fetchTeachers.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message; // Store any error message
+        state.error = action.error.message || 'Failed to fetch teachers'; // Store any error message
       });
   },
 });

@@ -19,7 +19,7 @@ import FormProvider, { RHFTextField, RHFUploadAvatar, RHFSelect } from 'src/comp
 import { useRouter } from 'src/routes/hooks';
 import { fData } from 'src/utils/format-number';
 import { paths } from 'src/routes/paths';
-import { getUserById, saveUser } from '../../app/store/slices/usersliice';
+import { getUserById, saveUser } from '../../app/store/slices/userslice';
 import { fetchCities, selectCities } from '../../app/store/slices/citySlice'; 
 
 

@@ -64,17 +64,17 @@ export default function ProfileHome({ info, posts }) {
       {sectionTitle(<InfoIcon />, 'Overview')}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
       <Chip
-        label={`ID: ${info.id || 'Not Available'}`}
+        label={`ID: ${info.teacher_id || 'Not Available'}`}
         sx={chipStyle(theme.palette.primary.main)}
       />
       <Chip
         label={`Gender: ${info.gender || 'Not Specified'}`}
         sx={chipStyle(theme.palette.primary.main)}
       />
-      <Chip
+      {/* <Chip
         label={`Age: ${info.age || 'Not Specified'}`}
         sx={chipStyle(theme.palette.primary.main)}
-      />
+      /> */}
         <Chip
           label={`Experience: ${info.experience_years} years`}
           sx={chipStyle(theme.palette.primary.main)}
@@ -195,11 +195,11 @@ export default function ProfileHome({ info, posts }) {
       <Grid xs={12}>
         <Card sx={{ p: 3, boxShadow: 2, borderRadius: '16px' }}>
           <CardHeader title="Posts" />
-          <Stack spacing={3}>
+          {/* <Stack spacing={3}>
             {posts.map((post) => (
               <ProfilePostItem key={post.id} post={post} />
             ))}
-          </Stack>
+          </Stack> */}
         </Card>
       </Grid>
     </Grid>
@@ -210,12 +210,14 @@ ProfileHome.propTypes = {
   info: PropTypes.shape({
     bio: PropTypes.string,
     experience_years: PropTypes.number,
-    id: PropTypes.string,
+    teacher_id: PropTypes.string,
     gender: PropTypes.string,
     age: PropTypes.number,
     education: PropTypes.string,
+    name :  PropTypes.string,
     is_verified: PropTypes.bool,
     rating: PropTypes.number,
+    area :PropTypes.string,
     hourly_rate: PropTypes.string,
     duration_per_session: PropTypes.number,
     teaching_mode: PropTypes.string,
