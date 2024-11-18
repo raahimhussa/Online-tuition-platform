@@ -63,6 +63,7 @@ export default function UserProfileView() {
           role={_userAbout.role}
           name={user?.displayName}
           avatarUrl={user?.photoURL}
+          
           coverUrl={_userAbout.coverUrl}
           city_name={_userAbout.city_name}
           email={_userAbout.email}
