@@ -234,10 +234,10 @@ export async function addTeacherLanguages(teacherId, languageId) {
 }
 // very important function
 export const getTeacherIdByUserId = async (userId) => {
-  const query = 'SELECT teacher_id FROM teachers WHERE user_id = $1';
+  const text = 'SELECT teacher_id FROM teachers WHERE user_id = $1';
   const values = [userId];
 
-  const result = await query(query, values);
+  const result = await query(text, values);
 
   // Check if a teacher exists for the provided user ID
   if (result.rows.length > 0) {
@@ -265,46 +265,54 @@ export const getTeacherByUserId = async (userId) => {
     throw new Error('Failed to fetch teacher details'); // More generic error message
   }
 };
+export async function clearTeacherAvailability(teacher_id) {
+  const text = `
+      DELETE FROM teacher_availability
+      WHERE teacher_id = $1
+  `;
+  const values = [teacher_id];
+  await query(text, values);
+}
 
 // save teacher availability information
 export const saveTeacherAvailability = async ({ teacher_id, day, start_time, end_time }) => {
-  const query = `
+  const text = `
         INSERT INTO teacher_availability (teacher_id, day, start_time, end_time)
         VALUES ($1, $2, $3, $4)
     `;
   const values = [teacher_id, day, start_time, end_time];
 
-  await query(query, values);
+  await query(text, values);
 };
 export const getTeacherAvailabilityByTeacherId = async (teacher_id) => {
-  const query = `
+  const text = `
         SELECT day, start_time, end_time
         FROM teacher_availability
         WHERE teacher_id = $1
     `;
   const values = [teacher_id];
 
-  const { rows } = await query(query, values);
+  const { rows } = await query(text, values);
   return rows;
 };
 export const updateTeacherAvailability = async ({ availability_id, start_time, end_time }) => {
-  const query = `
+  const text = `
         UPDATE teacher_availability
         SET start_time = $1, end_time = $2
         WHERE availability_id = $3
     `;
   const values = [start_time, end_time, availability_id];
 
-  await query(query, values);
+  await query(text, values);
 };
 export const deleteTeacherAvailability = async (availability_id) => {
-  const query = `
+  const text = `
         DELETE FROM teacher_availability
         WHERE availability_id = $1
     `;
   const values = [availability_id];
 
-  await query(query, values);
+  await query(text, values);
 };
 export async function clearTeacherLanguages(teacherId) {
   const text = `

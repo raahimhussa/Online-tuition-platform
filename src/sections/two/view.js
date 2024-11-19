@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -21,8 +21,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useSettingsContext } from 'src/components/settings';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
-import { useDispatch, useSelector } from 'react-redux'; 
-import { saveAvailability } from 'src/app/store/slices/availabilityslice';
+import { useDispatch, useSelector } from 'react-redux';
+import { saveAvailability, updateAvailability, getAvailability } from 'src/app/store/slices/availabilityslice';
 
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const times = [
@@ -69,10 +69,11 @@ export default function AvailabilityView() {
   const router = useRouter();
   const settings = useSettingsContext();
   const dispatch = useDispatch();
-  const availability = useSelector((state) => state.availability);
+  const availabilityState = useSelector((state) => state.availability);
 
   const [isBackLoading, setIsBackLoading] = useState(false);
   const [isNextLoading, setIsNextLoading] = useState(false);
+  const [isFormPopulated, setIsFormPopulated] = useState(false);
 
   const { control, handleSubmit, formState: { errors }, setValue, getValues } = useForm({
     resolver: yupResolver(validationSchema),
@@ -87,22 +88,48 @@ export default function AvailabilityView() {
     },
   });
 
-  const onSubmit = (data) => {
-    console.log('Submitted Data:', data);
-    setIsNextLoading(true);
-    dispatch(saveAvailability(data));
-    setTimeout(() => {
-      setIsNextLoading(false);
-      router.push(paths.dashboard.three);
-    }, 1000);
-  };
+  useEffect(() => {
+    // Fetch availability data on load
+    dispatch(getAvailability())
+      .unwrap()
+      .then((data) => {
+        if (data) {
+          // Populate form fields with fetched data
+          Object.entries(data).forEach(([day, dayData]) => {
+            setValue(`availability.${day}.checked`, dayData.checked);
+            setValue(`availability.${day}.slots`, dayData.slots);
+          });
+          setIsFormPopulated(true); // Set form populated if data exists
+        }
+      });
+  }, [dispatch, setValue]);
 
   const handleBackClick = () => {
     setIsBackLoading(true);
     setTimeout(() => {
       router.push(paths.dashboard.one);
       setIsBackLoading(false);
-    }, 1000); 
+    }, 1000);
+  };
+
+  const onSubmit = async (data) => {
+    console.log('Submitted Data:', data);
+    setIsNextLoading(true);
+
+    try {
+      if (isFormPopulated) {
+        await dispatch(updateAvailability(data)).unwrap();
+        console.log('Availability updated successfully');
+      } else {
+        await dispatch(saveAvailability(data)).unwrap();
+        console.log('Availability saved successfully');
+      }
+      router.push(paths.dashboard.three);
+    } catch (error) {
+      console.error('Error submitting availability:', error);
+    } finally {
+      setIsNextLoading(false);
+    }
   };
 
   const addSlot = (day) => {
@@ -249,12 +276,11 @@ export default function AvailabilityView() {
           </Grid>
         </Grid>
         <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
-  
           <LoadingButton type="button" loading={isBackLoading} onClick={handleBackClick} variant="contained" color="inherit">
             Back
           </LoadingButton>
           <LoadingButton type="submit" variant="contained" loading={isNextLoading}>
-            Next
+            {isFormPopulated ? 'Update' : 'Next'}
           </LoadingButton>
         </Box>
       </form>

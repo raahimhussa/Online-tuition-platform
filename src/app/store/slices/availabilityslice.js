@@ -1,16 +1,47 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
 
+// Get availability data (API call to retrieve data)
+export const getAvailability = createAsyncThunk(
+  'availability/getAvailability',
+  async (teacherId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`/api/teachers/get-teacher-availability`, {
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` }, // Adjust token storage as needed
+      });
+      return response.data; // Return retrieved availability data
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+// Save new availability data (API call to save data)
 export const saveAvailability = createAsyncThunk(
   'availability/saveAvailability',
   async (availabilityData, { rejectWithValue }) => {
     try {
-      // Simulate API call to save availability data
-      const response = await new Promise((resolve) =>
-        setTimeout(() => resolve(availabilityData), 500)
-      );
-      return response;
+      const response = await axios.post('/api/teachers/save-teacher-availability', availabilityData, {
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` }, // Adjust token storage as needed
+      });
+      return response.data; // Return saved availability data
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+// Update existing availability data (API call to update data)
+export const updateAvailability = createAsyncThunk(
+  'availability/updateAvailability',
+  async (availabilityData, { rejectWithValue }) => {
+    try {
+      const response = await axios.put('/api/teachers/update-teacher-availability', availabilityData, {
+        headers: { Authorization: `Bearer ${sessionStorage.getItem('accessToken')}` }, // Adjust token storage as needed
+      });
+      return response.data; // Return updated availability data
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
     }
   }
 );
@@ -50,6 +81,18 @@ const availabilitySlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(getAvailability.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAvailability.fulfilled, (state, action) => {
+        state.loading = false;
+        state.availability = action.payload;
+      })
+      .addCase(getAvailability.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
       .addCase(saveAvailability.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -59,6 +102,18 @@ const availabilitySlice = createSlice({
         state.availability = action.payload;
       })
       .addCase(saveAvailability.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateAvailability.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateAvailability.fulfilled, (state, action) => {
+        state.loading = false;
+        state.availability = action.payload;
+      })
+      .addCase(updateAvailability.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
