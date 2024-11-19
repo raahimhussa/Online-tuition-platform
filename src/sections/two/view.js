@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -80,8 +79,8 @@ export default function AvailabilityView() {
     defaultValues: {
       availability: days.reduce((acc, day) => {
         acc[day] = {
-          checked: true,
-          slots: [{ start: '09:00 AM', end: '05:00 PM' }],
+          checked: false,
+          slots: [],
         };
         return acc;
       }, {}),
@@ -89,17 +88,28 @@ export default function AvailabilityView() {
   });
 
   useEffect(() => {
-    // Fetch availability data on load
     dispatch(getAvailability())
       .unwrap()
       .then((data) => {
         if (data) {
-          // Populate form fields with fetched data
-          Object.entries(data).forEach(([day, dayData]) => {
-            setValue(`availability.${day}.checked`, dayData.checked);
-            setValue(`availability.${day}.slots`, dayData.slots);
+          // Transform API response into the required form format
+          const availabilityData = days.reduce((acc, day) => {
+            const daySlots = data.filter((slot) => slot.day === day);
+            acc[day] = {
+              checked: daySlots.length > 0, // Set `checked` to true if slots exist
+              slots: daySlots.map((slot) => ({
+                start: new Date(`1970-01-01T${slot.start_time}`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                end: new Date(`1970-01-01T${slot.end_time}`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+              })),
+            };
+            return acc;
+          }, {});
+
+          days.forEach((day) => {
+            setValue(`availability.${day}.checked`, availabilityData[day].checked);
+            setValue(`availability.${day}.slots`, availabilityData[day].slots);
           });
-          setIsFormPopulated(true); // Set form populated if data exists
+          setIsFormPopulated(true);
         }
       });
   }, [dispatch, setValue]);
@@ -113,16 +123,13 @@ export default function AvailabilityView() {
   };
 
   const onSubmit = async (data) => {
-    console.log('Submitted Data:', data);
     setIsNextLoading(true);
 
     try {
       if (isFormPopulated) {
         await dispatch(updateAvailability(data)).unwrap();
-        console.log('Availability updated successfully');
       } else {
         await dispatch(saveAvailability(data)).unwrap();
-        console.log('Availability saved successfully');
       }
       router.push(paths.dashboard.three);
     } catch (error) {
