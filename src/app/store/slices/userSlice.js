@@ -92,7 +92,7 @@ const initialState = {
   cityId: '',
   region: '',
   dob: '',
-  avatarUrl: null,
+  profile_picture: '',
   status: 'active',
 };
 
@@ -110,7 +110,7 @@ const userSlice = createSlice({
     setCityId: (state, action) => { state.cityId = action.payload; },
     setRegion: (state, action) => { state.region = action.payload; },
     setDob: (state, action) => { state.dob = action.payload; },
-    setAvatarUrl: (state, action) => { state.avatarUrl = action.payload; },
+    setprofile_picture: (state, action) => { state.profile_picture = action.payload; },
     setStatus: (state, action) => { state.status = action.payload; },
   },
   extraReducers: (builder) => {
@@ -161,7 +161,7 @@ export const {
   setCityId,
   setRegion,
   setDob,
-  setAvatarUrl,
+  setprofile_picture,
   setStatus,
 } = userSlice.actions;
 

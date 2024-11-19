@@ -18,6 +18,7 @@ import Label from 'src/components/label';
 
 export default function NavUpgrade() {
   const{user}=useAuthContext();
+  console.log(user)
 
   return (
     <Stack
@@ -29,7 +30,7 @@ export default function NavUpgrade() {
     >
       <Stack alignItems="center">
         <Box sx={{ position: 'relative' }}>
-          <Avatar src={user?.photoURL} alt={user?.displayName} sx={{ width: 48, height: 48 }} />
+          <Avatar src={user?.profile_picture} alt={user?.name} sx={{ width: 48, height: 48 }} />
           {/* <Label
             color="success"
             variant="filled"
@@ -48,7 +49,7 @@ export default function NavUpgrade() {
 
         <Stack spacing={0.5} sx={{ mt: 1.5, mb: 2 }}>
           <Typography variant="subtitle2" noWrap>
-            {user?.displayName}
+            {user?.name}
           </Typography>
 
           <Typography variant="body2" noWrap sx={{ color: 'text.disabled' }}>

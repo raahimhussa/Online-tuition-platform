@@ -21,7 +21,7 @@ export default function UserCard({ user }) {
     name,
     experience,
     students,
-    avatarUrl,
+    profile_picture,
     languages = [],
     grades = [],
     subjects = [],
@@ -42,7 +42,9 @@ export default function UserCard({ user }) {
       <Stack direction="row" alignItems="center" spacing={2}>
         <Avatar
           alt={name}
-          src={avatarUrl}
+          src={profile_picture
+      
+          }
           sx={{
             width: 64,
             height: 64,
@@ -121,7 +123,7 @@ UserCard.propTypes = {
     name: PropTypes.string.isRequired,
     experience: PropTypes.string.isRequired,
     students: PropTypes.number.isRequired,
-    avatarUrl: PropTypes.string.isRequired,
+    profile_picture: PropTypes.string.isRequired,
     bio: PropTypes.string.isRequired,
   
     languages: PropTypes.arrayOf(PropTypes.string),

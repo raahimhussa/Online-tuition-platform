@@ -21,6 +21,7 @@ import { fData } from 'src/utils/format-number';
 import { paths } from 'src/routes/paths';
 import { getUserById, saveUser } from '../../app/store/slices/userslice';
 import { fetchCities, selectCities } from '../../app/store/slices/citySlice'; 
+import  {uploadImageToCloudinary} from '../../../src/utils/uploadImage';
 
 
 export default function UserNewEditForm({ userId }) {
@@ -49,7 +50,7 @@ export default function UserNewEditForm({ userId }) {
       .typeError('Must be a valid date')
       .max(new Date(), 'Date of birth cannot be in the future'),
     area: Yup.string().required('Area code is required'),
-    avatarUrl: Yup.mixed().nullable(),
+    profile_picture: Yup.mixed().nullable(),
     isVerified: Yup.boolean(),
   });
 
@@ -83,7 +84,7 @@ export default function UserNewEditForm({ userId }) {
         dob: currentUser.dob ? currentUser.dob.split('T')[0] : '',
         area: currentUser.area || '',
         city: currentUser.city_id || '', // Adjust if you're fetching city names separately // Adjust according to your backend data
-        avatarUrl: currentUser.avatarUrl || null,
+        profile_picture: currentUser.profile_picture || null,
         isVerified: currentUser.isVerified || true,
       });
       setSelectedCity(currentUser.city_id || '');
@@ -111,7 +112,7 @@ export default function UserNewEditForm({ userId }) {
         city_id: data.city, // Ensure this matches your backend's expected field name
         area: data.area,
         dob: data.dob,
-        avatarUrl: data.avatarUrl, // If needed, map this to the expected field
+        profile_picture: data.profile_picture, // If needed, map this to the expected field
       };
       console.log('printing payload:',payload)
   
@@ -126,18 +127,31 @@ export default function UserNewEditForm({ userId }) {
     }
   };
 
-  const handleDrop = useCallback(
-    (acceptedFiles) => {
-      const file = acceptedFiles[0];
-      const newFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      });
-      if (file) {
-        setValue('avatarUrl', newFile, { shouldValidate: true });
+// Modify the handleDrop function
+const handleDrop = useCallback(
+  async (acceptedFiles) => {
+    const file = acceptedFiles[0];
+    if (file) {
+      try {
+        const previewUrl = URL.createObjectURL(file);
+        
+        // Set the preview in the form (for displaying locally before upload)
+        setValue('profile_picture', previewUrl, { shouldValidate: true });
+        // Upload image to Cloudinary
+        const cloudinaryUrl = await uploadImageToCloudinary(file);
+        console.log('Cloudinary URL received:', cloudinaryUrl); // Debug: Verify URL from Cloudinary
+
+        // Set Cloudinary URL in form
+        setValue('profile_picture', cloudinaryUrl, { shouldValidate: true });
+        console.log('Form state avatarUrl set to:', cloudinaryUrl); // Debug: Verify URL assignment
+      } catch (error) {
+        console.error('Error uploading to Cloudinary:', error);
+        enqueueSnackbar('Failed to upload image', { variant: 'error' });
       }
-    },
-    [setValue]
-  );
+    }
+  },
+  [setValue, enqueueSnackbar]
+);
 
   const handleNextClick = () => {
     const formValues = methods.getValues();
@@ -167,8 +181,9 @@ export default function UserNewEditForm({ userId }) {
           <Card sx={{ pt: 10, pb: 5, px: 3 }}>
             <Box sx={{ mb: 5 }}>
               <RHFUploadAvatar
-                name="avatarUrl"
+                name="profile_picture"
                 maxSize={3145728}
+                value={methods.watch('profile_picture')}
                 onDrop={handleDrop}
                 helperText={
                   <Typography

@@ -37,6 +37,7 @@ export async function POST(req) {
                 id: user.user_id,
                 email: user.email,
                 name: user.name,
+                profile_picture: user.profile_picture,
                 role: user.role,  // Role of the user (teacher, student, admin)
             }
         }), {

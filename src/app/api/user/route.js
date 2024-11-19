@@ -40,6 +40,7 @@ export async function GET(req) {
             created_at: user.created_at,
             updated_at: user.updated_at,
             dob: user.dob,
+            profile_picture:user.profile_picture,
         };
 
         // Return the filtered user data
