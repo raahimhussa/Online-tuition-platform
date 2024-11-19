@@ -30,7 +30,7 @@ export const updateUser = createAsyncThunk(
   'user/updateUser',
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await fetch('/api/teachers/update-profile', {
+      const response = await fetch('/api/teachers/update-teacher-profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

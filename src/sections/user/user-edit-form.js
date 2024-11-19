@@ -9,8 +9,8 @@ import Stack from '@mui/material/Stack';
 import LoadingButton from '@mui/lab/LoadingButton';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
 import { useDispatch, useSelector } from 'react-redux';
-import { saveUser } from 'src/app/store/slices/setupslice';
-import { fetchTeacherByUserId, selectTeacher } from 'src/app/store/slices/teacherslice'; // Updated imports
+import { saveUser, updateUser } from 'src/app/store/slices/setupslice';
+import { fetchTeacherByUserId, selectTeacher } from 'src/app/store/slices/teacherslice';
 import { useRouter } from 'src/routes/hooks';
 import { paths } from 'src/routes/paths';
 import { useSnackbar } from 'src/components/snackbar';
@@ -20,14 +20,11 @@ export default function UserEditForm({ currentUser }) {
   const dispatch = useDispatch();
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
-  const teacherData = useSelector(selectTeacher); // Get teacher data from Redux
-
+  const teacherData = useSelector(selectTeacher); 
   const [isBackLoading, setIsBackLoading] = useState(false);
   const [isNextLoading, setIsNextLoading] = useState(false);
-  const [languages, setLanguages] = useState([]); // State to hold languages from backend
+  const [languages, setLanguages] = useState([]);
 
-
-  // Validation schema
   const NewUserSchema = Yup.object().shape({
     experience_years: Yup.number()
       .typeError('Experience years are required')
@@ -62,14 +59,13 @@ export default function UserEditForm({ currentUser }) {
   const { handleSubmit, control, reset } = methods;
 
   useEffect(() => {
-    // Fetch teacher data if not already available
     if (!currentUser) {
       dispatch(fetchTeacherByUserId());
+      console.log('mycurrent', currentUser);
     }
   }, [dispatch, currentUser]);
 
   useEffect(() => {
-    // Populate form fields when teacherData becomes available
     if (teacherData) {
       reset({
         education: teacherData.education || '',
@@ -80,39 +76,50 @@ export default function UserEditForm({ currentUser }) {
       });
     }
   }, [teacherData, reset]);
-  // Fetch languages from API
+
   useEffect(() => {
     const fetchLanguages = async () => {
       try {
         const response = await fetch('/api/languages');
         if (!response.ok) throw new Error('Failed to fetch languages');
-        
         const data = await response.json();
-        setLanguages(data); // Set languages in state
+        setLanguages(data);
       } catch (error) {
         console.error('Error fetching languages:', error);
       }
     };
-
     fetchLanguages();
   }, []);
 
-  const onSubmit = (data) => {
-    // Map selected languages from names to their IDs
+  const handleSaveOrUpdate = async (data, action) => {
+    setIsNextLoading(true);
     const languageIds = data.languages.map(
       (languageName) => languages.find((lang) => lang.name === languageName)?.language_id
     );
-
     const submissionData = {
       ...data,
-      languages: languageIds, // Replace language names with IDs
+      languages: languageIds,
     };
 
-    dispatch(saveUser(submissionData));
-    enqueueSnackbar('Form submitted successfully!', { variant: 'success' });
+    try {
+      if (action === 'update') {
+        await dispatch(updateUser(submissionData)).unwrap();
+        enqueueSnackbar('Profile updated successfully!', { variant: 'success' });
+
+      } else {
+        await dispatch(saveUser(submissionData)).unwrap();
+        enqueueSnackbar('Profile created successfully!', { variant: 'success' });
+      }
+      router.push(paths.dashboard.one);
+    } catch (error) {
+      enqueueSnackbar('Failed to submit form', { variant: 'error' });
+    } finally {
+      setIsNextLoading(false);
+    }
   };
 
-  const handleNextClick = handleSubmit(onSubmit);
+  const handleNextClick = handleSubmit((data) => handleSaveOrUpdate(data, 'save'));
+  const handleUpdateClick = handleSubmit((data) => handleSaveOrUpdate(data, 'update'));
 
   const handleBackClick = () => {
     setIsBackLoading(true);
@@ -122,9 +129,10 @@ export default function UserEditForm({ currentUser }) {
     }, 1000);
   };
 
+  const isFormPopulated = teacherData && Object.values(teacherData).some(field => field !== '' && field !== null);
+
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-      {/* First Card */}
+    <FormProvider methods={methods} onSubmit={handleSubmit(handleNextClick)}>
       <Card sx={{ p: 3, mb: 3 }}>
         <Box
           display="grid"
@@ -143,7 +151,7 @@ export default function UserEditForm({ currentUser }) {
                 <Select {...field} label="Teaching Mode">
                   <MenuItem value="online">Online</MenuItem>
                   <MenuItem value="physical">Physical</MenuItem>
-                  <MenuItem value="hybrid">Hybrid</MenuItem>
+                  <MenuItem value="both">Both</MenuItem>
                 </Select>
               )}
             />
@@ -187,8 +195,13 @@ export default function UserEditForm({ currentUser }) {
           </LoadingButton>
         </Stack>
         <Stack alignItems="flex-end" sx={{ mt: 2 }}>
-          <LoadingButton type="submit" variant="contained" onClick={handleNextClick} loading={isNextLoading}>
-            {currentUser ? 'Update' : 'Next'}
+          <LoadingButton
+            type="submit"
+            variant="contained"
+            onClick={isFormPopulated ? handleUpdateClick : handleNextClick}k={handleNextClick}
+            loading={isNextLoading}
+          >
+            {isFormPopulated ? 'Update' : 'Next'}
           </LoadingButton>
         </Stack>
       </Box>

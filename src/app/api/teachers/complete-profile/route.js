@@ -62,17 +62,17 @@ export async function POST(req) {
 
         // Handle multiple grade levels
         // eslint-disable-next-line no-restricted-syntax
-        for (const gradeLevelId of grade_levels) {
-            // eslint-disable-next-line no-await-in-loop
-            await addTeacherGradeLevels(newTeacherProfile.teacher_id, gradeLevelId);
-        }
+        // for (const gradeLevelId of grade_levels) {
+        //     // eslint-disable-next-line no-await-in-loop
+        //     await addTeacherGradeLevels(newTeacherProfile.teacher_id, gradeLevelId);
+        // }
 
-        // Handle multiple subjects
-        // eslint-disable-next-line no-restricted-syntax
-        for (const subjectId of subjects) {
-            // eslint-disable-next-line no-await-in-loop
-            await addTeacherSubjects(newTeacherProfile.teacher_id, subjectId);
-        }
+        // // Handle multiple subjects
+        // // eslint-disable-next-line no-restricted-syntax
+        // for (const subjectId of subjects) {
+        //     // eslint-disable-next-line no-await-in-loop
+        //     await addTeacherSubjects(newTeacherProfile.teacher_id, subjectId);
+        // }
 
         return new Response(JSON.stringify({
             message: 'Teacher profile created successfully',
