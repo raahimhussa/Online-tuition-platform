@@ -19,13 +19,13 @@ export default function UserCard({ user }) {
 
   const {
     name,
-    experience,
     students,
+    experience_years:experience,
     profile_picture,
     languages = [],
-    grades = [],
+    grade_levels: grades = [],
     subjects = [],
-    price,
+    hourly_rate: price,
     bio,
   } = user;
 
