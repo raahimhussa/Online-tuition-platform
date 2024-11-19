@@ -49,9 +49,9 @@ const subjects = [
 
 // Yup validation schema
 const validationSchema = Yup.object({
-  subject: Yup.string().required('Subject is required'),
-  domain: Yup.string().required('Domain is required'),
-  subLevel: Yup.string().required('Sublevel is required'),
+  subject: Yup.array().min(1, 'At least one subject is required').required('Subject is required'),
+  domain: Yup.array().min(1, 'At least one domain is required').required('Domain is required'),
+  subLevel: Yup.array().min(1, 'At least one sublevel is required').required('Sublevel is required'),
   duration: Yup.string().required('Duration is required'),
   fees: Yup.number()
     .required('Fees are required')
@@ -66,7 +66,7 @@ const validationSchema = Yup.object({
 
 export default function Service(currentUser) {
   const router = useRouter();
-  const [selectedDomain, setSelectedDomain] = useState('');
+  const [selectedDomain, setSelectedDomain] = useState([]);
   const [selectedSubLevel, setSelectedSubLevel] = useState('');
   const [errorBar, setErrorBar] = useState(false);
     const [isBackLoading, setIsBackLoading] = useState(false);
@@ -79,9 +79,9 @@ export default function Service(currentUser) {
   const methods = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      subject: '',
-      domain: '',
-      subLevel: '',
+      subject: [],
+      domain: [],
+      subLevel: [],
       duration: '',
       fees: '',
       discount: '',
@@ -109,14 +109,14 @@ const onSubmit = (data) => {
 
   // Handle domain selection
   const handleDomainSelect = (e) => {
-    const selectedDomainValue = e.target.value;
-    const selectedDomainObj = domains.find((domainObj) => domainObj.domain === selectedDomainValue);
+    const selectedDomainValue = Array.isArray(e.target.value) ? e.target.value : [e.target.value];
+    const selectedSubLevels = selectedDomainValue.flatMap((domain) =>
+      domains.find((domainObj) => domainObj.domain === domain)?.subLevels || []
+    );
     setSelectedDomain(selectedDomainValue);
-    setSelectedSubLevel('');
+    setSelectedSubLevel([]);
     setValue('domain', selectedDomainValue);
-    if (!selectedDomainObj) {
-      setErrorBar(true);
-    }
+    setValue('subLevel', []);
   };
 
   const handleNextClick = () => {
@@ -146,17 +146,14 @@ const onSubmit = (data) => {
                     Choose Subject, Domain, and Grade Level
                   </Typography>
 
-            
-
                   {/* Dropdown for Subject */}
                   <FormControl fullWidth sx={{ mb: 5 }} error={Boolean(errors.subject)}>
-  <InputLabel id="subject-label">Choose Subject</InputLabel>
+  <InputLabel id="subject-label">Choose Subject(s)</InputLabel>
   <Controller
     name="subject"
     control={control}
     render={({ field }) => (
-      <Select labelId="subject-label" label="Choose Subject" {...field}>
-        {/* Map through the subjects array */}
+      <Select labelId="subject-label" label="Choose Subject(s)" multiple {...field}>
         {subjects.map((subject) => (
           <MenuItem key={subject} value={subject}>
             {subject}
@@ -179,7 +176,9 @@ const onSubmit = (data) => {
                       render={({ field }) => (
                         <Select
                           labelId="domain-label"
-                          label="Choose Domain"
+                          label="Choose Domain(s)"
+                          multiple
+                          value={selectedDomain}
                           {...field}
                           onChange={(e) => {
                             field.onChange(e);
@@ -208,13 +207,22 @@ const onSubmit = (data) => {
                       render={({ field }) => (
                         <Select
                           labelId="sublevel-label"
-                          label="Choose Sublevel"
+                          label="Choose Sublevel(s)"
+                          multiple
                           {...field}
-                          disabled={!selectedDomain}
+                          value={field.value || selectedSubLevel}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            field.onChange(value);
+                            setSelectedSubLevel(value);
+                          }}
+                          disabled={!selectedDomain.length}
                         >
-                          {domains
-                            .find((domainObj) => domainObj.domain === selectedDomain)
-                            ?.subLevels.map((subLevel) => (
+                          {selectedDomain
+                            .flatMap((domain) =>
+                              domains.find((domainObj) => domainObj.domain === domain)?.subLevels || []
+                            )
+                            .map((subLevel) => (
                               <MenuItem key={subLevel} value={subLevel}>
                                 {subLevel}
                               </MenuItem>
