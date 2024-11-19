@@ -9,7 +9,7 @@ import Stack from '@mui/material/Stack';
 import LoadingButton from '@mui/lab/LoadingButton';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
 import { useDispatch, useSelector } from 'react-redux';
-import { saveUser,updateUser } from 'src/app/store/slices/setupslice';
+import { saveUser } from 'src/app/store/slices/setupslice';
 import { fetchTeacherByUserId, selectTeacher } from 'src/app/store/slices/teacherslice'; // Updated imports
 import { useRouter } from 'src/routes/hooks';
 import { paths } from 'src/routes/paths';
@@ -20,11 +20,12 @@ export default function UserEditForm({ currentUser }) {
   const dispatch = useDispatch();
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
-  const teacherData = useSelector(selectTeacher);
+  const teacherData = useSelector(selectTeacher); // Get teacher data from Redux
 
   const [isBackLoading, setIsBackLoading] = useState(false);
   const [isNextLoading, setIsNextLoading] = useState(false);
   const [languages, setLanguages] = useState([]); // State to hold languages from backend
+
 
   // Validation schema
   const NewUserSchema = Yup.object().shape({
@@ -60,15 +61,15 @@ export default function UserEditForm({ currentUser }) {
 
   const { handleSubmit, control, reset } = methods;
 
-  // Fetch teacher data if not already available
   useEffect(() => {
+    // Fetch teacher data if not already available
     if (!currentUser) {
       dispatch(fetchTeacherByUserId());
     }
   }, [dispatch, currentUser]);
 
-  // Populate form fields when teacherData becomes available
   useEffect(() => {
+    // Populate form fields when teacherData becomes available
     if (teacherData) {
       reset({
         education: teacherData.education || '',
@@ -79,7 +80,6 @@ export default function UserEditForm({ currentUser }) {
       });
     }
   }, [teacherData, reset]);
-
   // Fetch languages from API
   useEffect(() => {
     const fetchLanguages = async () => {
@@ -108,16 +108,8 @@ export default function UserEditForm({ currentUser }) {
       languages: languageIds, // Replace language names with IDs
     };
 
-    if (currentUser) {
-      // Update if currentUser data exists
-      dispatch(updateUser(submissionData));
-      enqueueSnackbar('User updated successfully!', { variant: 'success' });
-      router.push(paths.dashboard.one)
-    } else {
-      // Save new user if currentUser is empty
-      dispatch(saveUser(submissionData));
-      enqueueSnackbar('User saved successfully!', { variant: 'success' });
-    }
+    dispatch(saveUser(submissionData));
+    enqueueSnackbar('Form submitted successfully!', { variant: 'success' });
   };
 
   const handleNextClick = handleSubmit(onSubmit);
@@ -132,6 +124,7 @@ export default function UserEditForm({ currentUser }) {
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+      {/* First Card */}
       <Card sx={{ p: 3, mb: 3 }}>
         <Box
           display="grid"
@@ -195,7 +188,7 @@ export default function UserEditForm({ currentUser }) {
         </Stack>
         <Stack alignItems="flex-end" sx={{ mt: 2 }}>
           <LoadingButton type="submit" variant="contained" onClick={handleNextClick} loading={isNextLoading}>
-            {currentUser ? 'Update' : 'Save'}
+            {currentUser ? 'Update' : 'Next'}
           </LoadingButton>
         </Stack>
       </Box>

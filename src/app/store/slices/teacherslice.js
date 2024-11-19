@@ -29,7 +29,7 @@ export const fetchTeacherByUserId = createAsyncThunk('teachers/fetchTeacherByUse
     const response = await fetch(`/api/teachers/setup-profile`, {
       method: 'GET',
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
     });

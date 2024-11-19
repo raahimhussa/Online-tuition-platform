@@ -26,6 +26,7 @@ export default function UserCard({ user }) {
     grades = [],
     subjects = [],
     price,
+    bio,
   } = user;
 
   // Function to handle navigation to profile page
@@ -67,7 +68,7 @@ export default function UserCard({ user }) {
       </Stack>
 
       <Typography variant="body1" sx={{ mt: 2, mb: 2 }}>
-        Hi, I am {name}. I have {experience} years of experience teaching {subjects.join(', ')} to students in grades{' '}
+        {bio}
       </Typography>
 
       <Divider sx={{ my: 2 }} />
@@ -121,6 +122,8 @@ UserCard.propTypes = {
     experience: PropTypes.string.isRequired,
     students: PropTypes.number.isRequired,
     avatarUrl: PropTypes.string.isRequired,
+    bio: PropTypes.string.isRequired,
+  
     languages: PropTypes.arrayOf(PropTypes.string),
     grades: PropTypes.arrayOf(PropTypes.string),
     subjects: PropTypes.arrayOf(PropTypes.string),
