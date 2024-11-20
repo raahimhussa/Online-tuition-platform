@@ -10,7 +10,7 @@ export async function hashPassword(password) {
 
 // Compare plain password with hashed password
 export async function verifyPassword(plainPassword, hashedPassword) {
-    return await bcrypt.compare(plainPassword, hashedPassword);
+    return bcrypt.compare(plainPassword, hashedPassword); // Removed redundant 'await'
 }
 
 // Generate JWT token

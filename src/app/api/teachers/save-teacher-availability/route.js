@@ -1,4 +1,3 @@
-// src/app/api/teachers/availability/route.js
 import { verifyToken } from '../../../../lib/auth';
 import { saveTeacherAvailability, getTeacherIdByUserId } from '../../../../lib/teacherService';
 
@@ -15,23 +14,29 @@ export async function POST(req) {
         }
 
         const { availability } = await req.json();
-
-        // Get the teacher_id from the user ID
         const teacherId = await getTeacherIdByUserId(userId.id);
 
-        // Insert new availability based on request data
-        for (const [day, { checked, slots }] of Object.entries(availability)) {
+        // Create an array to hold all the save operations
+        const availabilityPromises = [];
+
+        // Iterate over availability and prepare promises for each slot
+        Object.entries(availability).forEach(([day, { checked, slots }]) => {
             if (checked) {
-                for (const slot of slots) {
-                    await saveTeacherAvailability({
-                        teacher_id: teacherId,
-                        day,
-                        start_time: slot.start,
-                        end_time: slot.end,
-                    });
-                }
+                slots.forEach((slot) => {
+                    availabilityPromises.push(
+                        saveTeacherAvailability({
+                            teacher_id: teacherId,
+                            day,
+                            start_time: slot.start,
+                            end_time: slot.end,
+                        })
+                    );
+                });
             }
-        }
+        });
+
+        // Execute all save operations concurrently
+        await Promise.all(availabilityPromises);
 
         return new Response(JSON.stringify({ message: 'Teacher availability added successfully' }), {
             status: 201,

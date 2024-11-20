@@ -1,6 +1,6 @@
 // src/lib/contractService.js
 
-import query from './db';
+import { query } from './db';
 
 export const createContract = async (contractData) => {
     const { student_id, teacher_id, subject_id, start_date, end_date, mode, payment_terms, status } = contractData;

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Box, TextField, Button, MenuItem, Grid, useTheme } from '@mui/material';
 
 const UserFilter = ({ onFilterChange }) => {
@@ -158,6 +159,11 @@ const UserFilter = ({ onFilterChange }) => {
       </Grid>
     </Box>
   );
+};
+
+// PropTypes validation
+UserFilter.propTypes = {
+  onFilterChange: PropTypes.func.isRequired,
 };
 
 export default UserFilter;

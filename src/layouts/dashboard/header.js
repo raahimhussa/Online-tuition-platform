@@ -20,9 +20,9 @@ import {
   Searchbar,
   AccountPopover,
   SettingsButton,
-  //LanguagePopover,
-  //ContactsPopover,
-  //NotificationsPopover,
+  // LanguagePopover,
+  // ContactsPopover,
+  // NotificationsPopover,
 } from '../_common';
 
 // ----------------------------------------------------------------------

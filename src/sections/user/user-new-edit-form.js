@@ -21,7 +21,7 @@ import { fData } from 'src/utils/format-number';
 import { paths } from 'src/routes/paths';
 import { getUserById, saveUser } from '../../app/store/slices/userSlice';
 import { fetchCities, selectCities } from '../../app/store/slices/citySlice'; 
-import  {uploadImageToCloudinary} from '../../../src/utils/uploadImage';
+import  {uploadImageToCloudinary} from '../../utils/uploadImage';
 
 
 export default function UserNewEditForm({ userId }) {
