@@ -44,5 +44,10 @@ const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
     </Link>
   );
 });
-export default Logo;
 
+Logo.propTypes = {
+  disabledLink: PropTypes.bool,
+  sx: PropTypes.object,
+};
+
+export default Logo;

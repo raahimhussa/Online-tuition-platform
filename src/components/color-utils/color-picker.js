@@ -4,7 +4,7 @@ import { forwardRef, useCallback } from 'react';
 import { alpha } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
 import ButtonBase from '@mui/material/ButtonBase';
-//
+import { Icon } from '@iconify/react';
 // ----------------------------------------------------------------------
 
 const ColorPicker = forwardRef(
@@ -78,10 +78,10 @@ const ColorPicker = forwardRef(
                   }),
                 }}
               >
-                <Iconify
+                <Icon
                   width={hasSelected ? 12 : 0}
                   icon="eva:checkmark-fill"
-                  sx={{
+                  style={{
                     color: (theme) => theme.palette.getContrastText(color),
                     transition: (theme) =>
                       theme.transitions.create('all', {

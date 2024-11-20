@@ -234,17 +234,16 @@ export async function addTeacherLanguages(teacherId, languageId) {
 }
 // very important function
 export const getTeacherIdByUserId = async (userId) => {
-  const query = 'SELECT teacher_id FROM teachers WHERE user_id = $1';
+  const text = 'SELECT teacher_id FROM teachers WHERE user_id = $1';
   const values = [userId];
 
-  const result = await query(query, values);
+  const result = await query(text, values);
 
   // Check if a teacher exists for the provided user ID
   if (result.rows.length > 0) {
     return result.rows[0].teacher_id; // Return the teacher_id
-  } else {
-    throw new Error('No teacher found for this user ID');
   }
+  throw new Error('No teacher found for this user ID');
 };
 
 export const getTeacherByUserId = async (userId) => {
@@ -257,54 +256,62 @@ export const getTeacherByUserId = async (userId) => {
     // Check if a teacher exists for the provided user ID
     if (result.rows.length > 0) {
       return result.rows[0]; // Return all teacher details
-    } else {
-      return null; // Return null if no teacher found
     }
+    return null; // Return null if no teacher found
   } catch (error) {
     console.error('Database query error:', error);
     throw new Error('Failed to fetch teacher details'); // More generic error message
   }
 };
 
+export async function clearTeacherAvailability(teacher_id) {
+  const text = `
+      DELETE FROM teacher_availability
+      WHERE teacher_id = $1
+  `;
+  const values = [teacher_id];
+  await query(text, values);
+}
+
 // save teacher availability information
 export const saveTeacherAvailability = async ({ teacher_id, day, start_time, end_time }) => {
-  const query = `
+  const text = `
         INSERT INTO teacher_availability (teacher_id, day, start_time, end_time)
         VALUES ($1, $2, $3, $4)
     `;
   const values = [teacher_id, day, start_time, end_time];
 
-  await query(query, values);
+  await query(text, values);
 };
 export const getTeacherAvailabilityByTeacherId = async (teacher_id) => {
-  const query = `
+  const text = `
         SELECT day, start_time, end_time
         FROM teacher_availability
         WHERE teacher_id = $1
     `;
   const values = [teacher_id];
 
-  const { rows } = await query(query, values);
+  const { rows } = await query(text, values);
   return rows;
 };
 export const updateTeacherAvailability = async ({ availability_id, start_time, end_time }) => {
-  const query = `
+  const text = `
         UPDATE teacher_availability
         SET start_time = $1, end_time = $2
         WHERE availability_id = $3
     `;
   const values = [start_time, end_time, availability_id];
 
-  await query(query, values);
+  await query(text, values);
 };
 export const deleteTeacherAvailability = async (availability_id) => {
-  const query = `
+  const text = `
         DELETE FROM teacher_availability
         WHERE availability_id = $1
     `;
   const values = [availability_id];
 
-  await query(query, values);
+  await query(text, values);
 };
 export async function clearTeacherLanguages(teacherId) {
   const text = `
@@ -337,28 +344,28 @@ export async function updateTeacherLanguages(teacherId, languageIds) {
   // Clear existing languages
   await clearTeacherLanguages(teacherId);
 
-  // Add new languages
-  for (const languageId of languageIds) {
-    await addTeacherLanguages(teacherId, languageId);
-  }
+  // Add new languages concurrently
+  const languagePromises = languageIds.map((languageId) => addTeacherLanguages(teacherId, languageId));
+  await Promise.all(languagePromises);
 }
+
 export async function updateTeacherGradeLevels(teacherId, gradeLevelIds) {
   // Clear existing grade levels
   await clearTeacherGradeLevels(teacherId);
 
-  // Add new grade levels
-  for (const gradeLevelId of gradeLevelIds) {
-    await addTeacherGradeLevels(teacherId, gradeLevelId);
-  }
+  // Add new grade levels concurrently
+  const gradeLevelPromises = gradeLevelIds.map((gradeLevelId) => addTeacherGradeLevels(teacherId, gradeLevelId));
+  await Promise.all(gradeLevelPromises);
 }
+
 export async function updateTeacherSubjects(teacherId, subjectIds) {
   // Clear existing subjects
   await clearTeacherSubjects(teacherId);
 
-  // Add new subjects
-  for (const subjectId of subjectIds) {
-    await addTeacherSubjects(teacherId, subjectId);
-  }
+  // Add new subjects concurrently
+  const subjectPromises = subjectIds.map((subjectId) => addTeacherSubjects(teacherId, subjectId));
+  await Promise.all(subjectPromises);
 }
+
 
 // need to create update ,delete ,get ,teacher availbility  as well

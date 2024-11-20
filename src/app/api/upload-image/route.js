@@ -17,7 +17,7 @@ export async function POST(request) {
     // Convert file to buffer
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    const result = await new Promise((resolve, reject) => {
+    const uploadResult = await new Promise((resolve, reject) => { // Renamed result to uploadResult
       const upload = cloudinary.v2.uploader.upload_stream(
         { resource_type: 'image' },
         (error, result) => {
@@ -28,7 +28,7 @@ export async function POST(request) {
       upload.end(buffer); // Upload the file buffer to Cloudinary
     });
 
-    return NextResponse.json({ url: result.secure_url });
+    return NextResponse.json({ url: uploadResult.secure_url });
   } catch (error) {
     console.error('Cloudinary upload error:', error);
     return NextResponse.json({ error: 'Failed to upload image' }, { status: 500 });

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -21,8 +21,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useSettingsContext } from 'src/components/settings';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
-import { useDispatch, useSelector } from 'react-redux'; 
-import { saveAvailability } from 'src/app/store/slices/availabilityslice';
+import { useDispatch, useSelector } from 'react-redux';
+import { saveAvailability, updateAvailability, getAvailability } from 'src/app/store/slices/availabilityslice';
 
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const times = [
@@ -69,40 +69,75 @@ export default function AvailabilityView() {
   const router = useRouter();
   const settings = useSettingsContext();
   const dispatch = useDispatch();
-  const availability = useSelector((state) => state.availability);
+  const availabilityState = useSelector((state) => state.availability);
 
   const [isBackLoading, setIsBackLoading] = useState(false);
   const [isNextLoading, setIsNextLoading] = useState(false);
+  const [isFormPopulated, setIsFormPopulated] = useState(false);
 
   const { control, handleSubmit, formState: { errors }, setValue, getValues } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       availability: days.reduce((acc, day) => {
         acc[day] = {
-          checked: true,
-          slots: [{ start: '09:00 AM', end: '05:00 PM' }],
+          checked: false,
+          slots: [],
         };
         return acc;
       }, {}),
     },
   });
 
-  const onSubmit = (data) => {
-    console.log('Submitted Data:', data);
-    setIsNextLoading(true);
-    dispatch(saveAvailability(data));
-    setTimeout(() => {
-      setIsNextLoading(false);
-      router.push(paths.dashboard.three);
-    }, 1000);
-  };
+  useEffect(() => {
+    dispatch(getAvailability())
+      .unwrap()
+      .then((data) => {
+        if (data) {
+          // Transform API response into the required form format
+          const availabilityData = days.reduce((acc, day) => {
+            const daySlots = data.filter((slot) => slot.day === day);
+            acc[day] = {
+              checked: daySlots.length > 0, // Set `checked` to true if slots exist
+              slots: daySlots.map((slot) => ({
+                start: new Date(`1970-01-01T${slot.start_time}`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                end: new Date(`1970-01-01T${slot.end_time}`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+              })),
+            };
+            return acc;
+          }, {});
+
+          days.forEach((day) => {
+            setValue(`availability.${day}.checked`, availabilityData[day].checked);
+            setValue(`availability.${day}.slots`, availabilityData[day].slots);
+          });
+          setIsFormPopulated(true);
+        }
+      });
+  }, [dispatch, setValue]);
 
   const handleBackClick = () => {
     setIsBackLoading(true);
     setTimeout(() => {
       router.push(paths.dashboard.one);
       setIsBackLoading(false);
-    }, 1000); 
+    }, 1000);
+  };
+
+  const onSubmit = async (data) => {
+    setIsNextLoading(true);
+
+    try {
+      if (isFormPopulated) {
+        await dispatch(updateAvailability(data)).unwrap();
+      } else {
+        await dispatch(saveAvailability(data)).unwrap();
+      }
+      router.push(paths.dashboard.three);
+    } catch (error) {
+      console.error('Error submitting availability:', error);
+    } finally {
+      setIsNextLoading(false);
+    }
   };
 
   const addSlot = (day) => {
@@ -249,12 +284,11 @@ export default function AvailabilityView() {
           </Grid>
         </Grid>
         <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
-  
           <LoadingButton type="button" loading={isBackLoading} onClick={handleBackClick} variant="contained" color="inherit">
             Back
           </LoadingButton>
           <LoadingButton type="submit" variant="contained" loading={isNextLoading}>
-            Next
+            {isFormPopulated ? 'Update' : 'Next'}
           </LoadingButton>
         </Box>
       </form>
