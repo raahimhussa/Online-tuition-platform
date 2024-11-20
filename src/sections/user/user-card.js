@@ -121,14 +121,13 @@ export default function UserCard({ user }) {
 UserCard.propTypes = {
   user: PropTypes.shape({
     name: PropTypes.string.isRequired,
-    experience: PropTypes.string.isRequired,
+    experience_years: PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // Corrected prop name
     students: PropTypes.number.isRequired,
     profile_picture: PropTypes.string.isRequired,
     bio: PropTypes.string.isRequired,
-  
     languages: PropTypes.arrayOf(PropTypes.string),
-    grades: PropTypes.arrayOf(PropTypes.string),
+    grade_levels: PropTypes.arrayOf(PropTypes.string), // Corrected prop name
     subjects: PropTypes.arrayOf(PropTypes.string),
-    price: PropTypes.number,
+    hourly_rate: PropTypes.number, // Corrected prop name
   }).isRequired,
 };

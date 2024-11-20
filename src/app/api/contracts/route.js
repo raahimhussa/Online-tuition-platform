@@ -1,4 +1,4 @@
-import { createContract, getContractById, updateContractStatus, deleteContract } from './../../../lib/contractService';
+import { createContract, getContractById, updateContractStatus, deleteContract } from '../../../lib/contractService';
 
 export async function POST(req) {
     const data = await req.json();
