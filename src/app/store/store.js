@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import userReducer from './slices/userslice';
+import userReducer from './slices/userSlice';
 import cityReducer from './slices/citySlice';
 import availabiltyReducer from './slices/availabilityslice';
 import serviceReducer from './slices/serviceslice';
