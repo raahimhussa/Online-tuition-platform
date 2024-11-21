@@ -17,6 +17,36 @@ export const fetchTeachers = createAsyncThunk(
   }
 );
 
+export const fetchTeacherByUserId1 = createAsyncThunk('teachers/fetchTeacherByUserId', async () => {
+  try {
+    // Retrieve token from sessionStorage
+    const token = sessionStorage.getItem('accessToken');
+    if (!token) {
+      throw new Error('No token found. Please log in.');
+    }
+
+    // Make API call with Authorization header
+    const response = await fetch(`/api/teachers/setup-profile`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch teacher');
+    }
+
+    const data = await response.json();
+    console.log(data); // API response for a single teacher
+    return data;
+  } catch (error) {
+    console.error('Error fetching teacher:', error);
+    throw error;
+  }
+});
+
 // Thunk for fetching a teacher by user ID
 export const fetchTeacherByUserId = createAsyncThunk(
   'teachers/fetchTeacherByUserId',
