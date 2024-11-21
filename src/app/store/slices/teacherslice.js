@@ -17,35 +17,36 @@ export const fetchTeachers = createAsyncThunk('teachers/fetchTeachers', async ()
   }
 });
 // Thunk for fetching a teacher by user ID
-export const fetchTeacherByUserId = createAsyncThunk('teachers/fetchTeacherByUserId', async () => {
-  try {
-    // Retrieve token from sessionStorage
+export const fetchTeacherByUserId = createAsyncThunk(
+  'teachers/fetchTeacherByUserId',
+  async (teacherId, { rejectWithValue }) => {
     const token = sessionStorage.getItem('accessToken');
     if (!token) {
-      throw new Error('No token found. Please log in.');
+      return rejectWithValue('No token found. Please log in.');
     }
 
-    // Make API call with Authorization header
-    const response = await fetch(`/api/teachers/setup-profile`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
+    try {
+      const response = await fetch(`/api/teachers/${teacherId}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch teacher');
+      if (!response.ok) {
+        throw new Error('Failed to fetch teacher');
+      }
+
+      return await response.json(); // Return teacher data
+    } catch (error) {
+      // Return the error message in the rejected case
+      return rejectWithValue(error.message || 'An unexpected error occurred');
     }
-
-    const data = await response.json();
-    console.log(data); // API response for a single teacher
-    return data;
-  } catch (error) {
-    console.error('Error fetching teacher:', error);
-    throw error;
   }
-});
+);
+
+
 
 
 // Teacher slice
