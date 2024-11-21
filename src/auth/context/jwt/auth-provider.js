@@ -81,18 +81,41 @@ export function AuthProvider({ children }) {
 
   // Register
   const register = useCallback(async (formData) => {
+    console.log("Register function called with formData:", formData); // Log formData
+  
     try {
       const response = await axios.post(endpoints.auth.register, formData);
+  
+      console.log("API response received:", response); // Log the full response object
+  
       const { token, user } = response.data;
-
+  
+      console.log("Token received:", token); // Log the token
+      console.log("User received:", user); // Log the user object
+  
       setSession(token); // Save token to storage and set headers
-      localStorage.setItem(STORAGE_KEY, token);
+      console.log("Session set successfully."); // Confirm session setting
+  
+      localStorage.setItem(STORAGE_KEY, token); // Save the token to localStorage
+      console.log("Token saved to localStorage:", localStorage.getItem(STORAGE_KEY)); // Confirm token saved
+  
       dispatch({ type: 'REGISTER', payload: { user } });
+      console.log("Dispatch called with user:", user); // Confirm dispatch success
     } catch (error) {
-      console.error('Registration error:', error.response?.data?.message || 'Registration failed');
-      throw new Error(error.response?.data?.message || 'Registration failed');
+      console.error("Registration error:", error); // Log the full error object
+  
+      if (error.response) {
+        console.error("Error response data:", error.response.data); // Log the error response data
+        console.error("Error status:", error.response.status); // Log the status code
+        console.error("Error headers:", error.response.headers); // Log the headers
+      } else {
+        console.error("Error message:", error.message); // Log any other error messages
+      }
+  
+      throw new Error(error.response?.data?.message || "Registration failed");
     }
   }, []);
+  
 
   // Logout
   const logout = useCallback(() => {
