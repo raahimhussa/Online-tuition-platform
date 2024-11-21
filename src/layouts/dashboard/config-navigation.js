@@ -47,6 +47,12 @@ export function useNavData(teacherId) {
             roles: ['teacher', 'student'],
           },
           {
+            title: 'Student profile',
+            path: paths.dashboard.group.seven,
+            icon: ICONS.user,
+            roles: ['student'],
+          },
+          {
             title: 'Setup Profile',
             path: paths.dashboard.user.complete,
             icon: ICONS.dashboard,
@@ -70,22 +76,11 @@ export function useNavData(teacherId) {
             icon: ICONS.analytics,
             roles: ['teacher'],
           },
-          {
-            title: 'Devs',
-            path: paths.dashboard.group.six,
-            icon: ICONS.ecommerce,
-            roles: ['teacher', 'student'],
-          },
+         
           {
             title: 'Teachers Cards',
             path: paths.dashboard.user.cards,
             icon: ICONS.dashboard,
-            roles: ['student'],
-          },
-          {
-            title: 'Reviews',
-            path: paths.dashboard.group.five,
-            icon: ICONS.analytics,
             roles: ['student'],
           },
           {
@@ -95,11 +90,17 @@ export function useNavData(teacherId) {
             roles: ['student'],
           },
           {
-            title: 'Student profile',
-            path: paths.dashboard.group.seven,
-            icon: ICONS.user,
+            title: 'Reviews',
+            path: paths.dashboard.group.five,
+            icon: ICONS.analytics,
             roles: ['student'],
           },
+          // {
+          //   title: 'Devs',
+          //   path: paths.dashboard.group.six,
+          //   icon: ICONS.ecommerce,
+          //   roles: ['teacher', 'student'],
+          // },
         ],
       },
     ],

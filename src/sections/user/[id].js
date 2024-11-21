@@ -1,10 +1,16 @@
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { fetchTeacherByUserId, selectTeacher, selectTeachersLoading, selectTeachersError } from '../../app/store/slices/teacherslice'; // Adjust path if needed
-import ProfileHome from    './profile-home'
-
-
+import { Card } from '@mui/material'; 
+import {
+  fetchTeacherByUserId,
+  selectTeacher,
+  selectTeachersLoading,
+  selectTeachersError,
+} from '../../app/store/slices/teacherslice'; // Adjust the path if needed
+import ProfileHome from './profile-home';
+import ProfileCover from './profile-cover'; // Assuming a ProfileCover component exists
+// Importing Material-UI Card component
 
 // The component will use the teacher data from Redux state
 export default function TeacherProfile({ id }) {
@@ -36,20 +42,36 @@ export default function TeacherProfile({ id }) {
 
   return (
     <div>
-      {/* Pass the teacher data as a prop to ProfileHome */}
+      <Card
+        sx={{
+          mb: 3,
+          height: 290,
+        }}
+      >
+        <ProfileCover
+          role={teacher.role || 'N/A'}
+          name={teacher.displayName || 'Anonymous'}
+          avatarUrl={teacher.photoURL || '/default-avatar.png'}
+          coverUrl={teacher.coverURL || '/default-cover.jpg'}
+          city_name={teacher.city_name || 'Unknown'}
+          email={teacher.email || 'No email provided'}
+          phone={teacher.phone || 'No phone number provided'}
+        />
+      </Card>
+
       <ProfileHome info={teacher} posts={[]} />
     </div>
   );
 }
 
-// Optional: Add PropTypes for better type checking
+// Add PropTypes for better type checking
 TeacherProfile.propTypes = {
   id: PropTypes.string.isRequired,
 };
 
-// Fetch teacher id from URL in getServerSideProps to pass as prop
+// Fetch teacher ID from URL in getServerSideProps to pass as prop
 export async function getServerSideProps(context) {
-  const { id } = context.params; // Get teacher id from the URL
+  const { id } = context.params; // Get teacher ID from the URL
 
   return {
     props: {
