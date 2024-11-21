@@ -114,6 +114,7 @@ export async function getTeacherById(id) {
             u.phone_number, 
             u.gender, 
             u.dob, 
+            u.profile_picture,
             u.city_id, 
             u.area, 
             t.teaching_mode, 
