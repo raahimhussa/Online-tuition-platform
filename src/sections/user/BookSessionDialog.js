@@ -179,7 +179,7 @@ const BookSessionDialog = ({ open, onClose }) => {
         </FormProvider>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="secondary">
+        <Button onClick={onClose} color="info">
           Cancel
         </Button>
         <LoadingButton onClick={handleSubmit(onSubmit)} variant="contained">
