@@ -90,7 +90,7 @@ export default function UserCard({ user }) {
           </Typography>
           <Stack direction="row" spacing={1}>
             {subjects.map((subject, index) => (
-              <Chip key={index} label={subject} size="small" color="secondary" variant="outlined" />
+              <Chip key={index} label={subject} size="small" color="info" variant="outlined" />
             ))}
           </Stack>
         </Stack>
