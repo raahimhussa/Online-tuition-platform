@@ -248,7 +248,16 @@ export const getTeacherIdByUserId = async (userId) => {
 };
 
 export const getTeacherByUserId = async (userId) => {
-  const text = 'SELECT * FROM teachers WHERE user_id = $1';
+  const text = `
+    SELECT 
+      t.*, 
+      array_agg(DISTINCT lang.name) AS languages
+    FROM teachers t
+    LEFT JOIN teacher_languages tl ON t.teacher_id = tl.teacher_id
+    LEFT JOIN languages lang ON tl.language_id = lang.language_id
+    WHERE t.user_id = $1
+    GROUP BY t.teacher_id
+  `;
   const values = [userId];
 
   try {
@@ -256,14 +265,15 @@ export const getTeacherByUserId = async (userId) => {
 
     // Check if a teacher exists for the provided user ID
     if (result.rows.length > 0) {
-      return result.rows[0]; // Return all teacher details
+      return result.rows[0]; // Return teacher details with languages
     }
     return null; // Return null if no teacher found
   } catch (error) {
     console.error('Database query error:', error);
-    throw new Error('Failed to fetch teacher details'); // More generic error message
+    throw new Error('Failed to fetch teacher details'); // Generic error message
   }
 };
+
 export const getTeacherByUserIdNew = async (userId) => {
   const queryText = `
     SELECT 
