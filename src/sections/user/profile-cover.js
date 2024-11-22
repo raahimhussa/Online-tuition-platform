@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 // @mui
 import Box from '@mui/material/Box';
@@ -7,8 +8,10 @@ import ListItemText from '@mui/material/ListItemText';
 import { useTheme, alpha } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-// theme
+import Card from '@mui/material/Card'; // Import the Card component
+import CardContent from '@mui/material/CardContent'; // Import CardContent
 import { bgGradient } from 'src/theme/css';
+import BookSessionDialog from './BookSessionDialog'; // Import the dialog component
 
 // ----------------------------------------------------------------------
 
@@ -18,130 +21,127 @@ export default function ProfileCover({
   phone_number,
   email,
   city_name,
-  coverUrl,
   profile_picture,
 }) {
   const theme = useTheme();
 
-  return (
-    <Box
-      sx={{
-        ...bgGradient({
-          color: alpha(theme.palette.primary.darker, 0.8),
-          imgUrl: coverUrl,
-        }),
-        height: 1,
-        color: 'common.white',
-      }}
-    >
-      <Stack
-        direction={{ xs: 'column', md: 'row' }}
-        sx={{
-          left: { md: 24 },
-          bottom: { md: 20 },
-          zIndex: { md: 10 },
-          pt: { xs: 4, md: 2 },
-          position: { md: 'absolute' },
-        }}
-      >
-        <Avatar
-          src={profile_picture}
-          alt={name}
-          sx={{
-            mx: 'auto',
-            width: { xs: 64, md: 128 },
-            height: { xs: 64, md: 128 },
-            border: `solid 2px ${theme.palette.common.white}`,
-          }}
-        />
+  // State for controlling the dialog
+  const [open, setOpen] = useState(false);
 
-        <ListItemText
-          sx={{
-            mt: 2,
-            ml: { md: 3 },
-            textAlign: { xs: 'center', md: 'unset' },
-            color: theme.palette.mode === 'light' ? 'common.white' : 'text.primary',
-          }}
-          primary={name}
-          secondary={
-            <>
-              {/* <Typography
-                variant="body2"
-                sx={{
-                  opacity: 0.7,
-                  color: theme.palette.mode === 'light' ? 'common.white' : 'text.secondary',
-                }}
-              >
-                {role}
-              </Typography> */}
-              {phone_number && (
-                <Typography
-                  variant="body2"
-                  sx={{
-                    opacity: 0.7,
-                    mt: 0.5,
-                    color: theme.palette.mode === 'light' ? 'common.white' : 'text.secondary',
-                  }}
-                >
-                  📞 {phone_number}
-                </Typography>
-              )}
-              {email && (
-                <Typography
-                  variant="body2"
-                  sx={{
-                    opacity: 0.7,
-                    mt: 0.5,
-                    color: theme.palette.mode === 'light' ? 'common.white' : 'text.secondary',
-                  }}
-                >
-                  ✉️ {email}
-                </Typography>
-              )}
-              {city_name && (
-                <Typography
-                  variant="body2"
-                  sx={{
-                    opacity: 0.7,
-                    mt: 0.5,
-                    color: theme.palette.mode === 'light' ? 'common.white' : 'text.secondary',
-                  }}
-                >
-                  📍 {city_name}
-                </Typography>
-              )}
-            </>
-          }
-          primaryTypographyProps={{
-            typography: 'h4',
-          }}
-        />
-      </Stack>
-      <Button
-        variant="contained"
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  return (
+    <>
+      <Card
         sx={{
-          position: 'absolute',
-          bottom: 25,
-          right: 16,
-          backgroundColor: theme.palette.primary.dark,
+          width: '100%',
+          height: '100%',
+          minHeight: 280,
+          background: bgGradient({
+            color: alpha(theme.palette.primary.main, 0.9),
+          }),
           color: 'common.white',
-          '&:hover': {
-            backgroundColor: theme.palette.primary.main,
-          },
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+          mb : 4,
         }}
       >
-        Book a Session
-      </Button>
-    </Box>
+        <CardContent sx={{ width: '100%' }}>
+          <Stack
+            direction={{ xs: 'column', md: 'row' }}
+            alignItems="center"
+            spacing={2}
+            sx={{ textAlign: { xs: 'center', md: 'left' } }}
+          >
+            <Avatar
+              src={profile_picture}
+              alt={name}
+              sx={{
+                width: { xs: 80, md: 128 },
+                height: { xs: 80, md: 128 },
+                border: `3px solid ${theme.palette.common.white}`,
+              }}
+            />
+
+            <ListItemText
+              primary={name}
+              secondary={
+                <>
+                  {role && (
+                    <Typography
+                      variant="subtitle1"
+                      sx={{
+                        mt: 0.5,
+                        color: alpha(theme.palette.common.white, 0.9),
+                      }}
+                    >
+                      {role}
+                    </Typography>
+                  )}
+                  {phone_number && (
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        mt: 0.5,
+                        color: alpha(theme.palette.common.white, 0.8),
+                      }}
+                    >
+                      📞 {phone_number}
+                    </Typography>
+                  )}
+                  {email && (
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        mt: 0.5,
+                        color: alpha(theme.palette.common.white, 0.8),
+                      }}
+                    >
+                      ✉️ {email}
+                    </Typography>
+                  )}
+                  {city_name && (
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        mt: 0.5,
+                        color: alpha(theme.palette.common.white, 0.8),
+                      }}
+                    >
+                      📍 {city_name}
+                    </Typography>
+                  )}
+                </>
+              }
+              primaryTypographyProps={{
+                typography: 'h4',
+                fontWeight: 'bold',
+              }}
+            />
+          </Stack>
+
+          <Box sx={{ position: 'absolute', bottom: 16, right: 16 }}>
+            <Button variant="contained" color="primary" onClick={handleOpen}>
+              Book Now
+            </Button>
+          </Box>
+        </CardContent>
+      </Card>
+
+      {/* Book Session Dialog */}
+      <BookSessionDialog open={open} onClose={handleClose} />
+    </>
   );
 }
 
 ProfileCover.propTypes = {
   name: PropTypes.string.isRequired,
-  role: PropTypes.string.isRequired,
+  role: PropTypes.string,
   phone_number: PropTypes.string,
   email: PropTypes.string,
   city_name: PropTypes.string,
-  coverUrl: PropTypes.string.isRequired,
   profile_picture: PropTypes.string.isRequired,
 };
