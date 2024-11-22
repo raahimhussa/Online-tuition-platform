@@ -15,7 +15,7 @@ import AddOutlined from '@mui/icons-material/AddOutlined';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux'; 
-import { saveStudentData } from 'src/app/store/slices/studentslice';
+import { saveStudentData,updateStudent } from 'src/app/store/slices/studentslice';
 
 // ----------------------------------------------------------------------
 
@@ -145,7 +145,7 @@ export default function StudentEditForm({ currentStudent }) {
                   <RHFTextField
                     name={`subjects[${index}]`}
                     label={`Subject ${index + 1}`}
-                    placeholder={`e.g., Mathematics`}
+                    placeholder="e.g., Mathematics"
                     value={subject}
                     onChange={(e) => handleSubjectChange(index, e.target.value)}
                     fullWidth
@@ -220,6 +220,8 @@ export default function StudentEditForm({ currentStudent }) {
 StudentEditForm.propTypes = {
   currentStudent: PropTypes.shape({
     id: PropTypes.string.isRequired,
+    name: PropTypes.string, // Add this line
+    phone: PropTypes.string, 
     guardianName: PropTypes.string,
     guardianPhone: PropTypes.string,
     address: PropTypes.string,
