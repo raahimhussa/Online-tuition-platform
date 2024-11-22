@@ -20,7 +20,7 @@ export const fetchTeachers = createAsyncThunk(
 export const fetchTeacherByUserId1 = createAsyncThunk('teachers/fetchTeacherByUserId', async () => {
   try {
     // Retrieve token from sessionStorage
-    const token = sessionStorage.getItem('accessToken');
+    const token = localStorage.getItem('accessToken');
     if (!token) {
       throw new Error('No token found. Please log in.');
     }
