@@ -12,7 +12,15 @@ import { bgGradient } from 'src/theme/css';
 
 // ----------------------------------------------------------------------
 
-export default function ProfileCover({ name, avatarUrl, role, coverUrl, phone_number, email, city_name }) {
+export default function ProfileCover({
+  name,
+  role,
+  phone_number,
+  email,
+  city_name,
+  coverUrl,
+  profile_picture,
+}) {
   const theme = useTheme();
 
   return (
@@ -37,7 +45,7 @@ export default function ProfileCover({ name, avatarUrl, role, coverUrl, phone_nu
         }}
       >
         <Avatar
-          src={avatarUrl}
+          src={profile_picture}
           alt={name}
           sx={{
             mx: 'auto',
@@ -57,44 +65,48 @@ export default function ProfileCover({ name, avatarUrl, role, coverUrl, phone_nu
           primary={name}
           secondary={
             <>
-              <Typography variant="body2"
-              sx={{
-                opacity: 0.7,
-                color: theme.palette.mode === 'light' ? 'common.white' : 'text.secondary',
-              }}
-            >
-                {role}
-              </Typography>
-              {phone_number && (
-                <Typography variant="body2" 
+              {/* <Typography
+                variant="body2"
                 sx={{
                   opacity: 0.7,
-                  mt: 0.5,
-                  color: theme.palette.mode === 'light' ? 'common.white' : 'text.secondary', 
+                  color: theme.palette.mode === 'light' ? 'common.white' : 'text.secondary',
                 }}
               >
+                {role}
+              </Typography> */}
+              {phone_number && (
+                <Typography
+                  variant="body2"
+                  sx={{
+                    opacity: 0.7,
+                    mt: 0.5,
+                    color: theme.palette.mode === 'light' ? 'common.white' : 'text.secondary',
+                  }}
+                >
                   📞 {phone_number}
                 </Typography>
               )}
               {email && (
-                <Typography variant="body2" 
-                sx={{
-                  opacity: 0.7,
-                  mt: 0.5,
-                  color: theme.palette.mode === 'light' ? 'common.white' : 'text.secondary', 
-                }}
-              >
+                <Typography
+                  variant="body2"
+                  sx={{
+                    opacity: 0.7,
+                    mt: 0.5,
+                    color: theme.palette.mode === 'light' ? 'common.white' : 'text.secondary',
+                  }}
+                >
                   ✉️ {email}
                 </Typography>
               )}
               {city_name && (
-                <Typography variant="body2" 
-                sx={{
-                  opacity: 0.7,
-                  mt: 0.5,
-                  color: theme.palette.mode === 'light' ? 'common.white' : 'text.secondary', 
-                }}
-              >
+                <Typography
+                  variant="body2"
+                  sx={{
+                    opacity: 0.7,
+                    mt: 0.5,
+                    color: theme.palette.mode === 'light' ? 'common.white' : 'text.secondary',
+                  }}
+                >
                   📍 {city_name}
                 </Typography>
               )}
@@ -125,11 +137,11 @@ export default function ProfileCover({ name, avatarUrl, role, coverUrl, phone_nu
 }
 
 ProfileCover.propTypes = {
-  avatarUrl: PropTypes.string,
-  coverUrl: PropTypes.string,
-  name: PropTypes.string,
-  role: PropTypes.string,
+  name: PropTypes.string.isRequired,
+  role: PropTypes.string.isRequired,
   phone_number: PropTypes.string,
   email: PropTypes.string,
   city_name: PropTypes.string,
+  coverUrl: PropTypes.string.isRequired,
+  profile_picture: PropTypes.string.isRequired,
 };
