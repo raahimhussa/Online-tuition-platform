@@ -35,17 +35,6 @@ const domains = [
 ];
 
 
-const subjects = [
-  'Math',
-  'Science',
-  'English',
-  'Physics',
-  'Chemistry',
-  'Biology',
-  'Economics',
-  'Business'
-];
-
 
 // Yup validation schema
 const validationSchema = Yup.object({
@@ -108,16 +97,6 @@ const onSubmit = (data) => {
 
 
   // Handle domain selection
-  const handleDomainSelect = (e) => {
-    const selectedDomainValue = Array.isArray(e.target.value) ? e.target.value : [e.target.value];
-    const selectedSubLevels = selectedDomainValue.flatMap((domain) =>
-      domains.find((domainObj) => domainObj.domain === domain)?.subLevels || []
-    );
-    setSelectedDomain(selectedDomainValue);
-    setSelectedSubLevel([]);
-    setValue('domain', selectedDomainValue);
-    setValue('subLevel', []);
-  };
 
   const handleNextClick = () => {
     handleSubmit(onSubmit)();
