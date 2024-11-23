@@ -53,9 +53,12 @@ const UserFilter = ({ onFilterChange }) => {
   };
 
   const handleSearch = () => {
-    onFilterChange(filters);
+    const formattedFilters = {
+      ...filters,
+      price: filters.price.join('-'), // Convert the price array [0, 1000] to the string "0-1000"
+    };
+    onFilterChange(formattedFilters);
   };
-
   const handleClear = () => {
     setFilters({
       languages: '',
@@ -66,7 +69,6 @@ const UserFilter = ({ onFilterChange }) => {
     });
     onFilterChange({});
   };
-
   return (
     <Box
       sx={{
@@ -91,7 +93,7 @@ const UserFilter = ({ onFilterChange }) => {
             size="small"
             fullWidth
             sx={{ flex: 1, minWidth: '170px',
-              height: '40px',
+              height: '40px',mt:2,
               '& .MuiInputBase-root': { height: '40px', padding: '0 10px' },
              }}
           >
@@ -111,7 +113,7 @@ const UserFilter = ({ onFilterChange }) => {
             variant="outlined"
             size="small"
             fullWidth
-            sx={{ flex: 1, minWidth: '170px',
+            sx={{ flex: 1, minWidth: '170px',mt:2,
               height: '40px',
               '& .MuiInputBase-root': { height: '40px', padding: '0 10px' },
              }}
@@ -132,7 +134,7 @@ const UserFilter = ({ onFilterChange }) => {
             variant="outlined"
             size="small"
             fullWidth
-            sx={{ flex: 1, minWidth: '170px',
+            sx={{ flex: 1, minWidth: '170px',mt:2,
               height: '40px',
               '& .MuiInputBase-root': { height: '40px', padding: '0 10px' },
              }}
@@ -152,7 +154,7 @@ const UserFilter = ({ onFilterChange }) => {
             variant="outlined"
             size="small"
             fullWidth
-            sx={{ flex: 1, minWidth: '300px',
+            sx={{ flex: 1, minWidth: '300px',mt:2,
               height: '40px',
               '& .MuiInputBase-root': { height: '40px', padding: '0 10px' },
              }}
@@ -162,7 +164,7 @@ const UserFilter = ({ onFilterChange }) => {
             variant="contained"
             color="primary"
             onClick={handleSearch}
-            sx={{ flex: 1, minWidth: '100px', height: '40px', textTransform: 'none' }}
+            sx={{ flex: 1, minWidth: '100px',mt:2, height: '40px', textTransform: 'none' }}
           >
             Search
           </Button>
@@ -171,7 +173,7 @@ const UserFilter = ({ onFilterChange }) => {
             variant="outlined"
             color="info"
             onClick={handleClear}
-            sx={{ flex: 1, minWidth: '100px', height: '40px', textTransform: 'none' }}
+            sx={{ flex: 1, minWidth: '100px',mt:2, height: '40px', textTransform: 'none' }}
           >
             Clear
           </Button>
