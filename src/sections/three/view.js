@@ -15,6 +15,7 @@ import {
   Button,
   Snackbar,
   Alert,
+  Divider,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useForm, Controller } from 'react-hook-form';
@@ -160,10 +161,11 @@ export default function Service(currentUser) {
             <Grid item xs={12}>
               <Card>
                 <CardContent>
-                  <Typography sx={{ mb: 5 }} variant="h6" gutterBottom>
+                  <Typography variant="h6" gutterBottom>
                     Choose Subject, Domain, and Grade Level
                   </Typography>
 
+                  <Divider sx={{ mb: 5 }} />
                   {/* Dropdown for Subject */}
                   <FormControl fullWidth sx={{ mb: 5 }} error={Boolean(errors.subject)}>
   <InputLabel id="subject-label">Choose Subject(s)</InputLabel>
@@ -270,9 +272,12 @@ export default function Service(currentUser) {
               </Card>
               <Card sx={{ mt: 5 }}>
                 <CardContent>
-                  <Typography variant="h6" sx={{ mb: 5 }}>
+                  <Typography variant="h6" gutterBottom>
                     Duration
                   </Typography>
+
+                  <Divider sx={{ mb: 5 }} />
+
                   <FormControl fullWidth sx={{ mb: 2 }} error={Boolean(errors.duration)}>
                     <InputLabel id="duration-label">Select Duration</InputLabel>
                     <Controller
@@ -295,9 +300,12 @@ export default function Service(currentUser) {
               </Card>
               <Card sx={{ mt: 5 }}>
                 <CardContent>
-                  <Typography variant="h6" sx={{ mb: 5 }}>
+                  <Typography variant="h6" gutterBottom>
                     Fees and Discounts
                   </Typography>
+
+                  <Divider sx={{ mb: 5 }} />
+
                   <Box
                     sx={{
                       display: 'flex', // Set display to flex
