@@ -23,8 +23,13 @@ import * as Yup from 'yup';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 import { useDispatch, useSelector } from 'react-redux';
+<<<<<<< HEAD
 import { saveService } from 'src/app/store/slices/serviceslice';
 
+=======
+import { saveService,fetchGradeLevels,fetchSubjects } from 'src/app/store/slices/serviceslice';
+import { fetchTeacherByUserId1,selectTeacher } from 'src/app/store/slices/teacherslice';
+>>>>>>> 5d83b68c87d1d2a058797781bdf88a09f19a3011
 
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
 // Sample domains data
@@ -61,6 +66,13 @@ export default function Service(currentUser) {
     const [isBackLoading, setIsBackLoading] = useState(false);
   const [successBar, setSuccessBar] = useState(false);
   const dispatch = useDispatch();
+<<<<<<< HEAD
+=======
+  const { subjects:availableSubjects, gradeLevels, loading } = useSelector((state) => state.service);
+  const teacherData = useSelector(selectTeacher);
+
+
+>>>>>>> 5d83b68c87d1d2a058797781bdf88a09f19a3011
   const service = useSelector((state) => state.service);
 
   // React Hook Form setup
@@ -81,8 +93,10 @@ export default function Service(currentUser) {
     control,
     setValue,
     handleSubmit,
+    reset,
     formState: { errors }, 
   } = methods;
+<<<<<<< HEAD
 
 const onSubmit = (data) => {
   try {
@@ -94,6 +108,53 @@ const onSubmit = (data) => {
     setErrorBar(true); // Display error message if submission fails
   }
 };
+=======
+  useEffect(() => {
+    dispatch(fetchSubjects());
+    dispatch(fetchGradeLevels());
+    dispatch(fetchTeacherByUserId1());
+
+  }, [dispatch]);
+  useEffect(() => {
+    if (teacherData) {
+      const { subjects:teacherSubjects,  domains, sub_levels,  hourly_rate, duration_per_session } = teacherData;
+      reset({
+        subject: teacherSubjects || [],
+        domain: domains || [],
+        subLevel: sub_levels || [],
+        duration: duration_per_session || '',
+        fees: hourly_rate || '',
+        discount: '', // Set this to a default value if needed
+      });
+      setSelectedDomain(domains||[]);
+      setSelectedSubLevel(sub_levels || []);
+    }
+  }, [teacherData, reset]);
+
+  const onSubmit = (data) => {
+    try {
+      const gradeLevelIds = data.subLevel.map((subLevel) =>
+        gradeLevels.find((level) => level.sub_level === subLevel)?.grade_level_id
+      );
+      const subjectIds = data.subject.map((subject) =>
+        availableSubjects.find((subj) => subj.name === subject)?.subject_id
+      );
+      const payload = {
+        hourly_rate: data.fees,
+        duration_per_session: data.duration,
+        grade_levels: gradeLevelIds,
+        subjects: subjectIds,
+      };
+      console.log('Submitting Payload:', payload);
+
+      dispatch(saveService(payload));
+      setSuccessBar(true);
+    } catch (error) {
+      console.error('Submission error:', error);
+      setErrorBar(true);
+    }
+  };
+>>>>>>> 5d83b68c87d1d2a058797781bdf88a09f19a3011
 
 
   // Handle domain selection
@@ -133,9 +194,15 @@ const onSubmit = (data) => {
     control={control}
     render={({ field }) => (
       <Select labelId="subject-label" label="Choose Subject(s)" multiple {...field}>
+<<<<<<< HEAD
         {subjects.map((subject) => (
           <MenuItem key={subject} value={subject}>
             {subject}
+=======
+        {availableSubjects.map((subject) => (
+          <MenuItem key={subject.subject_id} value={subject.name}>
+            {subject.name}
+>>>>>>> 5d83b68c87d1d2a058797781bdf88a09f19a3011
           </MenuItem>
         ))}
       </Select>
