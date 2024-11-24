@@ -3,9 +3,11 @@ import React, { useState, useEffect } from 'react';
 // @mui
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack'; 
+import { LoadingScreen } from 'src/components/loading-screen';
 //
 import UserCard from './user-card';
 import UserFilter from './user-filter';
+
 
 // ----------------------------------------------------------------------
 
@@ -56,7 +58,7 @@ export default function UserCardList() {
     <Stack spacing={4}>
       <UserFilter onFilterChange={handleFilterChange} />
 
-      {loading && <div>Loading users...</div>}
+      {loading && <div><LoadingScreen /></div>}
       {error && <div>{error}</div>}
 
       {!loading && !error && (
