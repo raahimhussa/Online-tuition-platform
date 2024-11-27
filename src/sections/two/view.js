@@ -93,6 +93,7 @@ export default function AvailabilityView() {
       .unwrap()
       .then((data) => {
         if (data) {
+          console.log(data)
           // Transform API response into the required form format
           const availabilityData = days.reduce((acc, day) => {
             const daySlots = data.filter((slot) => slot.day === day);
