@@ -19,7 +19,7 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 // _mock
-import { _userList, _roles, USER_STATUS_OPTIONS } from 'src/_mock';
+import { _userList, USER_STATUS_OPTIONS } from 'src/_mock';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
@@ -54,7 +54,7 @@ const TABLE_HEAD = [
   { id: 'startDate', label: 'Start Date', width: 220 },
   { id: 'endDate', label: 'End Date', width: 180 },
   { id: 'staus', label: 'Status', width: 100 },
-  { id: '', width: 88 },
+  { id: '', width: 180},
 ];
 
 const defaultFilters = {
@@ -141,9 +141,9 @@ export default function UserListView() {
     [handleFilters]
   );
 
-  const handleResetFilters = useCallback(() => {
-    setFilters(defaultFilters);
-  }, []);
+  // const handleResetFilters = useCallback(() => {
+  //   setFilters(defaultFilters);
+  // }, []);
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -195,7 +195,7 @@ export default function UserListView() {
                       _userList.filter((user) => user.status === 'pending').length}
                     {/* {tab.value === 'banned' &&
                       _userList.filter((user) => user.status === 'banned').length} */}
-                    {tab.value === 'rejected' &&
+                    {tab.value === 'completed' &&
                       _userList.filter((user) => user.status === 'rejected').length}
                   </Label>
                 }
