@@ -89,7 +89,7 @@ export default function UserListView() {
     table.page * table.rowsPerPage + table.rowsPerPage
   );
 
-  const denseHeight = table.dense ? 52 : 72;
+  // const denseHeight = table.dense ? 52 : 72;
 
   const canReset = !isEqual(defaultFilters, filters);
 
@@ -183,7 +183,7 @@ export default function UserListView() {
                     color={
                       (tab.value === 'active' && 'success') ||
                       (tab.value === 'pending' && 'warning') ||
-                      (tab.value === 'banned' && 'error') ||
+                      // (tab.value === 'banned' && 'error') ||
                       'default'
                     }
                   >
@@ -193,8 +193,8 @@ export default function UserListView() {
 
                     {tab.value === 'pending' &&
                       _userList.filter((user) => user.status === 'pending').length}
-                    {tab.value === 'banned' &&
-                      _userList.filter((user) => user.status === 'banned').length}
+                    {/* {tab.value === 'banned' &&
+                      _userList.filter((user) => user.status === 'banned').length} */}
                     {tab.value === 'rejected' &&
                       _userList.filter((user) => user.status === 'rejected').length}
                   </Label>
@@ -203,24 +203,24 @@ export default function UserListView() {
             ))}
           </Tabs>
 
-          <UserTableToolbar
+          {/* <UserTableToolbar
             filters={filters}
             onFilters={handleFilters}
             //
             roleOptions={_roles}
-          />
+          /> */}
 
-          {canReset && (
+          {/* {canReset && (
             <UserTableFiltersResult
               filters={filters}
               onFilters={handleFilters}
-              //
+              
               onResetFilters={handleResetFilters}
-              //
+              
               results={dataFiltered.length}
               sx={{ p: 2.5, pt: 0 }}
             />
-          )}
+          )} */}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
@@ -277,7 +277,7 @@ export default function UserListView() {
                     ))}
 
                   <TableEmptyRows
-                    height={denseHeight}
+                    // height={denseHeight}
                     emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)}
                   />
 
@@ -306,7 +306,7 @@ export default function UserListView() {
         title="Delete"
         content={
           <>
-            Are you sure want to delete <strong> {table.selected.length} </strong> items?
+            Are you sure want to cancel <strong> {table.selected.length} </strong> items?
           </>
         }
         action={
@@ -318,7 +318,7 @@ export default function UserListView() {
               confirm.onFalse();
             }}
           >
-            Delete
+            Cancel
           </Button>
         }
       />
