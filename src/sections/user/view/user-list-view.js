@@ -49,11 +49,11 @@ import UserTableFiltersResult from '../user-table-filters-result';
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name' },
-  { id: 'phoneNumber', label: 'Phone Number', width: 180 },
-  { id: 'company', label: 'Company', width: 220 },
-  { id: 'role', label: 'Role', width: 180 },
-  { id: 'status', label: 'Status', width: 100 },
+  { id: 'name', label: 'Teacher Name' },
+  { id: 'subject', label: 'Subjects', width: 180 },
+  { id: 'startDate', label: 'Start Date', width: 220 },
+  { id: 'endDate', label: 'End Date', width: 180 },
+  { id: 'staus', label: 'Status', width: 100 },
   { id: '', width: 88 },
 ];
 
@@ -144,7 +144,6 @@ export default function UserListView() {
   const handleResetFilters = useCallback(() => {
     setFilters(defaultFilters);
   }, []);
-
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -152,19 +151,10 @@ export default function UserListView() {
           heading="List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'User', href: paths.dashboard.user.root },
-            { name: 'List' },
+         
+          
           ]}
-          action={
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.user.new}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              New User
-            </Button>
-          }
+        
           sx={{
             mb: { xs: 3, md: 5 },
           }}
