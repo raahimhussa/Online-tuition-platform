@@ -11,11 +11,12 @@ import Stack from '@mui/material/Stack';
 import LoadingButton from '@mui/lab/LoadingButton';
 import IconButton from '@mui/material/IconButton';
 import DeleteOutlined from '@mui/icons-material/DeleteOutlined';
+import Divider from '@mui/material/Divider';
 import AddOutlined from '@mui/icons-material/AddOutlined';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux'; 
-import { saveStudentData } from 'src/app/store/slices/studentslice';
+import { saveStudentData,updateStudent } from 'src/app/store/slices/studentslice';
 
 // ----------------------------------------------------------------------
 
@@ -93,6 +94,9 @@ export default function StudentEditForm({ currentStudent }) {
           <Typography variant="h6" gutterBottom>
             Academic Details
           </Typography>
+
+          <Divider sx={{ mb: 2 }} />
+
           <Box display="grid" gap={2}>
             {/* Grade Level */}
             <FormControl fullWidth error={!!errors.grade}>
@@ -145,7 +149,7 @@ export default function StudentEditForm({ currentStudent }) {
                   <RHFTextField
                     name={`subjects[${index}]`}
                     label={`Subject ${index + 1}`}
-                    placeholder={`e.g., Mathematics`}
+                    placeholder="e.g., Mathematics"
                     value={subject}
                     onChange={(e) => handleSubjectChange(index, e.target.value)}
                     fullWidth
@@ -168,6 +172,9 @@ export default function StudentEditForm({ currentStudent }) {
           <Typography variant="h6" gutterBottom>
             Guardian Details
           </Typography>
+
+          <Divider sx={{ mb: 2 }} />
+          
           <Box
             display="grid"
             gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }} // 1 column for small screens, 2 for larger
@@ -220,6 +227,8 @@ export default function StudentEditForm({ currentStudent }) {
 StudentEditForm.propTypes = {
   currentStudent: PropTypes.shape({
     id: PropTypes.string.isRequired,
+    name: PropTypes.string, // Add this line
+    phone: PropTypes.string, 
     guardianName: PropTypes.string,
     guardianPhone: PropTypes.string,
     address: PropTypes.string,

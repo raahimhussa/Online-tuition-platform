@@ -1,13 +1,12 @@
 "use client";
 
-// scrollbar
+// Scrollbar
 import 'simplebar-react/dist/simplebar.min.css';
 import { SessionProvider } from 'next-auth/react';
 
-// image
+// Image
 import 'react-lazy-load-image-component/src/effects/blur.css';
 
-// ----------------------------------------------------------------------
 // External Libraries
 import PropTypes from 'prop-types';
 
@@ -19,6 +18,7 @@ import { primaryFont } from 'src/theme/typography';
 import ProgressBar from 'src/components/progress-bar';
 import { MotionLazy } from 'src/components/animate/motion-lazy';
 import { SettingsProvider, SettingsDrawer } from 'src/components/settings';
+import FloatingChatButton from 'src/components/FloatingButton';
 
 // Auth
 import { AuthProvider, AuthConsumer } from 'src/auth/context/jwt';
@@ -48,9 +48,13 @@ export default function RootLayout({ children, session }) {
                   <SettingsDrawer />
                   <ProgressBar />
                   <AuthConsumer>
-                    <ClientProvider>{children}</ClientProvider>
+                    <ClientProvider>
+                      {children}
+                    </ClientProvider>
                   </AuthConsumer>
                 </MotionLazy>
+                {/* Floating Chat Button */}
+                <FloatingChatButton />
               </ThemeProvider>
             </SettingsProvider>
           </AuthProvider>
@@ -59,6 +63,7 @@ export default function RootLayout({ children, session }) {
     </html>
   );
 }
+
 RootLayout.propTypes = {
   children: PropTypes.node.isRequired,
   session: PropTypes.object,

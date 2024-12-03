@@ -1,7 +1,10 @@
 'use client';
 
 // sections
-import AvailabilityView from 'src/sections/two/view';
+import TermsAndConditionsView from 'src/sections/eight/view';
+
+// ----------------------------------------------------------------------
+
 
 
 import { useAuthContext } from 'src/auth/hooks';
@@ -15,7 +18,7 @@ export default function Page() {
   const role = user?.role;
 
   return role === 'teacher' ? (
-    <AvailabilityView /> // Render FiveView if role is 'student'
+    <TermsAndConditionsView /> // Render FiveView if role is 'student'
   ) : (
     <View403 /> // Render View403 (error page) if role is not 'student'
   );

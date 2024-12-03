@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { paths } from 'src/routes/paths';
 import SvgColor from 'src/components/svg-color';
+import { useAuthContext } from 'src/auth/hooks';
 
 // Define icons
 const icon = (name) => (
@@ -35,8 +36,13 @@ const ICONS = {
 };
 
 export function useNavData(teacherId) {
-  const data = useMemo(
-    () => [
+  // Get the current user's role from the authentication context
+  const { user } = useAuthContext();
+  const currentRole = user?.role;
+
+  // Memoize the filtered navigation data
+  const data = useMemo(() => {
+    const navItems = [
       {
         subheader: 'New Tutor',
         items: [
@@ -45,6 +51,12 @@ export function useNavData(teacherId) {
             path: paths.dashboard.user.new,
             icon: ICONS.user,
             roles: ['teacher', 'student'],
+          },
+          {
+            title: 'Student profile',
+            path: paths.dashboard.group.seven,
+            icon: ICONS.user,
+            roles: ['student'],
           },
           {
             title: 'Setup Profile',
@@ -71,12 +83,6 @@ export function useNavData(teacherId) {
             roles: ['teacher'],
           },
           {
-            title: 'Devs',
-            path: paths.dashboard.group.six,
-            icon: ICONS.ecommerce,
-            roles: ['teacher', 'student'],
-          },
-          {
             title: 'Teachers Cards',
             path: paths.dashboard.user.cards,
             icon: ICONS.dashboard,
@@ -88,23 +94,36 @@ export function useNavData(teacherId) {
             icon: ICONS.analytics,
             roles: ['student'],
           },
-          {
-            title: 'Teachers profile',
-            path: paths.dashboard.user.id(teacherId), // Ensure teacherId is passed
-            icon: ICONS.user,
-            roles: ['student'],
-          },
-          {
-            title: 'Student profile',
-            path: paths.dashboard.group.seven,
-            icon: ICONS.user,
-            roles: ['student'],
-          },
+             {
+          title: 'About Us',
+          path: paths.dashboard.group.six,
+          icon: ICONS.ecommerce,
+          roles: ['teacher', 'student'],
+        },
+        {
+          title: 'Contracts',
+          path: paths.dashboard.user.list,
+          icon: ICONS.ecommerce,
+          roles: [ 'student'],
+        },
+          // {
+        //   title: 'Teachers profile',
+        //   path: paths.dashboard.user.id(teacherId), // Ensure teacherId is passed
+        //   icon: ICONS.user,
+        //   roles: ['student'],
+        // },
         ],
       },
-    ],
-    [teacherId] // Dependency array includes teacherId to re-render when it changes
-  );
+    ];
+
+    // Filter items based on the user's role
+    return navItems.map((section) => ({
+      ...section,
+      items: section.items.filter((item) =>
+        item.roles.includes(currentRole)
+      ),
+    }));
+  }, [currentRole]); // Re-compute only when currentRole changes
 
   return data;
 }

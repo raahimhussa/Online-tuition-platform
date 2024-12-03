@@ -1,135 +1,192 @@
 import PropTypes from 'prop-types';
 // @mui
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Grid from '@mui/material/Grid';
 import Avatar from '@mui/material/Avatar';
-import ListItemText from '@mui/material/ListItemText';
+import React from 'react';
+import Stack from '@mui/material/Stack';
 import { useTheme, alpha } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-// theme
+import Box from '@mui/material/Box';
+// icons
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import { bgGradient } from 'src/theme/css';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import BookSessionDialog from './BookSessionDialog';
 
 // ----------------------------------------------------------------------
 
-export default function ProfileCover({ name, avatarUrl, role, coverUrl, phone_number, email, city_name }) {
+const convertToInternationalFormat = (phoneNumber) => {
+  if (!phoneNumber.startsWith('+92') && phoneNumber.startsWith('0')) {
+    // Replace leading '0' with '+92' for Pakistan
+    return phoneNumber.replace(/^0/, '+92');
+  }
+  return phoneNumber; // Return as-is if already in international format
+};
+
+export default function ProfileCover({
+  name,
+  role,
+  phone_number,
+  email,
+  city_name,
+  profile_picture,
+  age,
+}) {
   const theme = useTheme();
+  const [open, setOpen] = React.useState(false); // State for dialog
+
+  const handleWhatsAppClick = () => {
+    if (phone_number) {
+      const formattedPhoneNumber = convertToInternationalFormat(phone_number);
+      const whatsappUrl = `https://wa.me/${formattedPhoneNumber}`;
+      window.open(whatsappUrl, '_blank'); // Open WhatsApp in a new tab
+    }
+  };
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   return (
-    <Box
+    <>
+      <Card
       sx={{
-        ...bgGradient({
-          color: alpha(theme.palette.primary.darker, 0.8),
-          imgUrl: coverUrl,
-        }),
-        height: 1,
-        color: 'common.white',
+        position: 'relative',
+        p: { xs: 2, sm: 4 },
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        borderRadius: 2,
+        bgcolor: 'background.paper',
+        boxShadow: 3,
+       
+        width: '100%', // Ensures it takes up available space
+        maxWidth: 10000,  // Adjust the maxWidth to match the other cards
+        margin: '0 auto',  // Centers the card
+        mb : 5 ,
       }}
-    >
-      <Stack
-        direction={{ xs: 'column', md: 'row' }}
-        sx={{
-          left: { md: 24 },
-          bottom: { md: 20 },
-          zIndex: { md: 10 },
-          pt: { xs: 4, md: 2 },
-          position: { md: 'absolute' },
-        }}
       >
-        <Avatar
-          src={avatarUrl}
-          alt={name}
+        <Stack
+          direction={{ xs: 'column', md: 'row' }}
           sx={{
-            mx: 'auto',
-            width: { xs: 64, md: 128 },
-            height: { xs: 64, md: 128 },
-            border: `solid 2px ${theme.palette.common.white}`,
+            alignItems: 'center',
+            gap: 3,
+            mt: { xs: 3, md: 0 },
+            width: '100%', // Ensure Stack takes full width
           }}
-        />
+        >
+          <Avatar
+            src={profile_picture}
+            alt={name}
+            sx={{
+              width: { xs: 140, sm: 140, md: 140 },
+              height: { xs: 140, sm: 140, md: 140 },
+              border: `4px solid ${theme.palette.common.white}`,
+            }}
+          />
+          <CardContent
+            sx={{
+              textAlign: 'center',
+              mt: { xs: 2, md: 0 },
+              width: '100%', // Full width content area
+            }}
+          >
+             <Grid item xs={12} sm={6}>
+             <Stack direction="row" alignItems="center" spacing={1}>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>
+              {name}
+            </Typography>
+            </Stack>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+             <Stack direction="row" alignItems="center" spacing={1}>
+           
+            <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
+              {role || 'No Experience Added'}
+            </Typography>
+            </Stack>
+            </Grid>
+            
+            <Grid container spacing={2} justifyContent="center">
+              {/* Email */}
+              <Grid item xs={12} sm={6}>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <MailOutlineIcon color="action" />
+                  <Typography variant="body2" color="text.secondary">
+                    {email || 'N/A'}
+                  </Typography>
+                </Stack>
+              </Grid>
 
-        <ListItemText
+              {/* Phone Number */}
+              <Grid item xs={12} sm={6}>
+                <Stack direction="row" alignItems="center" spacing={1} onClick={handleWhatsAppClick}>
+                  <WhatsAppIcon color="action" sx={{ cursor: 'pointer' }} />
+                  <Typography variant="body2" color="text.secondary">
+                    {phone_number || 'N/A'}
+                  </Typography>
+                </Stack>
+              </Grid>
+
+              {/* City */}
+              <Grid item xs={12} sm={6}>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <LocationOnIcon color="action" />
+                  <Typography variant="body2" color="text.secondary">
+                    {city_name || 'N/A'}
+                  </Typography>
+                </Stack>
+              </Grid>
+
+              {/* Age */}
+              <Grid item xs={12} sm={6}>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <AccountBoxIcon color="action" />
+                  <Typography variant="body2" color="text.secondary">
+                    {age || 'N/A'}
+                  </Typography>
+                </Stack>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Stack>
+
+        <Button
+          variant="contained"
+          onClick={handleOpen}
           sx={{
-            mt: 2,
-            ml: { md: 3 },
-            textAlign: { xs: 'center', md: 'unset' },
-            color: theme.palette.mode === 'light' ? 'common.white' : 'text.primary',
+            position: 'absolute',
+            bottom: 20, // Position button at the bottom
+            right: 20, // Position button at the right
+         
+
+            backgroundColor: theme.palette.info.dark,
+            color: 'white',
+            '&:hover': {
+              backgroundColor: theme.palette.info.main,
+            },
           }}
-          primary={name}
-          secondary={
-            <>
-              <Typography variant="body2"
-              sx={{
-                opacity: 0.7,
-                color: theme.palette.mode === 'light' ? 'common.white' : 'text.secondary',
-              }}
-            >
-                {role}
-              </Typography>
-              {phone_number && (
-                <Typography variant="body2" 
-                sx={{
-                  opacity: 0.7,
-                  mt: 0.5,
-                  color: theme.palette.mode === 'light' ? 'common.white' : 'text.secondary', 
-                }}
-              >
-                  📞 {phone_number}
-                </Typography>
-              )}
-              {email && (
-                <Typography variant="body2" 
-                sx={{
-                  opacity: 0.7,
-                  mt: 0.5,
-                  color: theme.palette.mode === 'light' ? 'common.white' : 'text.secondary', 
-                }}
-              >
-                  ✉️ {email}
-                </Typography>
-              )}
-              {city_name && (
-                <Typography variant="body2" 
-                sx={{
-                  opacity: 0.7,
-                  mt: 0.5,
-                  color: theme.palette.mode === 'light' ? 'common.white' : 'text.secondary', 
-                }}
-              >
-                  📍 {city_name}
-                </Typography>
-              )}
-            </>
-          }
-          primaryTypographyProps={{
-            typography: 'h4',
-          }}
-        />
-      </Stack>
-      <Button
-        variant="contained"
-        sx={{
-          position: 'absolute',
-          bottom: 25,
-          right: 16,
-          backgroundColor: theme.palette.primary.dark,
-          color: 'common.white',
-          '&:hover': {
-            backgroundColor: theme.palette.primary.main,
-          },
-        }}
-      >
-        Book a Session
-      </Button>
-    </Box>
+        >
+          Book a Session
+        </Button>
+      </Card>
+
+      {/* Dialog for booking a session */}
+      <BookSessionDialog open={open} onClose={handleClose} />
+    </>
   );
 }
 
 ProfileCover.propTypes = {
-  avatarUrl: PropTypes.string,
-  coverUrl: PropTypes.string,
-  name: PropTypes.string,
-  role: PropTypes.string,
+  name: PropTypes.string.isRequired,
+  role: PropTypes.string.isRequired,
   phone_number: PropTypes.string,
   email: PropTypes.string,
   city_name: PropTypes.string,
+  profile_picture: PropTypes.string.isRequired,
+  age: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };

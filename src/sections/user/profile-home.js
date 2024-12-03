@@ -17,18 +17,38 @@ import BookIcon from '@mui/icons-material/Book';
 import LanguageIcon from '@mui/icons-material/Language';
 import LayersIcon from '@mui/icons-material/Layers';
 import ProfilePostItem from './profile-post-item';
+import UserCardListBySubject from './user-card-profile-home';
 // ----------------------------------------------------------------------
 
 export default function ProfileHome({ info, posts }) {
   const theme = useTheme();
 
-  const chipStyle = (color) => ({
-    color: theme.palette.common.white,
-    backgroundColor: color,
+  const sharedChipStyle = {
+    fontSize: '0.9rem',
+    padding: '4px 8px',
     borderRadius: '16px',
-    padding: '8px 12px',
-    fontWeight: 500,
-  });
+    color: 'black',
+  };
+
+  const langChipStyle = {
+    ...sharedChipStyle,
+    backgroundColor: '#e4cafe',
+  };
+
+  const overviewChipStyle = {
+    ...sharedChipStyle,
+    backgroundColor: '#b2e3c7',
+  };
+
+  const sessionChipStyle = {
+    ...sharedChipStyle,
+    backgroundColor: '#b8e4e3',
+  };
+
+  const subjectChipStyle = {
+    ...sharedChipStyle,
+    backgroundColor: '#b3c6f0',
+  };
 
   const sectionTitle = (icon, title) => (
     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -63,30 +83,14 @@ export default function ProfileHome({ info, posts }) {
     <Card sx={{ p: 3 }}>
       {sectionTitle(<InfoIcon />, 'Overview')}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
-      <Chip
-        label={`ID: ${info.teacher_id || 'Not Available'}`}
-        sx={chipStyle(theme.palette.primary.main)}
-      />
-      <Chip
-        label={`Gender: ${info.gender || 'Not Specified'}`}
-        sx={chipStyle(theme.palette.primary.main)}
-      />
-      {/* <Chip
-        label={`Age: ${info.age || 'Not Specified'}`}
-        sx={chipStyle(theme.palette.primary.main)}
-      /> */}
-        <Chip
-          label={`Experience: ${info.experience_years} years`}
-          sx={chipStyle(theme.palette.primary.main)}
-        />
+        <Chip label={`ID: ${info.teacher_id || 'Not Available'}`} sx={overviewChipStyle} />
+        <Chip label={`Gender: ${info.gender || 'Not Specified'}`} sx={overviewChipStyle} />
+        <Chip label={`Experience: ${info.experience_years} years`} sx={overviewChipStyle} />
         <Chip
           label={`Verified Status: ${info.is_verified ? 'Verified' : 'Not Verified'}`}
-          sx={chipStyle(theme.palette.success.main)}
+          sx={overviewChipStyle}
         />
-        <Chip
-          label={`Rating: ${info.rating || 'Not Rated'} stars`}
-          sx={chipStyle(theme.palette.success.main)}
-        />
+        <Chip label={`Rating: ${info.rating || 'Not Rated'} stars`} sx={overviewChipStyle} />
       </Box>
     </Card>
   );
@@ -95,18 +99,12 @@ export default function ProfileHome({ info, posts }) {
     <Card sx={{ p: 3 }}>
       {sectionTitle(<ScheduleIcon />, 'Session Details')}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
-        <Chip
-          label={`Hourly Rate: $${info.hourly_rate}`}
-          sx={chipStyle(theme.palette.info.main)}
-        />
+        <Chip label={`Hourly Rate: $${info.hourly_rate}`} sx={sessionChipStyle} />
         <Chip
           label={`Session Duration: ${info.duration_per_session} mins`}
-          sx={chipStyle(theme.palette.info.main)}
+          sx={sessionChipStyle}
         />
-        <Chip
-          label={`Teaching Mode: ${info.teaching_mode}`}
-          sx={chipStyle(theme.palette.info.main)}
-        />
+        <Chip label={`Teaching Mode: ${info.teaching_mode}`} sx={sessionChipStyle} />
       </Box>
     </Card>
   );
@@ -115,38 +113,30 @@ export default function ProfileHome({ info, posts }) {
     <Card sx={{ p: 3 }}>
       {sectionTitle(<BookIcon />, 'Subjects')}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
-      {info.subjects && info.subjects.length > 0 ? (
-        info.subjects.map((subject, index) => (
-          <Chip
-            key={index}
-            label={subject}
-            sx={chipStyle(theme.palette.secondary.main)}
-          />
-        ))
-      ) : (
-        <Typography variant="body2" color="text.secondary">
-          No subjects available.
-        </Typography>
-      )}
-      </Box>
-
-      <Box sx={{ mt: 3 }}>
-      {sectionTitle(<LayersIcon />, 'Grade Levels')}
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 2 }}>
-        {info.grade_levels && info.grade_levels.length > 0 ? (
-          info.grade_levels.map((level, index) => (
-            <Chip
-              key={index}
-              label={level}
-              sx={chipStyle(theme.palette.secondary.light)}
-            />
+        {info.subjects && info.subjects.length > 0 ? (
+          info.subjects.map((subject, index) => (
+            <Chip key={index} label={subject} sx={subjectChipStyle} />
           ))
         ) : (
           <Typography variant="body2" color="text.secondary">
-            No grade levels available.
+            No subjects available.
           </Typography>
         )}
       </Box>
+
+      <Box sx={{ mt: 3 }}>
+        {sectionTitle(<LayersIcon />, 'Grade Levels')}
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 2 }}>
+          {info.grade_levels && info.grade_levels.length > 0 ? (
+            info.grade_levels.map((level, index) => (
+              <Chip key={index} label={level} sx={subjectChipStyle} />
+            ))
+          ) : (
+            <Typography variant="body2" color="text.secondary">
+              No grade levels available.
+            </Typography>
+          )}
+        </Box>
       </Box>
     </Card>
   );
@@ -155,28 +145,21 @@ export default function ProfileHome({ info, posts }) {
     <Card sx={{ p: 3 }}>
       {sectionTitle(<LanguageIcon />, 'Languages')}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
-      {info.languages && info.languages.length > 0 ? (
-        info.languages.map((language, index) => (
-          <Chip
-            key={index}
-            label={language}
-            sx={chipStyle(theme.palette.primary.dark)}
-          />
-        ))
-      ) : (
-        <Typography variant="body2" color="text.secondary">
-          No languages available.
-        </Typography>
-      )}
-    </Box>
+        {info.languages && info.languages.length > 0 ? (
+          info.languages.map((language, index) => (
+            <Chip key={index} label={language} sx={langChipStyle} />
+          ))
+        ) : (
+          <Typography variant="body2" color="text.secondary">
+            No languages available.
+          </Typography>
+        )}
+      </Box>
     </Card>
   );
 
   return (
     <Grid container spacing={3}>
-      <Grid xs={12}>
-        {renderBio}
-      </Grid>
 
       <Grid xs={12} md={6}>
         <Stack spacing={3}>
@@ -192,16 +175,40 @@ export default function ProfileHome({ info, posts }) {
         </Stack>
       </Grid>
 
-      {/* <Grid xs={12}>
-        <Card sx={{ p: 3, boxShadow: 2, borderRadius: '16px' }}>
-          <CardHeader title="Posts" /> */}
-          {/* <Stack spacing={3}>
-            {posts.map((post) => (
-              <ProfilePostItem key={post.id} post={post} />
-            ))}
-          </Stack> */}
-        {/* </Card>
-      </Grid> */}
+      <Grid xs={12}>
+        {renderBio}
+      </Grid>
+
+      <Grid xs={12}>
+
+
+<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 4 }}>
+  <Typography
+    variant="h3"  // Slightly larger heading for more prominence
+    sx={{
+      fontWeight: '600',  // Medium boldness for a professional look
+      color: 'text.primary',
+      mt : 5,
+      mb : 5,
+
+      textAlign: 'center',
+      letterSpacing: 1.5,  // Adds space between letters for better readability
+        // Margin below for spacing
+      textTransform: 'uppercase',  // Optional: adds emphasis by capitalizing the title
+      borderBottom: '2px solid',  // Optional: underline effect for a professional look
+      width: 'fit-content',  // Ensures the border wraps the title text
+      pb: 1,  // Padding below the text to give space between text and underline
+    }}
+  >
+    Teacher Teaching Similar Subjects
+  </Typography>
+</Box>
+
+
+  <Stack spacing={3}>
+    <UserCardListBySubject />
+  </Stack>
+</Grid>
     </Grid>
   );
 }

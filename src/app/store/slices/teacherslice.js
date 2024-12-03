@@ -17,6 +17,36 @@ export const fetchTeachers = createAsyncThunk(
   }
 );
 
+export const fetchTeacherByUserId1 = createAsyncThunk('teachers/fetchTeacherByUserId1', async () => {
+  try {
+    // Retrieve token from sessionStorage
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      throw new Error('No token found. Please log in.');
+    }
+
+    // Make API call with Authorization header
+    const response = await fetch(`/api/teachers/setup-profile`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch teacher');
+    }
+
+    const data = await response.json();
+    console.log(data); // API response for a single teacher
+    return data;
+  } catch (error) {
+    console.error('Error fetching teacher:', error);
+    throw error;
+  }
+});
+
 // Thunk for fetching a teacher by user ID
 export const fetchTeacherByUserId = createAsyncThunk(
   'teachers/fetchTeacherByUserId',
@@ -49,7 +79,6 @@ export const fetchTeacherByUserId = createAsyncThunk(
   }
 );
 
-// Teacher slice
 const teacherSlice = createSlice({
   name: 'teachers',
   initialState: {
@@ -87,6 +116,20 @@ const teacherSlice = createSlice({
       .addCase(fetchTeacherByUserId.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Failed to fetch teacher';
+      })
+
+      // Handling fetchTeacherByUserId1 thunk
+      .addCase(fetchTeacherByUserId1.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchTeacherByUserId1.fulfilled, (state, action) => {
+        state.loading = false;
+        state.teacher = action.payload; // Store fetched teacher by user ID
+      })
+      .addCase(fetchTeacherByUserId1.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to fetch teacher by user ID';
       });
   },
 });
