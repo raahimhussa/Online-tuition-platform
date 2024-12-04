@@ -25,6 +25,15 @@ export const updateContractStatus = async (contract_id, status) => {
     return rows[0];
 };
 
+export const getAllContracts = async () => {
+  const text = `
+    SELECT * from hiring_contracts
+  `;
+  const { rows } = await query(text);
+  return rows;
+};
+
+
 export const deleteContract = async (contract_id) => {
     const text = `DELETE FROM hiring_contracts WHERE contract_id = $1`;
     await query(text, [contract_id]);

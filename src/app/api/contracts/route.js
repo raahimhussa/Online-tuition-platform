@@ -1,4 +1,4 @@
-import { createContract, getContractById, updateContractStatus, deleteContract } from '../../../lib/contractService';
+import { createContract, getContractById, updateContractStatus, deleteContract,getAllContracts } from '../../../lib/contractService';
 
 export async function POST(req) {
     const data = await req.json();
@@ -7,10 +7,39 @@ export async function POST(req) {
 }
 
 export async function GET(req) {
-    const contractId = req.query.contract_id;
-    const contract = await getContractById(contractId);
-    return new Response(JSON.stringify(contract), { status: 200 });
-}
+    try {
+      const url = new URL(req.url);
+      const contractId = url.searchParams.get('contract_id'); // Get `contract_id` from query parameters
+  
+      if (contractId) {
+        // Fetch contract by ID
+        const contract = await getContractById(contractId);
+        if (!contract) {
+          return new Response(JSON.stringify({ message: 'Contract not found' }), {
+            status: 404,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        return new Response(JSON.stringify(contract), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      } else {
+        // Fetch all contracts if no ID is provided
+        const contracts = await getAllContracts();
+        return new Response(JSON.stringify(contracts), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching contract(s):', error);
+      return new Response(JSON.stringify({ message: 'Failed to fetch contracts', error: error.message }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+  }
 
 export async function PUT(req) {
     const { contract_id, status } = await req.json();
