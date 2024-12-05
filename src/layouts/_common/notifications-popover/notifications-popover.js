@@ -32,7 +32,7 @@ import NotificationItem from './notification-item';
 
 const TABS = [
   { value: 'all', label: 'All' },
-  { value: 'unread', label: 'Unread' },
+  // { value: 'unread', label: 'Unread' },
 ];
 
 export default function NotificationsPopover() {
@@ -87,31 +87,31 @@ export default function NotificationsPopover() {
     </Stack>
   );
 
-  const renderTabs = (
-    <Tabs value={currentTab} onChange={handleChangeTab} sx={{ px: 2.5 }}>
-      {TABS.map((tab) => (
-        <Tab
-          key={tab.value}
-          value={tab.value}
-          label={
-            <Stack direction="row" spacing={1} alignItems="center">
-              <span>{tab.label}</span>
-              <Label
-                variant={currentTab === tab.value ? 'filled' : 'soft'}
-                color={tab.value === 'unread' ? 'info' : 'default'}
-              >
-                {tab.value === 'all' ? notifications.length : totalUnRead}
-              </Label>
-            </Stack>
-          }
-          sx={{
-            '&:not(:last-of-type)': { mr: 3 },
-            typography: 'body2',
-          }}
-        />
-      ))}
-    </Tabs>
-  );
+  // const renderTabs = (
+  //   <Tabs value={currentTab} onChange={handleChangeTab} sx={{ px: 2.5 }}>
+  //     {TABS.map((tab) => (
+  //       <Tab
+  //         key={tab.value}
+  //         value={tab.value}
+  //         label={
+  //           <Stack direction="row" spacing={1} alignItems="center">
+  //             <span>{tab.label}</span>
+  //             <Label
+  //               variant={currentTab === tab.value ? 'filled' : 'soft'}
+  //               color={tab.value === 'unread' ? 'info' : 'default'}
+  //             >
+  //               {tab.value === 'all' ? notifications.length : totalUnRead}
+  //             </Label>
+  //           </Stack>
+  //         }
+  //         sx={{
+  //           '&:not(:last-of-type)': { mr: 3 },
+  //           typography: 'body2',
+  //         }}
+  //       />
+  //     ))}
+  //   </Tabs>
+  // );
 
   const renderList = (
     <Scrollbar sx={{ px: 1, py: 2 }}>
@@ -147,14 +147,14 @@ export default function NotificationsPopover() {
         }}
       >
         {renderHeader}
-        <Divider />
-        {renderTabs}
-        <Divider />
+        {/* <Divider />
+        {renderTabs} */}
+        <Divider sx={{mt:3}}/>
         {renderList}
         <Box sx={{ p: 1 }}>
-          <Button fullWidth size="large" variant="contained">
+          {/* <Button fullWidth size="large" variant="contained">
             View All
-          </Button>
+          </Button> */}
         </Box>
       </Drawer>
     </>

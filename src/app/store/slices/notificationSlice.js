@@ -8,15 +8,18 @@ const initialState = {
       content: "Your contract has been updated.",
       type: "contract_update",
       is_read: false,
-      created_at: "2024-12-04T10:15:23"
+      created_at: "2024-12-04T10:15:23",
+      profile_picture: "https://res.cloudinary.com/dl6g2mzft/image/upload/v1729970538/samples/smile.jpg",
     },
+  
     {
       notification_id: 2,
       user_id: 102,
       content: "You received a new review!",
       type: "review",
       is_read: true,
-      created_at: "2024-12-04T09:45:10"
+      created_at: "2024-12-04T09:45:10",
+      profile_picture: "https://res.cloudinary.com/dl6g2mzft/image/upload/v1729970538/samples/smile.jpg",
     },
     {
       notification_id: 3,
@@ -24,7 +27,8 @@ const initialState = {
       content: "Welcome to our platform!",
       type: "general",
       is_read: false,
-      created_at: "2024-12-03T14:32:00"
+      created_at: "2024-12-03T14:32:00",
+      profile_picture: "https://res.cloudinary.com/dl6g2mzft/image/upload/v1729970538/samples/smile.jpg",
     },
     {
       notification_id: 4,
@@ -32,7 +36,8 @@ const initialState = {
       content: "Your review has been approved.",
       type: "review",
       is_read: true,
-      created_at: "2024-12-02T18:20:45"
+      created_at: "2024-12-02T18:20:45",
+      profile_picture: "https://res.cloudinary.com/dl6g2mzft/image/upload/v1729970538/samples/smile.jpg",
     },
     {
       notification_id: 5,
@@ -40,7 +45,8 @@ const initialState = {
       content: "Your subscription has been renewed.",
       type: "general",
       is_read: false,
-      created_at: "2024-12-04T08:10:15"
+      created_at: "2024-12-04T08:10:15",
+      profile_picture: "https://res.cloudinary.com/dl6g2mzft/image/upload/v1729970538/samples/smile.jpg",
     }
   ]
 };
