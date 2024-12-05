@@ -158,17 +158,11 @@ export default function ProfileCover({
         <Button
           variant="contained"
           onClick={handleOpen}
+          color="primary"
           sx={{
             position: 'absolute',
             bottom: 20, // Position button at the bottom
             right: 20, // Position button at the right
-         
-
-            backgroundColor: theme.palette.info.dark,
-            color: 'white',
-            '&:hover': {
-              backgroundColor: theme.palette.info.main,
-            },
           }}
         >
           Book a Session
