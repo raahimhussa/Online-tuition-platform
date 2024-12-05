@@ -16,9 +16,8 @@ import ScheduleIcon from '@mui/icons-material/Schedule';
 import BookIcon from '@mui/icons-material/Book';
 import LanguageIcon from '@mui/icons-material/Language';
 import LayersIcon from '@mui/icons-material/Layers';
-import ProfilePostItem from './profile-post-item';
 import UserCardListBySubject from './user-card-profile-home';
-// ----------------------------------------------------------------------
+import EventAvailableIcon from '@mui/icons-material/EventAvailable'; 
 
 export default function ProfileHome({ info, posts }) {
   const theme = useTheme();
@@ -28,27 +27,7 @@ export default function ProfileHome({ info, posts }) {
     padding: '4px 8px',
     borderRadius: '16px',
     color: 'black',
-    backgroundColor: '#FFD966',
-  };
-
-  const langChipStyle = {
-    ...sharedChipStyle,
-    //backgroundColor: '#e4cafe',
-  };
-
-  const overviewChipStyle = {
-    ...sharedChipStyle,
-    //backgroundColor: '#b2e3c7',
-  };
-
-  const sessionChipStyle = {
-    ...sharedChipStyle,
-    //backgroundColor: '#b8e4e3',
-  };
-
-  const subjectChipStyle = {
-    ...sharedChipStyle,
-    //backgroundColor: '#b3c6f0',
+    backgroundColor: '#e6ad00',
   };
 
   const sectionTitle = (icon, title) => (
@@ -65,16 +44,16 @@ export default function ProfileHome({ info, posts }) {
       <CardHeader title={sectionTitle(<SchoolIcon />, 'Biography & Education')} />
       <Stack spacing={2} sx={{ p: 3 }}>
         <Box sx={{ typography: 'body1' }}>
-        <Typography component="span" variant="subtitle1" sx={{ fontWeight: 800 }}>
-          Bio:
-        </Typography>{' '}
-        {info.bio || 'No bio available'}
+          <Typography component="span" variant="subtitle1" sx={{ fontWeight: 800 }}>
+            Bio:
+          </Typography>{' '}
+          {info.bio || 'No bio available'}
         </Box>
         <Box sx={{ typography: 'body1' }}>
-        <Typography component="span" variant="subtitle1" sx={{ fontWeight: 800 }}>
-          Education:
-        </Typography>{' '}
-        {info.education || 'No education available'}
+          <Typography component="span" variant="subtitle1" sx={{ fontWeight: 800 }}>
+            Education:
+          </Typography>{' '}
+          {info.education || 'No education available'}
         </Box>
       </Stack>
     </Card>
@@ -84,14 +63,14 @@ export default function ProfileHome({ info, posts }) {
     <Card sx={{ p: 3 }}>
       {sectionTitle(<InfoIcon />, 'Overview')}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
-        <Chip label={`ID: ${info.teacher_id || 'Not Available'}`} sx={overviewChipStyle} />
-        <Chip label={`Gender: ${info.gender || 'Not Specified'}`} sx={overviewChipStyle} />
-        <Chip label={`Experience: ${info.experience_years} years`} sx={overviewChipStyle} />
+        <Chip label={`ID: ${info.teacher_id || 'Not Available'}`} sx={sharedChipStyle} />
+        <Chip label={`Gender: ${info.gender || 'Not Specified'}`} sx={sharedChipStyle} />
+        <Chip label={`Experience: ${info.experience_years || 0} years`} sx={sharedChipStyle} />
         <Chip
           label={`Verified Status: ${info.is_verified ? 'Verified' : 'Not Verified'}`}
-          sx={overviewChipStyle}
+          sx={sharedChipStyle}
         />
-        <Chip label={`Rating: ${info.rating || 'Not Rated'} stars`} sx={overviewChipStyle} />
+        <Chip label={`Rating: ${info.rating || 'Not Rated'} stars`} sx={sharedChipStyle} />
       </Box>
     </Card>
   );
@@ -100,12 +79,12 @@ export default function ProfileHome({ info, posts }) {
     <Card sx={{ p: 3 }}>
       {sectionTitle(<ScheduleIcon />, 'Session Details')}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
-        <Chip label={`Hourly Rate: $${info.hourly_rate}`} sx={sessionChipStyle} />
+        <Chip label={`Hourly Rate: $${info.hourly_rate}`} sx={sharedChipStyle} />
         <Chip
-          label={`Session Duration: ${info.duration_per_session} mins`}
-          sx={sessionChipStyle}
+          label={`Session Duration: ${info.duration_per_session || 0} mins`}
+          sx={sharedChipStyle}
         />
-        <Chip label={`Teaching Mode: ${info.teaching_mode}`} sx={sessionChipStyle} />
+        <Chip label={`Teaching Mode: ${info.teaching_mode}`} sx={sharedChipStyle} />
       </Box>
     </Card>
   );
@@ -116,7 +95,7 @@ export default function ProfileHome({ info, posts }) {
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
         {info.subjects && info.subjects.length > 0 ? (
           info.subjects.map((subject, index) => (
-            <Chip key={index} label={subject} sx={subjectChipStyle} />
+            <Chip key={index} label={subject} sx={sharedChipStyle} />
           ))
         ) : (
           <Typography variant="body2" color="text.secondary">
@@ -130,7 +109,7 @@ export default function ProfileHome({ info, posts }) {
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 2 }}>
           {info.grade_levels && info.grade_levels.length > 0 ? (
             info.grade_levels.map((level, index) => (
-              <Chip key={index} label={level} sx={subjectChipStyle} />
+              <Chip key={index} label={level} sx={sharedChipStyle} />
             ))
           ) : (
             <Typography variant="body2" color="text.secondary">
@@ -148,7 +127,7 @@ export default function ProfileHome({ info, posts }) {
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
         {info.languages && info.languages.length > 0 ? (
           info.languages.map((language, index) => (
-            <Chip key={index} label={language} sx={langChipStyle} />
+            <Chip key={index} label={language} sx={sharedChipStyle} />
           ))
         ) : (
           <Typography variant="body2" color="text.secondary">
@@ -159,9 +138,41 @@ export default function ProfileHome({ info, posts }) {
     </Card>
   );
 
+  const renderAvailability = (
+    <Card sx={{ p: 3 }}>
+      {sectionTitle(<EventAvailableIcon />, 'Availability')}
+      {info.availability && Object.keys(info.availability).length > 0 ? (
+        <Stack spacing={2}>
+          {Object.entries(info.availability).map(([day, times], index) => (
+            <Box key={index}>
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  fontWeight: 700,
+                  mb: 1,
+                  color: theme.palette.mode === 'dark' ? 'white' : 'text.primary',
+                }}
+              >
+                {day}:
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                {times.map((time, idx) => (
+                  <Chip key={idx} label={time} sx={sharedChipStyle} />
+                ))}
+              </Box>
+            </Box>
+          ))}
+        </Stack>
+      ) : (
+        <Typography variant="body2" color="text.secondary">
+          No availability information provided.
+        </Typography>
+      )}
+    </Card>
+  );
+
   return (
     <Grid container spacing={3}>
-
       <Grid xs={12} md={6}>
         <Stack spacing={3}>
           {renderOverview}
@@ -176,32 +187,33 @@ export default function ProfileHome({ info, posts }) {
         </Stack>
       </Grid>
 
+      <Grid xs={12}>{renderBio}</Grid>
+
+      {/* Render Availability Card */}
+      <Grid xs={12}>{renderAvailability}</Grid>
+
       <Grid xs={12}>
-        {renderBio}
+        <Box sx={{ display: 'flex', mb: 4, mt: 4 }}>
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: 'bold',
+              color: theme.palette.mode === 'dark' ? 'white' : 'text.primary',
+              marginBottom: 1,
+              textDecoration: 'underline',
+            }}
+          >
+            Teachers Teaching Similar Subjects
+          </Typography>
+        </Box>
+        
+
+        <Stack spacing={3}>
+          <UserCardListBySubject subjects={info.subjects} />
+        </Stack>
       </Grid>
-
-      <Grid xs={12}>
-
-
-      <Box sx={{ display: 'flex', mb: 4, mt: 4 }}>
-  <Typography
-    variant="h4" 
-    sx={{
-      fontWeight: 'bold', 
-      color: theme.palette.mode === 'dark' ? 'white' : 'text.primary',
-      marginBottom: 1,
-    }}
-  >
-    Teacher Teaching Similar Subjects
-  </Typography>
-</Box>
-
-<Stack spacing={3}>
-  <UserCardListBySubject subjects={info.subjects} />
-</Stack>
-
-</Grid>
     </Grid>
+
   );
 }
 
@@ -211,18 +223,17 @@ ProfileHome.propTypes = {
     experience_years: PropTypes.number,
     teacher_id: PropTypes.string,
     gender: PropTypes.string,
-    age: PropTypes.number,
     education: PropTypes.string,
-    name :  PropTypes.string,
+    name: PropTypes.string,
     is_verified: PropTypes.bool,
     rating: PropTypes.number,
-    area :PropTypes.string,
     hourly_rate: PropTypes.string,
     duration_per_session: PropTypes.number,
     teaching_mode: PropTypes.string,
     subjects: PropTypes.arrayOf(PropTypes.string),
     grade_levels: PropTypes.arrayOf(PropTypes.string),
     languages: PropTypes.arrayOf(PropTypes.string),
+    availability: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string)),
   }),
   posts: PropTypes.array,
 };
