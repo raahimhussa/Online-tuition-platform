@@ -62,15 +62,7 @@ export const updateAvailability = createAsyncThunk(
 );
 
 const initialState = {
-  availability: {
-    Monday: { checked: true, slots: [{ start: '09:00 AM', end: '05:00 PM' }] },
-    Tuesday: { checked: true, slots: [{ start: '09:00 AM', end: '05:00 PM' }] },
-    Wednesday: { checked: true, slots: [{ start: '09:00 AM', end: '05:00 PM' }] },
-    Thursday: { checked: true, slots: [{ start: '09:00 AM', end: '05:00 PM' }] },
-    Friday: { checked: true, slots: [{ start: '09:00 AM', end: '05:00 PM' }] },
-    Saturday: { checked: true, slots: [{ start: '09:00 AM', end: '05:00 PM' }] },
-    Sunday: { checked: true, slots: [{ start: '09:00 AM', end: '05:00 PM' }] },
-  },
+  availability: {},
   loading: false,
   error: null,
 };
