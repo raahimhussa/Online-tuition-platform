@@ -183,24 +183,23 @@ export default function ProfileHome({ info, posts }) {
       <Grid xs={12}>
 
 
-<Box sx={{ display: 'flex', mb: 4, mt: 4 }}>
-<Typography
-  variant="h4" 
-  sx={{
-    fontWeight: 'bold', 
-    color: theme.palette.mode === 'dark' ? 'white' : 'text.primary',
-    marginBottom: 1,
-  }}
->
-  Teacher Teaching Similar Subjects
-</Typography>
-
+      <Box sx={{ display: 'flex', mb: 4, mt: 4 }}>
+  <Typography
+    variant="h4" 
+    sx={{
+      fontWeight: 'bold', 
+      color: theme.palette.mode === 'dark' ? 'white' : 'text.primary',
+      marginBottom: 1,
+    }}
+  >
+    Teacher Teaching Similar Subjects
+  </Typography>
 </Box>
 
+<Stack spacing={3}>
+  <UserCardListBySubject subjects={info.subjects} />
+</Stack>
 
-  <Stack spacing={3}>
-    <UserCardListBySubject />
-  </Stack>
 </Grid>
     </Grid>
   );
