@@ -15,26 +15,15 @@ import { fToNow } from 'src/utils/format-time';
 export default function NotificationItem({ notification }) {
   const renderAvatar = (
     <ListItemAvatar>
-      <Stack
-        alignItems="center"
-        justifyContent="center"
+      <Avatar
+        alt="User Profile"
+        src={notification.profile_picture}
         sx={{
           width: 40,
           height: 40,
-          borderRadius: '50%',
           bgcolor: 'background.neutral',
         }}
-      >
-        <Box
-          component="img"
-          src={`/assets/icons/notification/${
-            (notification.type === 'contract_update' && 'ic_contract_update') ||
-            (notification.type === 'review' && 'ic_review') ||
-            'ic_general'
-          }.svg`}
-          sx={{ width: 24, height: 24 }}
-        />
-      </Stack>
+      />
     </ListItemAvatar>
   );
 
@@ -47,10 +36,7 @@ export default function NotificationItem({ notification }) {
         </Typography>
       }
       secondary={
-        <Typography
-          variant="caption"
-          sx={{ color: 'text.disabled' }}
-        >
+        <Typography variant="caption" sx={{ color: 'text.disabled' }}>
           {fToNow(notification.created_at)}
         </Typography>
       }
@@ -60,10 +46,10 @@ export default function NotificationItem({ notification }) {
   const renderUnReadBadge = !notification.is_read && (
     <Box
       sx={{
-        top: 26,
+        top: 10,
+        right: 10,
         width: 8,
         height: 8,
-        right: 20,
         borderRadius: '50%',
         bgcolor: 'info.main',
         position: 'absolute',
@@ -78,6 +64,11 @@ export default function NotificationItem({ notification }) {
         p: 2.5,
         alignItems: 'flex-start',
         borderBottom: (theme) => `dashed 1px ${theme.palette.divider}`,
+        bgcolor: notification.is_read ? 'background.paper' : 'action.hover', // Unread notification has different background
+        '&:hover': {
+          bgcolor: 'action.selected', // Slightly darker background on hover
+        },
+        position: 'relative',
       }}
     >
       {renderUnReadBadge}
@@ -99,5 +90,6 @@ NotificationItem.propTypes = {
     type: PropTypes.string.isRequired,
     is_read: PropTypes.bool.isRequired,
     created_at: PropTypes.string.isRequired,
+    profile_picture: PropTypes.string.isRequired, // New profile picture field
   }).isRequired,
 };
