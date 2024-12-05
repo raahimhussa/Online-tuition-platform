@@ -78,6 +78,18 @@ const contractSlice = createSlice({
       .addCase(createContract.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Failed to create contract';
+      })
+      .addCase(fetchAllContracts.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAllContracts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.contracts = action.payload;
+      })
+      .addCase(fetchAllContracts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to fetch contracts';
       });
   },
 });

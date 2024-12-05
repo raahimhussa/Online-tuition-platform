@@ -23,7 +23,7 @@ import * as Yup from 'yup';
 import LoadingButton from '@mui/lab/LoadingButton';
 import RHFTextField from 'src/components/hook-form/rhf-text-field'; // Ensure this path is correct
 import getStripe from "src/utils/get-stripe";
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {createContract} from '../../app/store/slices/contractSlice';
 
 const BookSessionDialog = ({ open, onClose, teacher_id }) => {
