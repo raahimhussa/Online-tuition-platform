@@ -200,7 +200,14 @@ const dispatch = useDispatch();
                     {/* {tab.value === 'banned' &&
                       _userList.filter((user) => user.status === 'banned').length} */}
                     {tab.value === 'completed' &&
+                      _userList.filter((user) => user.status === 'completed').length}
+                       {tab.value === 'accepted' &&
+                      _userList.filter((user) => user.status === 'accepted').length}
+                       {tab.value === 'rejected' &&
                       _userList.filter((user) => user.status === 'rejected').length}
+                       {tab.value === 'cancelled' &&
+                      _userList.filter((user) => user.status === 'cancelled').length}
+                     
                   </Label>
                 }
               />

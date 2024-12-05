@@ -100,7 +100,7 @@ export function useNavData(teacherId) {
             title: 'Contracts',
             path: '/dashboard/user/list',
             icon: ICONS.contracts,
-            roles: ['student'],
+            roles: ['student','teacher'],
           },
         ],
       },
