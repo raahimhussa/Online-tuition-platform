@@ -1,17 +1,19 @@
 'use client';
 
 import isEqual from 'lodash/isEqual';
-import { useState, useCallback } from 'react';
+import { useState, useCallback,useEffect } from 'react';
 // @mui
 import { alpha } from '@mui/material/styles';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
+import { useSelector, useDispatch } from 'react-redux';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
+import { fetchAllContracts, selectContracts } from 'src/app/store/slices/contractSlice';
 import IconButton from '@mui/material/IconButton';
 import TableContainer from '@mui/material/TableContainer';
 // routes
@@ -19,7 +21,7 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 // _mock
-import { _userList, USER_STATUS_OPTIONS } from 'src/_mock';
+ import {  USER_STATUS_OPTIONS } from 'src/_mock';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
@@ -67,15 +69,14 @@ const defaultFilters = {
 
 export default function UserListView() {
   const table = useTable();
-
+const dispatch = useDispatch();
   const settings = useSettingsContext();
 
   const router = useRouter();
-
+  const _userList=useSelector(selectContracts);
+  console.log('_userList',_userList);
   const confirm = useBoolean();
-
   const [tableData, setTableData] = useState(_userList);
-
   const [filters, setFilters] = useState(defaultFilters);
 
   const dataFiltered = applyFilter({
@@ -88,6 +89,9 @@ export default function UserListView() {
     table.page * table.rowsPerPage,
     table.page * table.rowsPerPage + table.rowsPerPage
   );
+  useEffect(() => {
+    dispatch(fetchAllContracts());
+  }, [dispatch]);
 
   // const denseHeight = table.dense ? 52 : 72;
 
