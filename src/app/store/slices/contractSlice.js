@@ -53,6 +53,33 @@ export const fetchAllContracts = createAsyncThunk(
     }
   }
 );
+// Thunk for updating contract status
+// Thunk for updating contract status
+export const updateContractStatus = createAsyncThunk(
+  'contracts/updateContractStatus',
+  async (contractId, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`/api/contracts/${contractId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update contract status');
+      }
+
+      // Only contract_id is returned in the response
+      return contractId; // Return the contract_id to update the Redux state
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 
 // Contract slice
 const contractSlice = createSlice({
@@ -90,6 +117,19 @@ const contractSlice = createSlice({
       .addCase(fetchAllContracts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Failed to fetch contracts';
+      })
+      .addCase(updateContractStatus.pending, (state) => {
+          state.loading = true;
+          state.error = null;
+        })
+        .addCase(updateContractStatus.fulfilled, (state, action) => {
+          state.loading = false;
+          state.contract = action.payload;
+          state.contracts.push(action.payload);
+        })
+        .addCase(updateContractStatus.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload || 'Failed to create contract';
       });
   },
 });
