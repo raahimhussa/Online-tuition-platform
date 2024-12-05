@@ -114,14 +114,15 @@ export async function GET(req) {
       const queryText = `
         SELECT hc.*, 
                json_agg(json_build_object('subject_id', cs.subject_id, 'subject_name', s.name)) AS subjects,
-               u.name AS teacher_name
+               u.name AS teacher_name,
+               u.profile_picture AS teacher_profile_picture
         FROM hiring_contracts hc
         LEFT JOIN contract_subjects cs ON hc.contract_id = cs.contract_id
         LEFT JOIN subjects s ON cs.subject_id = s.subject_id
         LEFT JOIN teachers t ON hc.teacher_id = t.teacher_id
         LEFT JOIN users u ON t.user_id = u.user_id
         WHERE hc.student_id = $1 ${status ? 'AND hc.status = $2' : ''}
-        GROUP BY hc.contract_id, u.name
+        GROUP BY hc.contract_id, u.name, u.profile_picture
       `;
       const values = status ? [studentId, status] : [studentId];
       const { rows } = await query(queryText, values);
@@ -133,12 +134,15 @@ export async function GET(req) {
 
       const queryText = `
         SELECT hc.*, 
-               json_agg(json_build_object('subject_id', cs.subject_id, 'subject_name', s.name)) AS subjects
+               json_agg(json_build_object('subject_id', cs.subject_id, 'subject_name', s.name)) AS subjects,
+               u.profile_picture AS student_profile_picture
         FROM hiring_contracts hc
         LEFT JOIN contract_subjects cs ON hc.contract_id = cs.contract_id
         LEFT JOIN subjects s ON cs.subject_id = s.subject_id
+        LEFT JOIN students st ON hc.student_id = st.student_id
+        LEFT JOIN users u ON st.user_id = u.user_id
         WHERE hc.teacher_id = $1 ${status ? 'AND hc.status = $2' : ''}
-        GROUP BY hc.contract_id
+        GROUP BY hc.contract_id, u.profile_picture
       `;
       const values = status ? [teacherId, status] : [teacherId];
       const { rows } = await query(queryText, values);
@@ -158,6 +162,7 @@ export async function GET(req) {
     );
   }
 }
+
 
 
 export async function PUT(req) {
