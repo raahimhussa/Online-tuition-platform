@@ -63,6 +63,7 @@ export default function TeacherProfile({ id }) {
         email={teacher.email || 'No email provided'}
         phone_number={teacher.phone_number || 'No phone number provided'}
         teacher_id={id}
+        dob={teacher.dob}
       />
         {console.log(teacher)}
       <ProfileHome info={teacher} posts={[]} />

@@ -21,7 +21,7 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 
 // ----------------------------------------------------------------------
 
-export default function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
+export default function UserTableRow({ row, selected}) {
   const { teacher_name, teacher_profile_picture,student_profile_picture,start_date , end_date, status, email, subjects } = row;
 
   const confirm = useBoolean();
@@ -131,7 +131,7 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
  </Tooltip>
   )}
   {status === 'accepted' && (
-   <Tooltip title="Add a Review" placement="top" arrow>
+   <Tooltip title="Pay now" placement="top" arrow>
    <Button
      variant="outlined" // Provides a cleaner, professional look
      color="primary" // Keeps a professional tone
@@ -155,7 +155,7 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
         title="Cancel"
         content="Are you sure want to cancel ?"
         action={
-          <Button variant="contained" color="error" onClick={onDeleteRow}>
+          <Button variant="contained" color="error" >
             Cancel
           </Button>
         }
@@ -165,9 +165,6 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
 }
 
 UserTableRow.propTypes = {
-  onDeleteRow: PropTypes.func,
-  onEditRow: PropTypes.func,
-  onSelectRow: PropTypes.func,
   row: PropTypes.object,
   selected: PropTypes.bool,
 };

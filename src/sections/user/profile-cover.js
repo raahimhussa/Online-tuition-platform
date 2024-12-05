@@ -36,7 +36,7 @@ export default function ProfileCover({
   city_name,
   profile_picture,
   teacher_id,
-  age,
+  dob,
 }) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false); // State for dialog
@@ -48,7 +48,7 @@ export default function ProfileCover({
       window.open(whatsappUrl, '_blank'); // Open WhatsApp in a new tab
     }
   };
-{console.log('teacher_id',teacher_id)};
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -148,7 +148,11 @@ export default function ProfileCover({
                 <Stack direction="row" alignItems="center" spacing={1}>
                   <AccountBoxIcon color="action" />
                   <Typography variant="body2" color="text.secondary">
-                    {age || 'N/A'}
+                    { new Date(dob).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  }) || 'N/A'}
                   </Typography>
                 </Stack>
               </Grid>
@@ -183,6 +187,6 @@ ProfileCover.propTypes = {
   email: PropTypes.string,
   city_name: PropTypes.string,
   profile_picture: PropTypes.string.isRequired,
-  age: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  dob: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   teacher_id: PropTypes.number,
 };
