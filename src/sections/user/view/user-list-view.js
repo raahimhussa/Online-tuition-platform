@@ -42,6 +42,8 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 //
+import { LoadingScreen } from 'src/components/loading-screen';
+import { Box } from '@mui/material';
 import UserTableRow from '../user-table-row';
 import UserTableToolbar from '../user-table-toolbar';
 import UserTableFiltersResult from '../user-table-filters-result';
@@ -70,17 +72,19 @@ const defaultFilters = {
 export default function UserListView() {
   const table = useTable();
 const dispatch = useDispatch();
+const [loading, setLoading] = useState(false);
+
   const settings = useSettingsContext();
 
   const router = useRouter();
   const _userList=useSelector(selectContracts);
   console.log('_userList',_userList);
   const confirm = useBoolean();
-  const [tableData, setTableData] = useState(_userList);
+ 
   const [filters, setFilters] = useState(defaultFilters);
 
   const dataFiltered = applyFilter({
-    inputData: tableData,
+    inputData: _userList,
     comparator: getComparator(table.order, table.orderBy),
     filters,
   });
@@ -90,7 +94,9 @@ const dispatch = useDispatch();
     table.page * table.rowsPerPage + table.rowsPerPage
   );
   useEffect(() => {
+    setLoading(true);
     dispatch(fetchAllContracts());
+    setLoading(false);
   }, [dispatch]);
 
   // const denseHeight = table.dense ? 52 : 72;
@@ -110,26 +116,7 @@ const dispatch = useDispatch();
     [table]
   );
 
-  const handleDeleteRow = useCallback(
-    (id) => {
-      const deleteRow = tableData.filter((row) => row.id !== id);
-      setTableData(deleteRow);
 
-      table.onUpdatePageDeleteRow(dataInPage.length);
-    },
-    [dataInPage.length, table, tableData]
-  );
-
-  const handleDeleteRows = useCallback(() => {
-    const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
-    setTableData(deleteRows);
-
-    table.onUpdatePageDeleteRows({
-      totalRows: tableData.length,
-      totalRowsInPage: dataInPage.length,
-      totalRowsFiltered: dataFiltered.length,
-    });
-  }, [dataFiltered.length, dataInPage.length, table, tableData]);
 
   const handleEditRow = useCallback(
     (id) => {
@@ -144,6 +131,21 @@ const dispatch = useDispatch();
     },
     [handleFilters]
   );
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
+        }}
+      >
+       <LoadingScreen />
+      </Box>
+    );
+  }
 
   // const handleResetFilters = useCallback(() => {
   //   setFilters(defaultFilters);
@@ -237,11 +239,11 @@ const dispatch = useDispatch();
             <TableSelectedAction
               dense={table.dense}
               numSelected={table.selected.length}
-              rowCount={tableData.length}
+              rowCount={_userList.length}
               onSelectAllRows={(checked) =>
                 table.onSelectAllRows(
                   checked,
-                  tableData.map((row) => row.id)
+                  _userList.map((row) => row.id)
                 )
               }
               action={
@@ -259,13 +261,13 @@ const dispatch = useDispatch();
                   order={table.order}
                   orderBy={table.orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={tableData.length}
+                  rowCount={_userList.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
                   onSelectAllRows={(checked) =>
                     table.onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id)
+                      _userList.map((row) => row.id)
                     )
                   }
                 />
@@ -282,14 +284,14 @@ const dispatch = useDispatch();
                         row={row}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
+  
                         onEditRow={() => handleEditRow(row.id)}
                       />
                     ))}
 
                   <TableEmptyRows
                     // height={denseHeight}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)}
+                    emptyRows={emptyRows(table.page, table.rowsPerPage, _userList.length)}
                   />
 
                   <TableNoData notFound={notFound} />
@@ -325,7 +327,6 @@ const dispatch = useDispatch();
             variant="contained"
             color="error"
             onClick={() => {
-              handleDeleteRows();
               confirm.onFalse();
             }}
           >

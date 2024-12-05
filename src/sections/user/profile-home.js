@@ -18,10 +18,10 @@ import BookIcon from '@mui/icons-material/Book';
 import LanguageIcon from '@mui/icons-material/Language';
 import LayersIcon from '@mui/icons-material/Layers';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable'; 
-import UserCardListBySubject from './user-card-profile-home';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTeacherAvailability } from 'src/app/store/slices/availabilityslice';
 import dayjs from 'dayjs'; // Assuming this is the correct thunk import
+import UserCardListBySubject from './user-card-profile-home';
 
 export default function ProfileHome({ info, teacher_id, posts }) {
   const theme = useTheme();
