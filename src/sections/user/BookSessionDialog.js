@@ -69,6 +69,7 @@ const BookSessionDialog = ({ open, onClose, teacher_id }) => {
       end_date: '',
       mode: '',
       subjects: [],
+      teacher_id,
     },
   });
 
@@ -103,6 +104,7 @@ const BookSessionDialog = ({ open, onClose, teacher_id }) => {
   // Submit function
   const onSubmit = async (data) => {
     const payload = {
+      teacher_id,
       ...data,
     };
     try {

@@ -33,18 +33,21 @@ export async function POST(req) {
     }
 
     const body = await req.json();
-    const { teacher_id, start_date, end_date, mode, payment_terms, status, subjects } = body;
+    const { teacher_id, start_date, end_date, mode,subjects } = body;
+
+    // Automatically set status to "pending"
+    const status = 'pending';
 
     // Begin transaction
     await query('BEGIN');
 
     // Insert into `hiring_contracts` table
     const insertContractQuery = `
-      INSERT INTO hiring_contracts (student_id, teacher_id, start_date, end_date, mode, payment_terms, status)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      INSERT INTO hiring_contracts (student_id, teacher_id, start_date, end_date, mode, status)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *;
     `;
-    const contractValues = [studentId, teacher_id, start_date, end_date, mode, payment_terms, status];
+    const contractValues = [studentId, teacher_id, start_date, end_date, mode,status];
     const { rows: contractRows } = await query(insertContractQuery, contractValues);
     const newContract = contractRows[0];
 
@@ -71,6 +74,7 @@ export async function POST(req) {
     );
   }
 }
+
 
 
 
