@@ -66,7 +66,7 @@ export default function TeacherProfile({ id }) {
         dob={teacher.dob}
       />
         {console.log(teacher)}
-      <ProfileHome info={teacher} posts={[]} />
+      <ProfileHome info={teacher} posts={[]} teacher_id={id} />
 
     </div>
   );
