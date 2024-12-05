@@ -42,6 +42,8 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 //
+import { LoadingScreen } from 'src/components/loading-screen';
+import { Box } from '@mui/material';
 import UserTableRow from '../user-table-row';
 import UserTableToolbar from '../user-table-toolbar';
 import UserTableFiltersResult from '../user-table-filters-result';
@@ -70,6 +72,8 @@ const defaultFilters = {
 export default function UserListView() {
   const table = useTable();
 const dispatch = useDispatch();
+const [loading, setLoading] = useState(false);
+
   const settings = useSettingsContext();
 
   const router = useRouter();
@@ -90,7 +94,9 @@ const dispatch = useDispatch();
     table.page * table.rowsPerPage + table.rowsPerPage
   );
   useEffect(() => {
+    setLoading(true);
     dispatch(fetchAllContracts());
+    setLoading(false);
   }, [dispatch]);
 
   // const denseHeight = table.dense ? 52 : 72;
@@ -125,6 +131,21 @@ const dispatch = useDispatch();
     },
     [handleFilters]
   );
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
+        }}
+      >
+       <LoadingScreen />
+      </Box>
+    );
+  }
 
   // const handleResetFilters = useCallback(() => {
   //   setFilters(defaultFilters);
