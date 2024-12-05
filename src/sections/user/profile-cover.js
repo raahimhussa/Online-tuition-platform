@@ -35,6 +35,7 @@ export default function ProfileCover({
   email,
   city_name,
   profile_picture,
+  teacher_id,
   age,
 }) {
   const theme = useTheme();
@@ -47,7 +48,7 @@ export default function ProfileCover({
       window.open(whatsappUrl, '_blank'); // Open WhatsApp in a new tab
     }
   };
-
+{console.log('teacher_id',teacher_id)};
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -170,7 +171,7 @@ export default function ProfileCover({
       </Card>
 
       {/* Dialog for booking a session */}
-      <BookSessionDialog open={open} onClose={handleClose} />
+      <BookSessionDialog teacher_id={teacher_id} open={open} onClose={handleClose} />
     </>
   );
 }
@@ -183,4 +184,5 @@ ProfileCover.propTypes = {
   city_name: PropTypes.string,
   profile_picture: PropTypes.string.isRequired,
   age: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  teacher_id: PropTypes.number,
 };

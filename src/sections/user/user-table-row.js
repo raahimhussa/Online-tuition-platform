@@ -119,7 +119,7 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
     </Tooltip>
   )}
 
-  {status === 'banned' && (
+  {status === 'completed' && (
    <Tooltip title="Add a Review" placement="top" arrow>
    <Button
      variant="outlined" // Provides a cleaner, professional look
@@ -127,6 +127,17 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
      onClick={quickEdit.onTrue}
    >
      Add a Review
+   </Button>
+ </Tooltip>
+  )}
+  {status === 'accepted' && (
+   <Tooltip title="Add a Review" placement="top" arrow>
+   <Button
+     variant="outlined" // Provides a cleaner, professional look
+     color="primary" // Keeps a professional tone
+     onClick={quickEdit.onTrue}
+   >
+     Pay now
    </Button>
  </Tooltip>
   )}
