@@ -17,6 +17,9 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import Label from 'src/components/label';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import ReviewForm from 'src/sections/five/review-form';
+import { useAuthContext } from 'src/auth/hooks';
+
+import { View403 } from 'src/sections/error';
 
 export default function UserTableRow({ row, selected }) {
   const {
@@ -32,6 +35,8 @@ export default function UserTableRow({ row, selected }) {
 
   const confirm = useBoolean();
   const [isReviewDialogOpen, setReviewDialogOpen] = useState(false);
+  const { user } = useAuthContext();
+  const role = user?.role;
 
   const handleOpenReviewDialog = () => setReviewDialogOpen(true);
   const handleCloseReviewDialog = () => setReviewDialogOpen(false);
@@ -49,7 +54,12 @@ export default function UserTableRow({ row, selected }) {
         </TableCell>
 
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
+        {role === 'student' && (
           <Avatar alt={teacher_name} src={teacher_profile_picture} sx={{ mr: 2 }} />
+        )}
+         {role === 'teacher' && (
+          <Avatar alt={teacher_name} src={student_profile_picture} sx={{ mr: 2 }} />
+        )}
           <ListItemText
             primary={teacher_name}
             secondary={email}
@@ -62,7 +72,7 @@ export default function UserTableRow({ row, selected }) {
         </TableCell>
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>
-          {subjects.map((subject) => subject.subject_name).join(', ')}
+          {subjects?.map((subject) => subject.subject_name).join(', ')}
         </TableCell>
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>
@@ -108,27 +118,28 @@ export default function UserTableRow({ row, selected }) {
             top: '-11px', 
           }}
         >
-          {status === 'pending' && (
-            <>
-              <Button
-                variant="outlined"
-                color="primary"
-                size="small"
-                onClick={() => console.log('Approve action')}
-              >
-                Approve
-              </Button>
-              <Button
-                variant="outlined"
-                color="primary"
-                size="small"
-                onClick={() => console.log('Reject action')}
-              >
-                Reject
-              </Button>
-            </>
-          )}
-          {status === 'active' && (
+        {role === 'teacher' && status === 'pending' && (
+  <>
+    <Button
+      variant="outlined"
+      color="primary"
+      size="small"
+      onClick={() => console.log('Approve action')}
+    >
+      Approve
+    </Button>
+    <Button
+      variant="outlined"
+      color="primary"
+      size="small"
+      onClick={() => console.log('Reject action')}
+    >
+      Reject
+    </Button>
+  </>
+)}
+{role === 'student' && status === 'active' && (
+    
             <Button
               variant="outlined"
               color="primary"
@@ -140,7 +151,8 @@ export default function UserTableRow({ row, selected }) {
               Cancel
             </Button>
           )}
-          {status === 'completed' && (
+        {role === 'student' && status === 'completed' && (
+        
             <Button
               variant="outlined"
               color="primary"
@@ -150,7 +162,8 @@ export default function UserTableRow({ row, selected }) {
               Add a Review
             </Button>
           )}
-          {status === 'accepted' && (
+           {role === 'student' && status === 'accepted' && (
+        
             <Button
               variant="outlined"
               color="primary"
