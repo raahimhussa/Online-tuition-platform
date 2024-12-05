@@ -28,26 +28,27 @@ export default function ProfileHome({ info, posts }) {
     padding: '4px 8px',
     borderRadius: '16px',
     color: 'black',
+    backgroundColor: '#FFD966',
   };
 
   const langChipStyle = {
     ...sharedChipStyle,
-    backgroundColor: '#e4cafe',
+    //backgroundColor: '#e4cafe',
   };
 
   const overviewChipStyle = {
     ...sharedChipStyle,
-    backgroundColor: '#b2e3c7',
+    //backgroundColor: '#b2e3c7',
   };
 
   const sessionChipStyle = {
     ...sharedChipStyle,
-    backgroundColor: '#b8e4e3',
+    //backgroundColor: '#b8e4e3',
   };
 
   const subjectChipStyle = {
     ...sharedChipStyle,
-    backgroundColor: '#b3c6f0',
+    //backgroundColor: '#b3c6f0',
   };
 
   const sectionTitle = (icon, title) => (
@@ -63,14 +64,14 @@ export default function ProfileHome({ info, posts }) {
     <Card>
       <CardHeader title={sectionTitle(<SchoolIcon />, 'Biography & Education')} />
       <Stack spacing={2} sx={{ p: 3 }}>
-        <Box sx={{ typography: 'body2' }}>
-        <Typography component="span" variant="subtitle1" sx={{ fontWeight: 700 }}>
+        <Box sx={{ typography: 'body1' }}>
+        <Typography component="span" variant="subtitle1" sx={{ fontWeight: 800 }}>
           Bio:
         </Typography>{' '}
         {info.bio || 'No bio available'}
         </Box>
-        <Box sx={{ typography: 'body2' }}>
-        <Typography component="span" variant="subtitle1" sx={{ fontWeight: 700 }}>
+        <Box sx={{ typography: 'body1' }}>
+        <Typography component="span" variant="subtitle1" sx={{ fontWeight: 800 }}>
           Education:
         </Typography>{' '}
         {info.education || 'No education available'}
@@ -182,26 +183,18 @@ export default function ProfileHome({ info, posts }) {
       <Grid xs={12}>
 
 
-<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 4 }}>
-  <Typography
-    variant="h3"  // Slightly larger heading for more prominence
-    sx={{
-      fontWeight: '600',  // Medium boldness for a professional look
-      color: 'text.primary',
-      mt : 5,
-      mb : 5,
+<Box sx={{ display: 'flex', mb: 4, mt: 4 }}>
+<Typography
+  variant="h4" 
+  sx={{
+    fontWeight: 'bold', 
+    color: theme.palette.mode === 'dark' ? 'white' : 'text.primary',
+    marginBottom: 1,
+  }}
+>
+  Teacher Teaching Similar Subjects
+</Typography>
 
-      textAlign: 'center',
-      letterSpacing: 1.5,  // Adds space between letters for better readability
-        // Margin below for spacing
-      textTransform: 'uppercase',  // Optional: adds emphasis by capitalizing the title
-      borderBottom: '2px solid',  // Optional: underline effect for a professional look
-      width: 'fit-content',  // Ensures the border wraps the title text
-      pb: 1,  // Padding below the text to give space between text and underline
-    }}
-  >
-    Teacher Teaching Similar Subjects
-  </Typography>
 </Box>
 
 

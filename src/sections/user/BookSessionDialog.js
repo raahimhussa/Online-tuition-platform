@@ -24,7 +24,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import RHFTextField from 'src/components/hook-form/rhf-text-field'; // Ensure this path is correct
 import getStripe from "src/utils/get-stripe";
 import { useDispatch } from 'react-redux';
-import createContract from '../../app/store/slices/contractsSlice';
+import {createContract} from '../../app/store/slices/contractSlice';
 
 const BookSessionDialog = ({ open, onClose, teacher_id }) => {
   const [subjects, setSubjects] = useState([]);
@@ -112,7 +112,7 @@ const BookSessionDialog = ({ open, onClose, teacher_id }) => {
       const action = await dispatch(createContract(payload));
       console.log('Dispatched Action:', action); // Dispatch the thunk
       setSuccessSnackbar(true);
-      reset(); // Reset form on success
+      // reset(); // Reset form on success
       onClose(); // Close dialog
     } catch (error) {
       console.error('Failed to create contract:', error);
