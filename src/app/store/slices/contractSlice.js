@@ -15,19 +15,21 @@ export const createContract = createAsyncThunk(
         body: JSON.stringify(contractData),
       });
 
-      console.log(response);
-      
+      // Check if response is successful
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to create contract');
       }
 
+      // Parse and return response if successful
       return await response.json();
     } catch (error) {
+      console.error('Error creating contract:', error);
       return rejectWithValue(error.message);
     }
   }
 );
+
 
 // Thunk for fetching all contracts
 export const fetchAllContracts = createAsyncThunk(
@@ -76,18 +78,6 @@ const contractSlice = createSlice({
       .addCase(createContract.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Failed to create contract';
-      })
-      .addCase(fetchAllContracts.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchAllContracts.fulfilled, (state, action) => {
-        state.loading = false;
-        state.contracts = action.payload;
-      })
-      .addCase(fetchAllContracts.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || 'Failed to fetch contracts';
       });
   },
 });

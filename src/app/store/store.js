@@ -7,6 +7,7 @@ import setupReducer from './slices/setupslice';
 import teacherReducer from './slices/teacherslice'; 
 import studentReducer from './slices/studentslice';
 import notificationsReducer from './slices/notificationSlice'; 
+import contractReducer from './slices/contractSlice'; 
 
 const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ const store = configureStore({
     teachers: teacherReducer,
     students: studentReducer,
     notifications: notificationsReducer, // Add the notifications reducer
+    contracts: contractReducer,  
   },
   // Ensure Redux DevTools is enabled
   devTools: process.env.NODE_ENV !== 'production',

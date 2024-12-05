@@ -1,6 +1,6 @@
+import { query } from 'src/lib/db';
 import { createContract, getContractById, updateContractStatus, deleteContract ,getAllContracts} from '../../../lib/contractService';
 import { verifyToken } from '../../../lib/auth';
-import { query } from 'src/lib/db';
 
 export async function POST(req) {
   try {
