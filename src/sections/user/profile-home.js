@@ -17,7 +17,7 @@ import BookIcon from '@mui/icons-material/Book';
 import LanguageIcon from '@mui/icons-material/Language';
 import LayersIcon from '@mui/icons-material/Layers';
 import UserCardListBySubject from './user-card-profile-home';
-import EventAvailableIcon from '@mui/icons-material/EventAvailable'; 
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 
 export default function ProfileHome({ info, posts }) {
   const theme = useTheme();
@@ -194,26 +194,36 @@ export default function ProfileHome({ info, posts }) {
 
       <Grid xs={12}>
         <Box sx={{ display: 'flex', mb: 4, mt: 4 }}>
-          <Typography
-            variant="h4"
-            sx={{
-              fontWeight: 'bold',
-              color: theme.palette.mode === 'dark' ? 'white' : 'text.primary',
-              marginBottom: 1,
-              textDecoration: 'underline',
-            }}
-          >
-            Teachers Teaching Similar Subjects
-          </Typography>
+          <Box sx={{ display: 'flex', mb: 4, mt: 4 }}>
+            <Typography
+              variant="h4"
+              sx={{
+                fontWeight: 'bold',
+                color: theme.palette.mode === 'dark' ? 'white' : 'text.primary',
+                marginBottom: 2,
+                position: 'relative', 
+                paddingBottom: '8px', 
+              }}
+            >
+              Teachers Teaching Similar Subjects
+              <Box
+                sx={{
+                  position: 'absolute',
+                  bottom: 0, 
+                  left: 0,
+                  width: '100%', 
+                  borderBottom: '2px solid', 
+                }}
+              />
+            </Typography>
+          </Box>
         </Box>
-        
 
         <Stack spacing={3}>
           <UserCardListBySubject subjects={info.subjects} />
         </Stack>
       </Grid>
     </Grid>
-
   );
 }
 

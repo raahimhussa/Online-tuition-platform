@@ -3,32 +3,43 @@ import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
 import TableRow from '@mui/material/TableRow';
-import Checkbox from '@mui/material/Checkbox';
 import TableCell from '@mui/material/TableCell';
-import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
+import { useState } from 'react';
+// MUI Icons
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import DoNotDisturbOnOutlinedIcon from '@mui/icons-material/DoNotDisturbOnOutlined';
+import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
 import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { ConfirmDialog } from 'src/components/custom-dialog';
-//
-// import UserQuickEditForm from './user-quick-edit-form';
+import ReviewForm from 'src/sections/five/review-form';
 
-// ----------------------------------------------------------------------
-
-export default function UserTableRow({ row, selected}) {
-  const { teacher_name, teacher_profile_picture,student_profile_picture,start_date , end_date, status, email, subjects } = row;
+export default function UserTableRow({ row, selected }) {
+  const {
+    teacher_name,
+    teacher_profile_picture,
+    student_profile_picture,
+    start_date,
+    end_date,
+    status,
+    email,
+    subjects,
+  } = row;
 
   const confirm = useBoolean();
+  const [isReviewDialogOpen, setReviewDialogOpen] = useState(false);
 
-  const quickEdit = useBoolean();
+  const handleOpenReviewDialog = () => setReviewDialogOpen(true);
+  const handleCloseReviewDialog = () => setReviewDialogOpen(false);
 
-  const popover = usePopover();
+  const handleSubmitReview = (data) => {
+    console.log('Review Submitted:', data);
+    handleCloseReviewDialog();
+  };
 
   return (
     <>
@@ -39,7 +50,6 @@ export default function UserTableRow({ row, selected}) {
 
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
           <Avatar alt={teacher_name} src={teacher_profile_picture} sx={{ mr: 2 }} />
-
           <ListItemText
             primary={teacher_name}
             secondary={email}
@@ -52,24 +62,24 @@ export default function UserTableRow({ row, selected}) {
         </TableCell>
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>
-  {subjects.map((subject) => subject.subject_name).join(', ')}
-</TableCell>
+          {subjects.map((subject) => subject.subject_name).join(', ')}
+        </TableCell>
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>
-  {new Date(start_date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })}
-</TableCell>
+          {new Date(start_date).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          })}
+        </TableCell>
 
-<TableCell sx={{ whiteSpace: 'nowrap' }}>
-  {new Date(end_date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })}
-</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>
+          {new Date(end_date).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          })}
+        </TableCell>
 
         <TableCell>
           <Label
@@ -85,78 +95,99 @@ export default function UserTableRow({ row, selected}) {
           </Label>
         </TableCell>
 
-   
-
-<TableCell align="right" sx={{ px: 1, display: 'flex', gap: 1, justifyContent: 'flex-end', whiteSpace: 'nowrap' }}>
-  {status === 'pending' && (
-    <>
-      <Tooltip title="Approve" placement="top" arrow>
-        <IconButton color="success" onClick={() => console.log('Approve action')}>
-          <Iconify icon="mdi:check-circle" />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title="Reject" placement="top" arrow>
-        <IconButton color="error" onClick={() => console.log('Reject action')}  sx={{ ml:2.5}}>
-          <Iconify icon="mdi:close-circle" />
-        </IconButton>
-      </Tooltip>
-    </>
-  )}
-
-  {status === 'active' && (
-    <Tooltip title="Cancel" placement="top" arrow>
-      <IconButton 
-        color="default" 
-        onClick={() => {
-          confirm.onTrue();
-          popover.onClose();
-        }}
-        sx={{ ml:4.5 }}
-      >
-        
-        <Iconify icon="ooui:cancel" />
-      </IconButton>
-    </Tooltip>
-  )}
-
-  {status === 'completed' && (
-   <Tooltip title="Add a Review" placement="top" arrow>
-   <Button
-     variant="outlined" // Provides a cleaner, professional look
-     color="primary" // Keeps a professional tone
-     onClick={quickEdit.onTrue}
-   >
-     Add a Review
-   </Button>
- </Tooltip>
-  )}
-  {status === 'accepted' && (
-   <Tooltip title="Pay now" placement="top" arrow>
-   <Button
-     variant="outlined" // Provides a cleaner, professional look
-     color="primary" // Keeps a professional tone
-     onClick={quickEdit.onTrue}
-   >
-     Pay now
-   </Button>
- </Tooltip>
-  )}
-</TableCell>
-
-
-
+        <TableCell
+          align="right"
+          sx={{
+            px: 1,
+            display: 'flex',
+            gap: 1,
+            justifyContent: 'flex-end',
+            whiteSpace: 'nowrap',
+            alignItems: 'center', 
+            position: 'relative',
+            top: '-11px', 
+          }}
+        >
+          {status === 'pending' && (
+            <>
+              <Button
+                variant="outlined"
+                color="primary"
+                size="small"
+                onClick={() => console.log('Approve action')}
+              >
+                Approve
+              </Button>
+              <Button
+                variant="outlined"
+                color="primary"
+                size="small"
+                onClick={() => console.log('Reject action')}
+              >
+                Reject
+              </Button>
+            </>
+          )}
+          {status === 'active' && (
+            <Button
+              variant="outlined"
+              color="primary"
+              size="small"
+              onClick={() => {
+                confirm.onTrue();
+              }}
+            >
+              Cancel
+            </Button>
+          )}
+          {status === 'completed' && (
+            <Button
+              variant="outlined"
+              color="primary"
+              size="small"
+              onClick={handleOpenReviewDialog}
+            >
+              Add a Review
+            </Button>
+          )}
+          {status === 'accepted' && (
+            <Button
+              variant="outlined"
+              color="primary"
+              size="small"
+              onClick={() => console.log('Pay now action')}
+            >
+              Pay now
+            </Button>
+          )}
+        </TableCell>
       </TableRow>
 
-
+      {/* Review Dialog */}
+      {isReviewDialogOpen && (
+        <ReviewForm
+          open={isReviewDialogOpen}
+          onClose={handleCloseReviewDialog}
+          onSubmitReview={handleSubmitReview}
+          studentId={row.student_profile_picture}
+        />
+      )}
 
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
         title="Cancel"
-        content="Are you sure want to cancel ?"
+        content="Are you sure want to cancel?"
         action={
-          <Button variant="contained" color="error" >
-            Cancel
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => {
+              console.log('Cancelled');
+              confirm.onFalse();
+            }}
+          >
+            Confirm
           </Button>
         }
       />
