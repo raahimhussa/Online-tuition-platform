@@ -167,7 +167,7 @@ const BookSessionDialog = ({ open, onClose, teacher_id }) => {
                         render={({ field }) => (
                           <Select {...field} fullWidth defaultValue="">
                             <MenuItem value="online">Online</MenuItem>
-                            <MenuItem value="offline">Offline</MenuItem>
+                            <MenuItem value="physical">Physical</MenuItem>
                           </Select>
                         )}
                       />
