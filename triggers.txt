@@ -1,0 +1,36 @@
+-- Function to notify on contract creation
+CREATE OR REPLACE FUNCTION notify_on_contract_creation()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO notifications (user_id, content, type, is_read)
+    VALUES 
+        (NEW.student_id, 'A new contract has been created.', 'contract_update', FALSE),
+        (NEW.teacher_id, 'You have been hired for a new contract.', 'contract_update', FALSE);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function to notify on contract status update
+CREATE OR REPLACE FUNCTION notify_on_contract_status_change()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO notifications (user_id, content, type, is_read)
+    VALUES 
+        (OLD.student_id, CONCAT('Your contract status has been updated to: ', NEW.status), 'contract_update', FALSE),
+        (OLD.teacher_id, CONCAT('Your contract status has been updated to: ', NEW.status), 'contract_update', FALSE);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- Trigger for contract creation
+CREATE TRIGGER after_contract_creation
+AFTER INSERT ON hiring_contracts
+FOR EACH ROW
+EXECUTE FUNCTION notify_on_contract_creation();
+
+-- Trigger for contract status update
+CREATE TRIGGER after_contract_status_change
+AFTER UPDATE OF status ON hiring_contracts
+FOR EACH ROW
+EXECUTE FUNCTION notify_on_contract_status_change();
