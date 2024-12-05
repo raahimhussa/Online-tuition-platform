@@ -5,10 +5,48 @@ import { createContract, getContractById, updateContractStatus, deleteContract,g
 >>>>>>> a037386eaf962f711f7057bc8d237fc7d78aba1d
 
 export async function POST(req) {
-    const data = await req.json();
-    const contract = await createContract(data);
-    return new Response(JSON.stringify(contract), { status: 201 });
+  const client = await query.connect(); // Start a client connection for transaction control
+  try {
+    const body = await req.json();
+    const { student_id, teacher_id, start_date, end_date, mode, payment_terms, status, subjects } = body;
+
+    await client.query('BEGIN'); // Start transaction
+
+    // Insert into `hiring_contracts` table
+    const insertContractQuery = `
+      INSERT INTO hiring_contracts (student_id, teacher_id, start_date, end_date, mode, payment_terms, status)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING *;
+    `;
+    const contractValues = [student_id, teacher_id, start_date, end_date, mode, payment_terms, status];
+    const { rows: contractRows } = await client.query(insertContractQuery, contractValues);
+    const newContract = contractRows[0];
+
+    // Insert into `contract_subjects` table for each subject
+    const insertSubjectQuery = `
+      INSERT INTO contract_subjects (contract_id, subject_id)
+      VALUES ($1, $2);
+    `;
+
+    for (const subjectId of subjects) {
+      await client.query(insertSubjectQuery, [newContract.contract_id, subjectId]);
+    }
+
+    await client.query('COMMIT'); // Commit transaction
+
+    return new Response(JSON.stringify(newContract), { status: 201 });
+  } catch (error) {
+    await client.query('ROLLBACK'); // Rollback transaction on error
+    console.error('Error creating contract:', error);
+    return new Response(
+      JSON.stringify({ message: 'Failed to create contract', error: error.message }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  } finally {
+    client.release(); // Release client
+  }
 }
+
 
 export async function GET(req) {
     try {
