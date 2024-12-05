@@ -100,6 +100,9 @@ export async function GET(req) {
     const studentResult = await query(studentQuery, [userId]);
     const teacherResult = await query(teacherQuery, [userId]);
 
+    const url = new URL(req.url);
+    const status = url.searchParams.get('status'); // Get the status from the query parameter
+
     if (studentResult.rows.length > 0) {
       // User is a student
       const studentId = studentResult.rows[0].student_id;
@@ -113,10 +116,11 @@ export async function GET(req) {
         LEFT JOIN subjects s ON cs.subject_id = s.subject_id
         LEFT JOIN teachers t ON hc.teacher_id = t.teacher_id
         LEFT JOIN users u ON t.user_id = u.user_id
-        WHERE hc.student_id = $1
+        WHERE hc.student_id = $1 ${status ? 'AND hc.status = $2' : ''}
         GROUP BY hc.contract_id, u.name
       `;
-      const { rows } = await query(queryText, [studentId]);
+      const values = status ? [studentId, status] : [studentId];
+      const { rows } = await query(queryText, values);
 
       return new Response(JSON.stringify(rows), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } else if (teacherResult.rows.length > 0) {
@@ -129,10 +133,11 @@ export async function GET(req) {
         FROM hiring_contracts hc
         LEFT JOIN contract_subjects cs ON hc.contract_id = cs.contract_id
         LEFT JOIN subjects s ON cs.subject_id = s.subject_id
-        WHERE hc.teacher_id = $1
+        WHERE hc.teacher_id = $1 ${status ? 'AND hc.status = $2' : ''}
         GROUP BY hc.contract_id
       `;
-      const { rows } = await query(queryText, [teacherId]);
+      const values = status ? [teacherId, status] : [teacherId];
+      const { rows } = await query(queryText, values);
 
       return new Response(JSON.stringify(rows), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } else {
@@ -149,6 +154,7 @@ export async function GET(req) {
     );
   }
 }
+
 
 export async function PUT(req) {
     const { contract_id, status } = await req.json();
