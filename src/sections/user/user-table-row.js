@@ -19,7 +19,7 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import ReviewForm from 'src/sections/five/review-form';
 import { useAuthContext } from 'src/auth/hooks';
 import { useDispatch } from 'react-redux';
-import { updateContractStatus } from 'src/app/store/slices/contractSlice'; // Assuming you have a proper path for the slice
+import { updateContractStatus,updateContractStatusToRejected } from 'src/app/store/slices/contractSlice'; // Assuming you have a proper path for the slice
 
 import { View403 } from 'src/sections/error';
 
@@ -57,7 +57,7 @@ export default function UserTableRow({ row, selected }) {
   };
 
   const handleReject = () => {
-    dispatch(updateContractStatus({ contractId: contract_id, status: 'rejected' }));
+    dispatch(updateContractStatusToRejected({ contractId: contract_id, status: 'rejected' }));
   };
 
   const handleSubmitReview = (data) => {
