@@ -69,17 +69,19 @@ export default function UserTableRow({ row, selected }) {
     handleCloseReviewDialog();
   };
    // New Payment Gateway Function
-   const handlePayNow = async () => {
+   const handlePayNow = async (contract_id, total_price) => {
+    console.log('Handle Pay Now triggered', contract_id, total_price); // Check if this is logged
+
     try {
       // Send the total price to the backend to create the checkout session
       const checkoutSession = await fetch('/api/checkout_sess', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json', // Ensure you send JSON data
-          origin: 'http://localhost:3035', // Adjust the origin as needed
         },
         body: JSON.stringify({
           amount: total_price, // Send the total price here
+          contract_id: contract_id, // Send the contract_id to associate with the payment
         }),
       });
   
@@ -98,6 +100,23 @@ export default function UserTableRow({ row, selected }) {
   
       if (error) {
         console.warn(error.message);
+      } else {
+        // After successful payment, update the contract status to "active"
+        const response = await fetch(`/api/contracts/${contract_id}/activate`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`, // Pass the authorization token if needed
+          },
+        });
+  
+        const responseJson = await response.json();
+  
+        if (response.ok) {
+          console.log('Contract status updated to active:', responseJson);
+        } else {
+          console.error('Failed to update contract status:', responseJson.message);
+        }
       }
     } catch (error) {
       console.error('Error during payment: ', error);
@@ -260,7 +279,7 @@ export default function UserTableRow({ row, selected }) {
             backgroundColor: 'rgba(255, 165, 0, 0.1)',
             '&:hover': { backgroundColor: 'rgba(255, 165, 0, 0.2)' },
           }}
-          onClick={handlePayNow} // Calling payment function here
+          onClick={() => handlePayNow(contract_id, total_price)}// Calling payment function here
         >
           Pay now - ${total_price} {/* Displaying the total price */}
         </Button>
