@@ -80,6 +80,29 @@ export const updateContractStatus = createAsyncThunk(
     }
   }
 );
+export const updateContractStatusToRejected = createAsyncThunk(
+  'contracts/updateContractStatusToRejected',
+  async (contractId, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`/api/contracts/${contractId}/rejected`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update contract status to rejected');
+      }
+
+      return contractId; // Return the contract_id to update the Redux state
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 
 
