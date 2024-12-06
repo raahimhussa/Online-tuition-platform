@@ -19,6 +19,8 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import ReviewForm from 'src/sections/five/review-form';
 import { useAuthContext } from 'src/auth/hooks';
 import { useDispatch } from 'react-redux';
+import getStripe from "src/utils/get-stripe";
+
 import { updateContractStatus,updateContractStatusToRejected } from 'src/app/store/slices/contractSlice'; // Assuming you have a proper path for the slice
 
 import { View403 } from 'src/sections/error';
@@ -35,6 +37,7 @@ export default function UserTableRow({ row, selected }) {
     status,
     email,
     subjects,
+    total_price,
   } = row;
 
 
@@ -65,6 +68,42 @@ export default function UserTableRow({ row, selected }) {
     console.log('Review Submitted:', data);
     handleCloseReviewDialog();
   };
+   // New Payment Gateway Function
+   const handlePayNow = async () => {
+    try {
+      // Send the total price to the backend to create the checkout session
+      const checkoutSession = await fetch('/api/checkout_sess', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // Ensure you send JSON data
+          origin: 'http://localhost:3035', // Adjust the origin as needed
+        },
+        body: JSON.stringify({
+          amount: total_price, // Send the total price here
+        }),
+      });
+  
+      const checkoutSessionJson = await checkoutSession.json();
+  
+      if (checkoutSessionJson.statusCode === 500) {
+        console.error(checkoutSessionJson.message);
+        return;
+      }
+  
+      const stripe = await getStripe(); // You should have a method to get Stripe instance
+  
+      const { error } = await stripe.redirectToCheckout({
+        sessionId: checkoutSessionJson.id,
+      });
+  
+      if (error) {
+        console.warn(error.message);
+      }
+    } catch (error) {
+      console.error('Error during payment: ', error);
+    }
+  };
+  
 
   return (
     <>
@@ -212,18 +251,21 @@ export default function UserTableRow({ row, selected }) {
       Add a Review
     </Button>
   )}
-  {role === 'student' && status === 'accepted' && (
-    <Button
-      variant="text"
-      color="primary"
-      size="small"
-      sx={{ backgroundColor: 'rgba(255, 165, 0, 0.1)', '&:hover': { backgroundColor: 'rgba(255, 165, 0, 0.2)' } }}
-      onClick={() => console.log('Pay now action')}
-    >
-      Pay now
-    </Button>
-  )}
-</TableCell>
+{role === 'student' && status === 'accepted' && (
+          <Button
+          variant="text"
+          color="primary"
+          size="small"
+          sx={{
+            backgroundColor: 'rgba(255, 165, 0, 0.1)',
+            '&:hover': { backgroundColor: 'rgba(255, 165, 0, 0.2)' },
+          }}
+          onClick={handlePayNow} // Calling payment function here
+        >
+          Pay now - ${total_price} {/* Displaying the total price */}
+        </Button>
+          )}
+        </TableCell>
 
       </TableRow>
 
