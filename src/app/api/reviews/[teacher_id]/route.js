@@ -18,7 +18,7 @@ export async function GET(req, { params }) {
     const fetchReviewsQuery = `
       SELECT r.review_id, r.contract_id, r.student_id, r.teacher_id, r.rating, r.review_text, r.created_at, 
              u.profile_picture AS student_profile_picture,
-             s.name AS student_name
+             u.name AS student_name
       FROM reviews r
       JOIN students s ON r.student_id = s.student_id
       JOIN users u ON s.user_id = u.user_id
