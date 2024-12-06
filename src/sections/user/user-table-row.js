@@ -80,8 +80,6 @@ export default function UserTableRow({ row, selected }) {
     dispatch(createReview(updatedData));
     handleCloseReviewDialog();
   };
-<<<<<<< HEAD
-=======
    // New Payment Gateway Function
    const handlePayNow = async (contract_id, total_price) => {
     console.log('Handle Pay Now triggered', contract_id, total_price); // Check if this is logged
@@ -136,7 +134,6 @@ export default function UserTableRow({ row, selected }) {
       console.error('Error during payment: ', error);
     }
   };
->>>>>>> 6fbf357affca26ac79c0f63a01a99dec09af8e28
   
 
   return (
