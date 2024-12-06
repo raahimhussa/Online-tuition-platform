@@ -113,6 +113,7 @@ export async function GET(req) {
 
       const queryText = `
         SELECT hc.*, 
+               t.hourly_rate,
                json_agg(json_build_object('subject_id', cs.subject_id, 'subject_name', s.name)) AS subjects,
                u.name AS teacher_name,
                u.profile_picture AS teacher_profile_picture
@@ -121,19 +122,34 @@ export async function GET(req) {
         LEFT JOIN subjects s ON cs.subject_id = s.subject_id
         LEFT JOIN teachers t ON hc.teacher_id = t.teacher_id
         LEFT JOIN users u ON t.user_id = u.user_id
-        WHERE hc.student_id = $1 ${status ? 'AND hc.status = $2' : ''}
-        GROUP BY hc.contract_id, u.name, u.profile_picture
+        WHERE hc.student_id = $1 ${status ? 'AND hc.status = $2' : ''} 
+        GROUP BY hc.contract_id, u.name, u.profile_picture, t.hourly_rate
       `;
       const values = status ? [studentId, status] : [studentId];
       const { rows } = await query(queryText, values);
 
-      return new Response(JSON.stringify(rows), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      // Add total_price to each contract based on hourly_rate, start_date, and end_date
+      const result = rows.map(contract => {
+        const startDate = new Date(contract.start_date);
+        const endDate = new Date(contract.end_date);
+        const hourlyRate = contract.hourly_rate;
+
+        // Calculate the number of hours between start_date and end_date
+        const hours = Math.abs(endDate - startDate) / 36e5; // Convert ms to hours
+        const totalPrice = hourlyRate * hours;
+
+        // Add total_price to each contract but keep other fields unchanged
+        return { ...contract, total_price: totalPrice };
+      });
+
+      return new Response(JSON.stringify(result), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } else if (teacherResult.rows.length > 0) {
       // User is a teacher
       const teacherId = teacherResult.rows[0].teacher_id;
 
       const queryText = `
         SELECT hc.*, 
+               t.hourly_rate,
                json_agg(json_build_object('subject_id', cs.subject_id, 'subject_name', s.name)) AS subjects,
                u.profile_picture AS student_profile_picture
         FROM hiring_contracts hc
@@ -141,13 +157,27 @@ export async function GET(req) {
         LEFT JOIN subjects s ON cs.subject_id = s.subject_id
         LEFT JOIN students st ON hc.student_id = st.student_id
         LEFT JOIN users u ON st.user_id = u.user_id
-        WHERE hc.teacher_id = $1 ${status ? 'AND hc.status = $2' : ''}
-        GROUP BY hc.contract_id, u.profile_picture
+        WHERE hc.teacher_id = $1 ${status ? 'AND hc.status = $2' : ''} 
+        GROUP BY hc.contract_id, u.profile_picture, t.hourly_rate
       `;
       const values = status ? [teacherId, status] : [teacherId];
       const { rows } = await query(queryText, values);
 
-      return new Response(JSON.stringify(rows), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      // Add total_price to each contract based on hourly_rate, start_date, and end_date
+      const result = rows.map(contract => {
+        const startDate = new Date(contract.start_date);
+        const endDate = new Date(contract.end_date);
+        const hourlyRate = contract.hourly_rate;
+
+        // Calculate the number of hours between start_date and end_date
+        const hours = Math.abs(endDate - startDate) / 36e5; // Convert ms to hours
+        const totalPrice = hourlyRate * hours;
+
+        // Add total_price to each contract but keep other fields unchanged
+        return { ...contract, total_price: totalPrice };
+      });
+
+      return new Response(JSON.stringify(result), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } else {
       return new Response(
         JSON.stringify({ message: 'User is neither a student nor a teacher' }),
@@ -162,6 +192,7 @@ export async function GET(req) {
     );
   }
 }
+
 
 
 

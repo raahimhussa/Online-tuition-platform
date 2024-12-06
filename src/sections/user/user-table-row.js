@@ -19,6 +19,8 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import ReviewForm from 'src/sections/five/review-form';
 import { useAuthContext } from 'src/auth/hooks';
 import { useDispatch } from 'react-redux';
+import getStripe from "src/utils/get-stripe";
+
 import { updateContractStatus,updateContractStatusToRejected } from 'src/app/store/slices/contractSlice'; // Assuming you have a proper path for the slice
 
 import { View403 } from 'src/sections/error';
@@ -38,6 +40,7 @@ export default function UserTableRow({ row, selected }) {
     status,
     email,
     subjects,
+    total_price,
   } = row;
 
 
@@ -77,6 +80,63 @@ export default function UserTableRow({ row, selected }) {
     dispatch(createReview(updatedData));
     handleCloseReviewDialog();
   };
+<<<<<<< HEAD
+=======
+   // New Payment Gateway Function
+   const handlePayNow = async (contract_id, total_price) => {
+    console.log('Handle Pay Now triggered', contract_id, total_price); // Check if this is logged
+
+    try {
+      // Send the total price to the backend to create the checkout session
+      const checkoutSession = await fetch('/api/checkout_sess', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // Ensure you send JSON data
+        },
+        body: JSON.stringify({
+          amount: total_price, // Send the total price here
+          contract_id: contract_id, // Send the contract_id to associate with the payment
+        }),
+      });
+  
+      const checkoutSessionJson = await checkoutSession.json();
+  
+      if (checkoutSessionJson.statusCode === 500) {
+        console.error(checkoutSessionJson.message);
+        return;
+      }
+  
+      const stripe = await getStripe(); // You should have a method to get Stripe instance
+  
+      const { error } = await stripe.redirectToCheckout({
+        sessionId: checkoutSessionJson.id,
+      });
+  
+      if (error) {
+        console.warn(error.message);
+      } else {
+        // After successful payment, update the contract status to "active"
+        const response = await fetch(`/api/contracts/${contract_id}/activate`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`, // Pass the authorization token if needed
+          },
+        });
+  
+        const responseJson = await response.json();
+  
+        if (response.ok) {
+          console.log('Contract status updated to active:', responseJson);
+        } else {
+          console.error('Failed to update contract status:', responseJson.message);
+        }
+      }
+    } catch (error) {
+      console.error('Error during payment: ', error);
+    }
+  };
+>>>>>>> 6fbf357affca26ac79c0f63a01a99dec09af8e28
   
 
   return (
@@ -225,18 +285,21 @@ export default function UserTableRow({ row, selected }) {
       Add a Review
     </Button>
   )}
-  {role === 'student' && status === 'accepted' && (
-    <Button
-      variant="text"
-      color="primary"
-      size="small"
-      sx={{ backgroundColor: 'rgba(255, 165, 0, 0.1)', '&:hover': { backgroundColor: 'rgba(255, 165, 0, 0.2)' } }}
-      onClick={() => console.log('Pay now action')}
-    >
-      Pay now
-    </Button>
-  )}
-</TableCell>
+{role === 'student' && status === 'accepted' && (
+          <Button
+          variant="text"
+          color="primary"
+          size="small"
+          sx={{
+            backgroundColor: 'rgba(255, 165, 0, 0.1)',
+            '&:hover': { backgroundColor: 'rgba(255, 165, 0, 0.2)' },
+          }}
+          onClick={() => handlePayNow(contract_id, total_price)}// Calling payment function here
+        >
+          Pay now - ${total_price} {/* Displaying the total price */}
+        </Button>
+          )}
+        </TableCell>
 
       </TableRow>
 

@@ -1,3 +1,4 @@
+import { verifyToken } from 'src/lib/auth';
 import { query } from 'src/lib/db';
 
 export async function PATCH(req, { params }) {
