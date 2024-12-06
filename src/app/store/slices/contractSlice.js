@@ -82,7 +82,7 @@ export const updateContractStatus = createAsyncThunk(
 );
 export const updateContractStatusToRejected = createAsyncThunk(
   'contracts/updateContractStatusToRejected',
-  async (contractId, { rejectWithValue }) => {
+  async ({ contractId, status }, { rejectWithValue }) => {
     try {
       const response = await fetch(`/api/contracts/${contractId}/rejected`, {
         method: 'PATCH',
@@ -97,7 +97,7 @@ export const updateContractStatusToRejected = createAsyncThunk(
         throw new Error(errorData.message || 'Failed to update contract status to rejected');
       }
 
-      return contractId; // Return the contract_id to update the Redux state
+      return { contractId, status }; // Return the contractId and new status
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -156,6 +156,24 @@ const contractSlice = createSlice({
         }
       })
       .addCase(updateContractStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to update contract status';
+      })
+      .addCase(updateContractStatusToRejected.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateContractStatusToRejected.fulfilled, (state, action) => {
+        state.loading = false;
+        const { contractId,status } = action.payload; // Only contractId is returned
+        const contractToUpdate = state.contracts.find(contract => contract.id === contractId);
+        if (contractToUpdate) {
+          contractToUpdate.status = status; // Manually set the status to 'rejected'
+        }
+        
+      })
+
+      .addCase(updateContractStatusToRejected.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Failed to update contract status';
       });

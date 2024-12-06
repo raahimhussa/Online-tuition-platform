@@ -26,6 +26,7 @@ import { View403 } from 'src/sections/error';
 export default function UserTableRow({ row, selected }) {
   const {
     contract_id, // Assuming row has id
+    student_name,
     teacher_name,
     teacher_profile_picture,
     student_profile_picture,
@@ -68,26 +69,47 @@ export default function UserTableRow({ row, selected }) {
   return (
     <>
       <TableRow hover selected={selected}>
-        <TableCell padding="checkbox">
+        {/* <TableCell padding="checkbox"> */}
           {/* <Checkbox checked={selected} onClick={onSelectRow} /> */}
-        </TableCell>
+        {/* </TableCell> */}
 
-        <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
+        <TableCell >
           {role === 'student' && (
             <Avatar alt={teacher_name} src={teacher_profile_picture} sx={{ mr: 2 }} />
           )}
           {role === 'teacher' && (
             <Avatar alt={teacher_name} src={student_profile_picture} sx={{ mr: 2 }} />
           )}
+ </TableCell>
+ <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
+           {role === 'teacher'  && (
           <ListItemText
-            primary={teacher_name}
+           
+            primary={student_name}
+         
             secondary={email}
             primaryTypographyProps={{ typography: 'body2' }}
             secondaryTypographyProps={{
               component: 'span',
               color: 'text.disabled',
             }}
+        
           />
+        )}
+          {role === 'student'  && (
+          <ListItemText
+           
+            primary={teacher_name}
+         
+            secondary={email}
+            primaryTypographyProps={{ typography: 'body2' }}
+            secondaryTypographyProps={{
+              component: 'span',
+              color: 'text.disabled',
+            }}
+        
+          />
+        )}
         </TableCell>
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>
@@ -111,85 +133,98 @@ export default function UserTableRow({ row, selected }) {
         </TableCell>
 
         <TableCell>
-          <Label
-            variant="soft"
-            color={
-              (status === 'active' && 'success') ||
-              (status === 'pending' && 'warning') ||
-              (status === 'banned' && 'error') ||
-              'default'
-            }
-          >
-            {status}
-          </Label>
-        </TableCell>
+  <Label
+    variant="soft"
+    color={
+      (status === 'active' && 'success') ||
+      (status === 'pending' && 'warning') ||
+      (status === 'accepted' && 'primary') ||
+      (status === 'rejected' && 'error') ||
+      (status === 'completed' && 'info') ||
+      (status === 'cancelled' && 'error') ||
+      'default'
+    }
+  >
+    {status}
+  </Label>
+</TableCell>
+
 
         <TableCell
-          align="right"
-          sx={{
-            px: 1,
-            display: 'flex',
-            gap: 1,
-            justifyContent: 'flex-end',
-            whiteSpace: 'nowrap',
-            alignItems: 'center',
-            position: 'relative',
-            top: '-11px',
-          }}
-        >
-          {role === 'teacher' && status === 'pending' && (
-            <>
-              <Button
-                variant="outlined"
-                color="primary"
-                size="small"
-                onClick={handleApprove}
-              >
-                Approve
-              </Button>
-              <Button
-                variant="outlined"
-                color="primary"
-                size="small"
-                onClick={handleReject}
-              >
-                Reject
-              </Button>
-            </>
-          )}
-          {role === 'student' && status === 'active' && (
-            <Button
-              variant="outlined"
-              color="primary"
-              size="small"
-              onClick={() => {
-                confirm.onTrue();
-              }}
-            >
-              Cancel
-            </Button>
-          )}
-          {role === 'student' && status === 'completed' && (
-            <Button
-              variant="outlined"
-              color="primary"
-              size="small"
-              onClick={handleOpenReviewDialog}
-            >
-              Add a Review
-            </Button>
-          )}
-          {role === 'student' && status === 'accepted' && (
-            <Button
-              variant="outlined"
-              color="primary"
-              size="small"
-              onClick={() => console.log('Pay now action')}
-            >
-              Pay now
-            </Button>
-          )}
-        </TableCell>
+  align="center"
+  sx={{
+    textAlign: 'center', // Ensure proper text alignment
+  }}
+>
+  {role === 'teacher' && status === 'pending' && (
+    <>
+      <Button
+        variant="text" // Soft variant simulation
+        color="primary"
+        size="small"
+        sx={{
+          backgroundColor: 'rgba(0, 0, 255, 0.1)', // Light blue background for softness
+          '&:hover': {
+            backgroundColor: 'rgba(0, 0, 255, 0.2)',
+          },
+        }}
+        onClick={handleApprove}
+      >
+        Approve
+      </Button>
+      <Button
+        variant="text"
+        color="primary"
+        size="small"
+        sx={{
+          backgroundColor: 'rgba(255, 0, 0, 0.1)', // Light red background
+          '&:hover': {
+            backgroundColor: 'rgba(255, 0, 0, 0.2)',
+          },
+        }}
+        onClick={handleReject}
+      >
+        Reject
+      </Button>
+    </>
+  )}
+  {role === 'student' && status === 'active' && (
+    <Button
+      variant="text"
+      color="primary"
+      size="small"
+      sx={{ backgroundColor: 'rgba(255, 215, 0, 0.1)', '&:hover': { backgroundColor: 'rgba(0, 128, 0, 0.2)' } }}
+      onClick={() => {
+        confirm.onTrue();
+      }}
+    >
+      Cancel
+    </Button>
+  )}
+  {role === 'student' && status === 'completed' && (
+    <Button
+      variant="text"
+      color="primary"
+      size="small"
+      sx={{ backgroundColor: 'rgba(255, 215, 0, 0.1)', '&:hover': { backgroundColor: 'rgba(255, 215, 0, 0.2)' } }}
+      onClick={handleOpenReviewDialog}
+    >
+      Add a Review
+    </Button>
+  )}
+  {role === 'student' && status === 'accepted' && (
+    <Button
+      variant="text"
+      color="primary"
+      size="small"
+      sx={{ backgroundColor: 'rgba(255, 165, 0, 0.1)', '&:hover': { backgroundColor: 'rgba(255, 165, 0, 0.2)' } }}
+      onClick={() => console.log('Pay now action')}
+    >
+      Pay now
+    </Button>
+  )}
+</TableCell>
+
       </TableRow>
 
       {/* Review Dialog */}

@@ -238,13 +238,16 @@ export default function ProfileHome({ info, teacher_id, posts }) {
             sx={{
               fontWeight: 'bold',
               color: theme.palette.mode === 'dark' ? 'white' : 'text.primary',
-              marginBottom: 1,
+              marginBottom: 2,
               textDecoration: 'underline',
+              textDecorationThickness: '2px', // Adjust thickness if needed
+              textUnderlineOffset: '6px', // Adjust space between text and underline
             }}
           >
             Teachers Teaching Similar Subjects
           </Typography>
         </Box>
+        
 
         <Stack spacing={3}>
           <UserCardListBySubject subjects={info.subjects} />
