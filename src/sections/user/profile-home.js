@@ -70,6 +70,25 @@ export default function ProfileHome({ info, teacher_id, posts }) {
       </Stack>
     </Card>
   );
+  const renderReview = (
+    <Card>
+      <CardHeader title={sectionTitle(<SchoolIcon />, 'Biography & Education')} />
+      <Stack spacing={2} sx={{ p: 3 }}>
+        <Box sx={{ typography: 'body1' }}>
+          <Typography component="span" variant="subtitle1" sx={{ fontWeight: 800 }}>
+            Bio:
+          </Typography>{' '}
+          {info.bio || 'No bio available'}
+        </Box>
+        <Box sx={{ typography: 'body1' }}>
+          <Typography component="span" variant="subtitle1" sx={{ fontWeight: 800 }}>
+            Education:
+          </Typography>{' '}
+          {info.education || 'No education available'}
+        </Box>
+      </Stack>
+    </Card>
+  );
 
   const renderOverview = (
     <Card sx={{ p: 3 }}>
@@ -230,6 +249,7 @@ export default function ProfileHome({ info, teacher_id, posts }) {
       <Grid xs={12}>{renderBio}</Grid>
 
       <Grid xs={12}>{renderAvailability()}</Grid>
+      <Grid xs={12}>{renderReview}</Grid>
 
       <Grid xs={12}>
         <Box sx={{ display: 'flex', mb: 4, mt: 4 }}>

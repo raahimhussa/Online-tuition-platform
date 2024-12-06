@@ -22,6 +22,7 @@ import { useDispatch } from 'react-redux';
 import { updateContractStatus,updateContractStatusToRejected } from 'src/app/store/slices/contractSlice'; // Assuming you have a proper path for the slice
 
 import { View403 } from 'src/sections/error';
+import { createReview } from 'src/app/store/slices/reviewSlice';
 
 export default function UserTableRow({ row, selected }) {
   const {
@@ -30,6 +31,8 @@ export default function UserTableRow({ row, selected }) {
     teacher_name,
     teacher_profile_picture,
     student_profile_picture,
+    teacher_id,
+    student_id,
     start_date,
     end_date,
     status,
@@ -61,10 +64,20 @@ export default function UserTableRow({ row, selected }) {
     dispatch(updateContractStatusToRejected({ contractId: contract_id, status: 'rejected' }));
   };
 
+  const contractId = 26;
+  const studentId = 5;
+  const teacherId = 27;
+  const rating = 4;
+  const reviewText = "The teacher was very helpful and explained the concepts clearly. Highly recommend!";
+  
+ 
   const handleSubmitReview = (data) => {
-    console.log('Review Submitted:', data);
+    const updatedData = { ...data, student_id, contract_id, teacher_id };
+    console.log('Review Submitted:', updatedData);
+    dispatch(createReview(updatedData));
     handleCloseReviewDialog();
   };
+  
 
   return (
     <>
@@ -247,8 +260,8 @@ export default function UserTableRow({ row, selected }) {
             variant="contained"
             color="error"
             onClick={() => {
-              console.log('Cancelled');
-              confirm.onFalse();
+              // handleCancel(); // Call the handleCancel function
+              confirm.onFalse(); // Close the dialog
             }}
           >
             Confirm

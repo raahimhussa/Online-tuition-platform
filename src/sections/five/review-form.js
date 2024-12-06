@@ -20,7 +20,7 @@ import React, { useState } from 'react';
 
 // ----------------------------------------------------------------------
 
-export default function ReviewForm({ onSubmitReview, studentId, open, onClose }) {
+export default function ReviewForm({ onSubmitReview, open, onClose }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const ReviewSchema = Yup.object().shape({
@@ -28,14 +28,14 @@ export default function ReviewForm({ onSubmitReview, studentId, open, onClose })
       .min(1, 'Minimum rating is 1')
       .max(5, 'Maximum rating is 5')
       .required('Rating is required'),
-    reviewText: Yup.string().required('Review text is required'),
+    review_text: Yup.string().required('Review text is required'),
   });
 
   const methods = useForm({
     resolver: yupResolver(ReviewSchema),
     defaultValues: {
       rating: 0,
-      reviewText: '',
+      review_text: '',
     },
   });
 
@@ -44,7 +44,7 @@ export default function ReviewForm({ onSubmitReview, studentId, open, onClose })
   const handleReviewSubmit = async (data) => {
     setIsLoading(true);
 
-    const reviewData = { ...data, studentId };
+    const reviewData = { ...data };
 
     console.log('Submitting Review:', reviewData);
     if (onSubmitReview) onSubmitReview(reviewData);
@@ -89,9 +89,9 @@ export default function ReviewForm({ onSubmitReview, studentId, open, onClose })
             rows={4}
             label="Review"
             placeholder="Share your experience..."
-            error={!!errors.reviewText}
-            helperText={errors.reviewText?.message}
-            {...methods.register('reviewText')}
+            error={!!errors.review_text}
+            helperText={errors.review_text?.message}
+            {...methods.register('review_text')}
             sx={{ mt: 2 }}
           />
         </form>
@@ -116,7 +116,6 @@ export default function ReviewForm({ onSubmitReview, studentId, open, onClose })
 
 ReviewForm.propTypes = {
   onSubmitReview: PropTypes.func,
-  studentId: PropTypes.string.isRequired,
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
 };
