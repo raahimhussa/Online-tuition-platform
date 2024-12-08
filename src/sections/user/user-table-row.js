@@ -148,6 +148,7 @@ export default function UserTableRow({ row, selected }) {
         {/* <TableCell padding="checkbox"> */}
           {/* <Checkbox checked={selected} onClick={onSelectRow} /> */}
         {/* </TableCell> */}
+        {console.log('student_name',student_name)}
 
         <TableCell >
           {role === 'student' && (
@@ -157,11 +158,15 @@ export default function UserTableRow({ row, selected }) {
             <Avatar alt={teacher_name} src={student_profile_picture} sx={{ mr: 2 }} />
           )}
  </TableCell>
+
+
  <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
            {role === 'teacher'  && (
+          
           <ListItemText
            
             primary={student_name}
+          
          
             secondary={email}
             primaryTypographyProps={{ typography: 'body2' }}
