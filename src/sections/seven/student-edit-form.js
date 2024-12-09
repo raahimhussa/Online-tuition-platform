@@ -64,12 +64,12 @@ export default function StudentEditForm() {
   const methods = useForm({
     resolver: yupResolver(StudentSchema),
     defaultValues: {
-      domain: studentState?.grade_domain || '',
-      subDomain: studentState?.grade_sub_level || '',
-      address: studentState?.guardian_address || '',
-      guardianName: studentState?.guardian_name || '',
-      guardianPhone: studentState?.guardian_phone || '',
-      subjects: studentState?.subjects || [],
+      domain: studentData?.grade_domain || '',
+      subDomain: studentData?.grade_sub_level || '',
+      address: studentData?.guardian_address || '',
+      guardianName: studentData?.guardian_name || '',
+      guardianPhone: studentData?.guardian_phone || '',
+      subjects: studentData?.subjects || [],
     },
   });
   const isFormPopulated = studentData && Object.values(studentData).some(field => field !== '' && field !== null);
@@ -99,8 +99,9 @@ export default function StudentEditForm() {
 
     const fetchStudent = async () => {
       try {
-        const result = await dispatch(fetchStudentData(studentState)).unwrap();
+        studentData = await dispatch(fetchStudentData()).unwrap();
         if (result) {
+          console.log(result)
           Object.keys(result).forEach((key) => {
             if (methods.getValues(key) !== undefined) {
               setValue(key, result[key]);
@@ -111,6 +112,7 @@ export default function StudentEditForm() {
         console.error('Failed to fetch student data:', error);
       }
     };
+
 
     const fetchSubjects = async () => {
       try {
