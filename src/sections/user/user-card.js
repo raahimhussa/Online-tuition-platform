@@ -66,11 +66,26 @@ export default function UserCard({ user }) {
           </Box>
         </Stack>
 
-        <Typography variant="body1" sx={{ mt: 2, mb: 2 }}>
-          {bio && typeof bio === 'string' && bio.split(' ').length > 5
-            ? `${bio.split(' ').slice(0, 5).join(' ')}...`
-            : bio || 'No bio available'}
-        </Typography>
+        <Typography
+  variant="body1"
+  sx={{ 
+    mt: 2, 
+    mb: 2, 
+    minHeight: '40px',  // Adjust based on design preference
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    display: '-webkit-box',
+    WebkitLineClamp: 2, // Limits text to 2 lines
+    WebkitBoxOrient: 'vertical'
+  }}
+>
+  {bio && typeof bio === 'string'
+    ? bio.split(' ').length >= 10
+      ? `${bio.split(' ').slice(0, 6).join(' ')}...`
+      : bio
+    : 'No bio available.'}
+</Typography>
+
 
         <Divider sx={{ my: 2 }} />
 
