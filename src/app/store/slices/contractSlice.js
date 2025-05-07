@@ -53,6 +53,84 @@ export const fetchAllContracts = createAsyncThunk(
     }
   }
 );
+// Thunk for updating contract status
+// Thunk for updating contract status
+// Thunk for updating contract status
+export const updateContractStatus = createAsyncThunk(
+  'contracts/updateContractStatus',
+  async ({ contractId, status }, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`/api/contracts/${contractId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+        body: JSON.stringify({ status }), // Ensure you're sending status in the body
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update contract status');
+      }
+
+      return { contractId, status }; // Return the contractId and new status
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+export const updateContractStatusToRejected = createAsyncThunk(
+  'contracts/updateContractStatusToRejected',
+  async ({ contractId, status }, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`/api/contracts/${contractId}/rejected`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update contract status to rejected');
+      }
+
+      return { contractId, status }; // Return the contractId and new status
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const updateContractStatusToCancelled = createAsyncThunk(
+  'contracts/updateContractStatusToCancelled',
+  async ({ contractId, status }, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`/api/contracts/${contractId}/cancelled`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update contract status to rejected');
+      }
+
+      return { contractId, status }; // Return the contractId and new status
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+
+
+
 
 // Contract slice
 const contractSlice = createSlice({
@@ -90,11 +168,61 @@ const contractSlice = createSlice({
       .addCase(fetchAllContracts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Failed to fetch contracts';
+      })
+      .addCase(updateContractStatus.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateContractStatus.fulfilled, (state, action) => {
+        state.loading = false;
+        const { contractId, status } = action.payload;
+        const contractToUpdate = state.contracts.find(contract => contract.id === contractId);
+        if (contractToUpdate) {
+          contractToUpdate.status = status;
+        }
+      })
+      .addCase(updateContractStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to update contract status';
+      })
+      .addCase(updateContractStatusToRejected.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateContractStatusToRejected.fulfilled, (state, action) => {
+        state.loading = false;
+        const { contractId,status } = action.payload; // Only contractId is returned
+        const contractToUpdate = state.contracts.find(contract => contract.id === contractId);
+        if (contractToUpdate) {
+          contractToUpdate.status = status; // Manually set the status to 'rejected'
+        }
+        
+      })
+      .addCase(updateContractStatusToRejected.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to update contract status';
+      })
+      .addCase(updateContractStatusToCancelled.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateContractStatusToCancelled.fulfilled, (state, action) => {
+        state.loading = false;
+        const { contractId,status } = action.payload; // Only contractId is returned
+        const contractToUpdate = state.contracts.find(contract => contract.id === contractId);
+        if (contractToUpdate) {
+          contractToUpdate.status = status; // Manually set the status to 'rejected'
+        }
+        
+      })
+
+      .addCase(updateContractStatusToCancelled.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to update contract status';
       });
+      ;
   },
 });
-
-// Selectors
 export const selectContracts = (state) => state.contracts.contracts;
 export const selectSingleContract = (state) => state.contracts.contract;
 export const selectContractsLoading = (state) => state.contracts.loading;
@@ -102,3 +230,4 @@ export const selectContractsError = (state) => state.contracts.error;
 
 // Export the reducer
 export default contractSlice.reducer;
+

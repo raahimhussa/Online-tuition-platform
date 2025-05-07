@@ -17,7 +17,7 @@ export default function NotificationItem({ notification }) {
     <ListItemAvatar>
       <Avatar
         alt="User Profile"
-        src={notification.profile_picture}
+        src={notification.image}
         sx={{
           width: 40,
           height: 40,
@@ -90,6 +90,6 @@ NotificationItem.propTypes = {
     type: PropTypes.string.isRequired,
     is_read: PropTypes.bool.isRequired,
     created_at: PropTypes.string.isRequired,
-    profile_picture: PropTypes.string.isRequired, // New profile picture field
+    image: PropTypes.string.isRequired, // New profile picture field
   }).isRequired,
 };

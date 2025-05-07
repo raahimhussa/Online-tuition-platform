@@ -40,7 +40,13 @@ export default function UserCard({ user }) {
 
   return (
     <>
-      <Card sx={{ textAlign: 'left', padding: 2, maxWidth: 320, boxShadow: 3 }}>
+      <Card sx={{ 
+        textAlign: 'left', 
+        padding: 2, 
+        width: '100%',  // Make card responsive
+        maxWidth: { xs: '100%', sm: 320 },  // Responsive max-width
+        boxShadow: 3 
+      }}>
         <Stack direction="row" alignItems="center" spacing={2}>
           <Avatar
             alt={name}
@@ -60,11 +66,26 @@ export default function UserCard({ user }) {
           </Box>
         </Stack>
 
-        <Typography variant="body1" sx={{ mt: 2, mb: 2 }}>
-          {bio && typeof bio === 'string' && bio.split(' ').length > 5
-            ? `${bio.split(' ').slice(0, 5).join(' ')}...`
-            : bio || 'No bio available'}
-        </Typography>
+        <Typography
+  variant="body1"
+  sx={{ 
+    mt: 2, 
+    mb: 2, 
+    minHeight: '40px',  // Adjust based on design preference
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    display: '-webkit-box',
+    WebkitLineClamp: 2, // Limits text to 2 lines
+    WebkitBoxOrient: 'vertical'
+  }}
+>
+  {bio && typeof bio === 'string'
+    ? bio.split(' ').length >= 10
+      ? `${bio.split(' ').slice(0, 6).join(' ')}...`
+      : bio
+    : 'No bio available.'}
+</Typography>
+
 
         <Divider sx={{ my: 2 }} />
 
@@ -72,9 +93,16 @@ export default function UserCard({ user }) {
           <Typography variant="subtitle2" color="text.secondary">
             Languages
           </Typography>
-          <Stack direction="row" spacing={1}>
+          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>  {/* Allow wrapping */}
             {languages.map((curr, index) => (
-              <Chip key={index} label={curr} size="small" color="primary" variant="outlined" />
+              <Chip 
+                key={index} 
+                label={curr} 
+                size="small" 
+                color="primary" 
+                variant="outlined"
+                sx={{ mb: 1 }}  // Add margin bottom for wrapped items
+              />
             ))}
           </Stack>
 
@@ -83,7 +111,12 @@ export default function UserCard({ user }) {
           </Typography>
           <Stack direction="row" spacing={1}>
             {grades.map((grade, index) => (
-              <Chip key={index} label={grade} size="small" variant="outlined" />
+              <Chip key={index} label={grade} size="small" variant="outlined"
+              sx={{
+                color: '#81C784',
+                borderColor: '#81C784',
+              }}
+              />
             ))}
           </Stack>
 
@@ -92,7 +125,12 @@ export default function UserCard({ user }) {
           </Typography>
           <Stack direction="row" spacing={1}>
             {subjects.map((subject, index) => (
-              <Chip key={index} label={subject} size="small" color="info" variant="outlined" />
+              <Chip key={index} label={subject} size="small" variant="outlined"
+              sx={{
+                color: '#80CBC4', 
+                borderColor: '#80CBC4', 
+              }}
+              />
             ))}
           </Stack>
         </Stack>

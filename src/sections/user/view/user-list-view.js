@@ -11,6 +11,7 @@ import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
+import { useAuthContext } from 'src/auth/hooks';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import { fetchAllContracts, selectContracts } from 'src/app/store/slices/contractSlice';
@@ -42,6 +43,9 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 //
+// import { useAuthContext } from 'src/auth/hooks';
+import { LoadingScreen } from 'src/components/loading-screen';
+import { Box } from '@mui/material';
 import UserTableRow from '../user-table-row';
 import UserTableToolbar from '../user-table-toolbar';
 import UserTableFiltersResult from '../user-table-filters-result';
@@ -49,15 +53,11 @@ import UserTableFiltersResult from '../user-table-filters-result';
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
+;
+ // Make sure `role1` is defined
 
-const TABLE_HEAD = [
-  { id: 'name', label: 'Teacher Name' },
-  { id: 'subject', label: 'Subjects', width: 180 },
-  { id: 'startDate', label: 'Start Date', width: 220 },
-  { id: 'endDate', label: 'End Date', width: 180 },
-  { id: 'staus', label: 'Status', width: 100 },
-  { id: '', width: 180},
-];
+// Set a default label if role1 is undefined or still loading
+
 
 const defaultFilters = {
   name: '',
@@ -68,19 +68,36 @@ const defaultFilters = {
 // ----------------------------------------------------------------------
 
 export default function UserListView() {
+  const { user } = useAuthContext();
+  const role1 = user?.role;
+
+  console.log('role1',role1);
+
   const table = useTable();
 const dispatch = useDispatch();
-  const settings = useSettingsContext();
+const [loading, setLoading] = useState(false);
 
+  const settings = useSettingsContext();
+  const TABLE_HEAD = [
+    {
+      id: 'name',
+      label: role1 === 'teacher' ? 'Student Name' : 'Teacher Name', 
+    },
+    { id: 'subject', label: 'Subjects', width: 180 },
+    { id: 'startDate', label: 'Start Date', width: 220 },
+    { id: 'endDate', label: 'End Date', width: 180 },
+    { id: 'status', label: 'Status', width: 100 },
+    { id: '', width: 180 },
+  ];
   const router = useRouter();
   const _userList=useSelector(selectContracts);
   console.log('_userList',_userList);
   const confirm = useBoolean();
-  const [tableData, setTableData] = useState(_userList);
+ 
   const [filters, setFilters] = useState(defaultFilters);
 
   const dataFiltered = applyFilter({
-    inputData: tableData,
+    inputData: _userList,
     comparator: getComparator(table.order, table.orderBy),
     filters,
   });
@@ -90,7 +107,9 @@ const dispatch = useDispatch();
     table.page * table.rowsPerPage + table.rowsPerPage
   );
   useEffect(() => {
+    setLoading(true);
     dispatch(fetchAllContracts());
+    setLoading(false);
   }, [dispatch]);
 
   // const denseHeight = table.dense ? 52 : 72;
@@ -110,26 +129,7 @@ const dispatch = useDispatch();
     [table]
   );
 
-  const handleDeleteRow = useCallback(
-    (id) => {
-      const deleteRow = tableData.filter((row) => row.id !== id);
-      setTableData(deleteRow);
 
-      table.onUpdatePageDeleteRow(dataInPage.length);
-    },
-    [dataInPage.length, table, tableData]
-  );
-
-  const handleDeleteRows = useCallback(() => {
-    const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
-    setTableData(deleteRows);
-
-    table.onUpdatePageDeleteRows({
-      totalRows: tableData.length,
-      totalRowsInPage: dataInPage.length,
-      totalRowsFiltered: dataFiltered.length,
-    });
-  }, [dataFiltered.length, dataInPage.length, table, tableData]);
 
   const handleEditRow = useCallback(
     (id) => {
@@ -144,6 +144,21 @@ const dispatch = useDispatch();
     },
     [handleFilters]
   );
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
+        }}
+      >
+       <LoadingScreen />
+      </Box>
+    );
+  }
 
   // const handleResetFilters = useCallback(() => {
   //   setFilters(defaultFilters);
@@ -193,20 +208,20 @@ const dispatch = useDispatch();
                   >
                     {tab.value === 'all' && _userList.length}
                     {tab.value === 'active' &&
-                      _userList.filter((user) => user.status === 'active').length}
+                      _userList.filter((user1) => user1.status === 'active').length}
 
                     {tab.value === 'pending' &&
-                      _userList.filter((user) => user.status === 'pending').length}
+                      _userList.filter((user1) => user1.status === 'pending').length}
                     {/* {tab.value === 'banned' &&
-                      _userList.filter((user) => user.status === 'banned').length} */}
+                      _userList.filter((user1) => user1.status === 'banned').length} */}
                     {tab.value === 'completed' &&
-                      _userList.filter((user) => user.status === 'completed').length}
+                      _userList.filter((user1) => user1.status === 'completed').length}
                        {tab.value === 'accepted' &&
-                      _userList.filter((user) => user.status === 'accepted').length}
+                      _userList.filter((user1) => user1.status === 'accepted').length}
                        {tab.value === 'rejected' &&
-                      _userList.filter((user) => user.status === 'rejected').length}
+                      _userList.filter((user1) => user1.status === 'rejected').length}
                        {tab.value === 'cancelled' &&
-                      _userList.filter((user) => user.status === 'cancelled').length}
+                      _userList.filter((user1) => user1.status === 'cancelled').length}
                      
                   </Label>
                 }
@@ -237,11 +252,11 @@ const dispatch = useDispatch();
             <TableSelectedAction
               dense={table.dense}
               numSelected={table.selected.length}
-              rowCount={tableData.length}
+              rowCount={_userList.length}
               onSelectAllRows={(checked) =>
                 table.onSelectAllRows(
                   checked,
-                  tableData.map((row) => row.id)
+                  _userList.map((row) => row.id)
                 )
               }
               action={
@@ -259,13 +274,13 @@ const dispatch = useDispatch();
                   order={table.order}
                   orderBy={table.orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={tableData.length}
+                  rowCount={_userList.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
                   onSelectAllRows={(checked) =>
                     table.onSelectAllRows(
                       checked,
-                      tableData.map((row) => row.id)
+                      _userList.map((row) => row.id)
                     )
                   }
                 />
@@ -282,14 +297,14 @@ const dispatch = useDispatch();
                         row={row}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
+  
                         onEditRow={() => handleEditRow(row.id)}
                       />
                     ))}
 
                   <TableEmptyRows
                     // height={denseHeight}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)}
+                    emptyRows={emptyRows(table.page, table.rowsPerPage, _userList.length)}
                   />
 
                   <TableNoData notFound={notFound} />
@@ -325,7 +340,6 @@ const dispatch = useDispatch();
             variant="contained"
             color="error"
             onClick={() => {
-              handleDeleteRows();
               confirm.onFalse();
             }}
           >
